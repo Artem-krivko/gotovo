@@ -1,0 +1,207 @@
+@import "tailwindcss";
+
+/* ── Базовые переменные ──────────────────────────────────────────────────────── */
+:root {
+  --bg-base: #0A0A0F;
+  --bg-surface: #13131A;
+  --bg-elevated: #1C1C28;
+  --bg-subtle: #16161F;
+  --text-primary: #F8F8FF;
+  --text-secondary: #A1A1B5;
+  --text-muted: #6B6B80;
+  --border-subtle: rgba(255,255,255,0.06);
+  --border-default: rgba(255,255,255,0.10);
+  --border-strong: rgba(255,255,255,0.16);
+  --accent-purple: #7C3AED;
+  --accent-blue: #3B82F6;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sora), system-ui, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: rgba(124, 58, 237, 0.4);
+  color: #fff;
+}
+
+/* ── Скроллбар ───────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* ── Анимации появления ──────────────────────────────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.reveal-up {
+  opacity: 0;
+  animation: fade-up 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.reveal-in {
+  opacity: 0;
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+.delay-1 { animation-delay: 0.08s; }
+.delay-2 { animation-delay: 0.16s; }
+.delay-3 { animation-delay: 0.24s; }
+.delay-4 { animation-delay: 0.32s; }
+.delay-5 { animation-delay: 0.40s; }
+
+/* ── Hover эффекты ───────────────────────────────────────────────────────────── */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+.hover-lift:hover { transform: translateY(-2px); }
+
+/* ── Glow фоны ───────────────────────────────────────────────────────────────── */
+.glow-purple {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(124,58,237,0.3), transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+.glow-blue {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(59,130,246,0.25), transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+/* ── Hero glow gradient ──────────────────────────────────────────────────────── */
+.hero-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 80% 50% at 50% -5%, rgba(124,58,237,0.2), transparent 60%);
+}
+
+/* ── Gradient border ─────────────────────────────────────────────────────────── */
+.gradient-border {
+  position: relative;
+  background: var(--bg-surface);
+  border-radius: 16px;
+}
+.gradient-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(124,58,237,0.4), rgba(59,130,246,0.2), transparent);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ── Shimmer loading ─────────────────────────────────────────────────────────── */
+.shimmer {
+  background: linear-gradient(90deg, var(--bg-surface) 0%, var(--bg-elevated) 50%, var(--bg-surface) 100%);
+  background-size: 200% auto;
+  animation: shimmer 1.5s linear infinite;
+}
+
+/* ── Floating animation ──────────────────────────────────────────────────────── */
+.float { animation: float 6s ease-in-out infinite; }
+.float-slow { animation: float 8s ease-in-out infinite; }
+
+/* ── Pulse glow ──────────────────────────────────────────────────────────────── */
+.pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+
+/* ── Grid overlay ────────────────────────────────────────────────────────────── */
+.grid-overlay {
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ── Mockup: зацикленная прокрутка ──────────────────────────────────────────── */
+/*
+  Контент внутри мокапа анимируется translateY вверх — имитация скролла страницы.
+  52% — насколько уходит вверх. Паузы в 45–50% и 95–100% создают
+  ощущение "долистал → вернулся наверх".
+  8s — полный цикл. Cubic-bezier(0.45,0,0.55,1) — плавное ускорение/замедление.
+*/
+@keyframes scroll-loop {
+  0%   { transform: translateY(0); }
+  10%  { transform: translateY(0); }       /* пауза наверху */
+  45%  { transform: translateY(-52%); }    /* долистали до конца */
+  55%  { transform: translateY(-52%); }    /* пауза внизу */
+  90%  { transform: translateY(0); }       /* вернулись наверх */
+  100% { transform: translateY(0); }
+}
+
+.mockup-scroll {
+  animation: scroll-loop 9s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  will-change: transform;
+}
+
+/* ── Mockup: 3D наклон ───────────────────────────────────────────────────────── */
+/*
+  perspective(1200px) — глубина 3D сцены. Чем больше — тем менее агрессивный наклон.
+  rotateY(-12deg) — поворот по горизонтальной оси (левый край ближе к зрителю).
+  rotateX(4deg)  — лёгкий наклон по вертикали (верх чуть дальше).
+  scale(0.96)    — немного уменьшен чтобы не обрезало при наклоне.
+  При hover — выпрямляется в нейтральное положение.
+*/
+.mockup-3d {
+  transform: perspective(1200px) rotateY(-12deg) rotateX(4deg) scale(0.96);
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mockup-3d:hover {
+  transform: perspective(1200px) rotateY(-4deg) rotateX(1deg) scale(0.99);
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up, .reveal-in { opacity: 1; animation: none; }
+  .hover-lift, .hover-lift:hover { transform: none; transition: none; }
+  .float, .float-slow { animation: none; }
+  .pulse-glow { animation: none; }
+  .shimmer { animation: none; }
+  .mockup-scroll { animation: none; }
+  .mockup-3d, .mockup-3d:hover { transform: none; transition: none; }
+  html { scroll-behavior: auto; }
+}

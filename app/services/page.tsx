@@ -1,0 +1,311 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Faq } from "@/components/sections/faq";
+import { Cta } from "@/components/sections/cta";
+import { SERVICE_FORMATS, AUDIENCE_ITEMS, OUTCOME_ITEMS, SERVICES_FAQ } from "@/content/services";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
+
+export const metadata: Metadata = {
+  title: "Услуги — разработка сайтов для бизнеса | gotovo",
+  description: "Лендинги от €500, бизнес-сайты от €800. AI-генератор покажет дизайн до оплаты за 30 секунд. Кастомная разработка без шаблонов.",
+  alternates: { canonical: `${SITE_URL}/services` },
+  openGraph: { url: `${SITE_URL}/services`, images: [{ url: "/og-image.png", width: 1200, height: 630 }] },
+};
+
+// ─── Иконки ───────────────────────────────────────────────────────────────────
+
+function ArrowRight() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+      <path d="M2.5 7l3.5 3.5 5.5-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+const FORMAT_ICONS = ["🖥️", "🏢", "🔍"] as const;
+
+// ─── Страница ─────────────────────────────────────────────────────────────────
+
+export default function ServicesPage() {
+  return (
+    <main>
+
+      {/* ── Hero ────────────────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-[#0A0A0F] px-4 pb-20 pt-16 sm:px-6 sm:pb-28 sm:pt-24">
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true"
+          style={{ background: "radial-gradient(ellipse 70% 50% at 30% -5%, rgba(124,58,237,0.22), transparent 60%)" }} />
+        <div className="grid-overlay pointer-events-none absolute inset-0" aria-hidden="true" />
+
+        <div className="relative mx-auto max-w-5xl">
+          <div className="flex flex-col items-center text-center">
+            <span className="reveal-up inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-1.5 text-sm font-medium text-violet-400">
+              Услуги gotovo
+            </span>
+
+            <h1 className="reveal-up delay-1 mt-6 text-5xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl lg:text-7xl">
+              Сайты которые{" "}
+              <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-blue-400 bg-clip-text text-transparent">
+                работают на бизнес
+              </span>
+            </h1>
+
+            <p className="reveal-up delay-2 mt-6 max-w-xl text-lg leading-7 text-[#A1A1B5]">
+              Лендинги, бизнес-сайты и SEO-запуск — без шаблонов и хаоса.
+              Сначала покажем дизайн через генератор, потом сделаем.
+            </p>
+
+            <div className="reveal-up delay-3 mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+              <Link href="/generator"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/30 transition hover:opacity-90 hover:-translate-y-0.5">
+                <span aria-hidden="true">✦</span> Попробовать генератор
+              </Link>
+              <Link href="/pricing"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 text-sm font-medium text-white transition hover:bg-white/10">
+                Смотреть цены
+              </Link>
+            </div>
+
+            {/* Метрики */}
+            <div className="reveal-up delay-4 mt-12 grid w-full max-w-lg grid-cols-3 gap-3">
+              {[
+                { value: "3 формата", label: "под любую задачу" },
+                { value: "7–14 дней", label: "типичный срок" },
+                { value: "Превью бесплатно", label: "через генератор" },
+              ].map((m) => (
+                <div key={m.label} className="rounded-2xl border border-white/10 bg-[#13131A] p-4 text-center">
+                  <p className="text-base font-bold text-white sm:text-lg">{m.value}</p>
+                  <p className="mt-1 text-xs leading-4 text-[#6B6B80]">{m.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Форматы работы ──────────────────────────────────────────────────── */}
+      <section className="bg-[#16161F] px-4 py-16 sm:px-6 sm:py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="reveal-up text-center">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Форматы</p>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              Выберите под свою задачу
+            </h2>
+            <p className="mt-3 text-[#A1A1B5]">Быстрый запуск, системный сайт или подготовка к росту</p>
+          </div>
+
+          {/* Мобилка: snap-scroll */}
+          <div className="-mx-4 mt-10 overflow-x-auto px-4 sm:hidden">
+            <div className="flex gap-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
+              {SERVICE_FORMATS.map((format, i) => (
+                <div key={format.title}
+                  className="flex w-[80vw] max-w-[300px] shrink-0 flex-col rounded-2xl border border-white/10 bg-[#13131A] p-6"
+                  style={{ scrollSnapAlign: "start" }}>
+                  <span className="text-3xl" aria-hidden="true">{FORMAT_ICONS[i % FORMAT_ICONS.length]}</span>
+                  <div className="mt-4 flex items-baseline gap-2">
+                    <span className="text-2xl font-bold text-white">{format.price}</span>
+                    <span className="text-sm text-[#6B6B80]">{format.duration}</span>
+                  </div>
+                  <h3 className="mt-2 text-lg font-semibold text-white">{format.title}</h3>
+                  <p className="mt-2 flex-1 text-sm leading-6 text-[#A1A1B5]">{format.description}</p>
+                  <ul className="mt-4 flex flex-col gap-2">
+                    {format.bullets.map((b) => (
+                      <li key={b} className="flex items-center gap-2 text-sm text-[#6B6B80]">
+                        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-violet-500" aria-hidden="true" />{b}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+              <div className="w-4 shrink-0" aria-hidden="true" />
+            </div>
+          </div>
+
+          {/* Десктоп: grid */}
+          <div className="mt-10 hidden gap-5 sm:grid sm:grid-cols-3">
+            {SERVICE_FORMATS.map((format, i) => {
+              const delay = i === 0 ? "delay-1" : i === 1 ? "delay-2" : "delay-3";
+              const isFeatured = i === 1;
+              return (
+                <div key={format.title}
+                  className={`reveal-up flex flex-col rounded-2xl border p-7 transition hover:-translate-y-1 ${delay} ${
+                    isFeatured
+                      ? "border-violet-500/30 bg-gradient-to-br from-violet-500/10 to-blue-500/5"
+                      : "border-white/10 bg-[#13131A] hover:border-white/20 hover:bg-[#1C1C28]"
+                  }`}>
+                  <div className="flex items-start justify-between">
+                    <span className="text-3xl" aria-hidden="true">{FORMAT_ICONS[i]}</span>
+                    {isFeatured && (
+                      <span className="rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-violet-400">
+                        Популярный
+                      </span>
+                    )}
+                  </div>
+                  <div className="mt-5 flex items-baseline gap-2">
+                    <span className="text-3xl font-bold text-white">{format.price}</span>
+                    <span className="text-sm text-[#6B6B80]">{format.duration}</span>
+                  </div>
+                  <h3 className="mt-2 text-xl font-semibold text-white">{format.title}</h3>
+                  <p className="mt-3 flex-1 text-sm leading-6 text-[#A1A1B5]">{format.description}</p>
+                  <ul className="mt-5 flex flex-col gap-2.5">
+                    {format.bullets.map((b) => (
+                      <li key={b} className="flex items-center gap-2.5 text-sm text-[#A1A1B5]">
+                        <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${isFeatured ? "bg-violet-400" : "bg-[#6B6B80]"}`} aria-hidden="true" />{b}
+                      </li>
+                    ))}
+                  </ul>
+                  <Link href="/generator"
+                    className={`mt-6 inline-flex w-full items-center justify-center gap-1.5 rounded-xl py-3 text-sm font-semibold transition hover:-translate-y-0.5 ${
+                      isFeatured
+                        ? "bg-gradient-to-r from-violet-600 to-blue-600 text-white shadow-lg shadow-violet-500/25 hover:opacity-90"
+                        : "border border-white/10 bg-white/5 text-white hover:bg-white/10"
+                    }`}>
+                    Попробовать <ArrowRight />
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Для кого ────────────────────────────────────────────────────────── */}
+      <section className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="reveal-up text-center">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Аудитория</p>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              Кому подходит
+            </h2>
+          </div>
+
+          {/* Мобилка */}
+          <div className="-mx-4 mt-10 overflow-x-auto px-4 sm:hidden">
+            <div className="flex gap-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
+              {AUDIENCE_ITEMS.map((item) => (
+                <div key={item.title}
+                  className="flex w-[80vw] max-w-[280px] shrink-0 flex-col rounded-2xl border border-white/10 bg-[#13131A] p-5"
+                  style={{ scrollSnapAlign: "start" }}>
+                  <span className="inline-flex w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-[#6B6B80]">
+                    {item.badge}
+                  </span>
+                  <h3 className="mt-3 font-semibold text-white">{item.title}</h3>
+                  <p className="mt-2 flex-1 text-sm leading-6 text-[#A1A1B5]">{item.description}</p>
+                </div>
+              ))}
+              <div className="w-4 shrink-0" aria-hidden="true" />
+            </div>
+          </div>
+
+          {/* Десктоп */}
+          <div className="mt-10 hidden gap-5 sm:grid sm:grid-cols-2">
+            {AUDIENCE_ITEMS.map((item, i) => {
+              const delay = i === 0 ? "delay-1" : i === 1 ? "delay-2" : i === 2 ? "delay-3" : "delay-4";
+              return (
+                <div key={item.title}
+                  className={`reveal-up rounded-2xl border border-white/10 bg-[#13131A] p-6 transition hover:border-white/20 sm:p-7 ${delay}`}>
+                  <span className="inline-flex items-center rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-400">
+                    {item.badge}
+                  </span>
+                  <h3 className="mt-4 text-lg font-semibold text-white">{item.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-[#A1A1B5]">{item.description}</p>
+                  <ul className="mt-4 flex flex-col gap-2">
+                    {item.points.map((p) => (
+                      <li key={p} className="flex items-center gap-2 text-sm text-[#6B6B80]">
+                        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-violet-500" aria-hidden="true" />{p}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Что входит в результат ──────────────────────────────────────────── */}
+      <section className="bg-[#16161F] px-4 py-16 sm:px-6 sm:py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="reveal-up text-center">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Результат</p>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              Что вы получаете
+            </h2>
+            <p className="mt-3 text-[#A1A1B5]">
+              Не набор экранов — рабочая система с логикой, адаптивом и подготовкой к запуску
+            </p>
+          </div>
+
+          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" role="list">
+            {OUTCOME_ITEMS.map((item, i) => {
+              const delay = i < 2 ? "delay-1" : i < 4 ? "delay-2" : "delay-3";
+              return (
+                <li key={item.title}
+                  className={`reveal-up flex gap-4 rounded-2xl border border-white/10 bg-[#13131A] p-5 transition hover:border-white/20 ${delay}`}>
+                  <span className={`mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-white ${item.accent}`} aria-hidden="true">
+                    <CheckIcon />
+                  </span>
+                  <div>
+                    <p className="font-semibold text-white">{item.title}</p>
+                    <p className="mt-1 text-sm leading-6 text-[#6B6B80]">{item.description}</p>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      </section>
+
+      {/* ── Сравнение ───────────────────────────────────────────────────────── */}
+      <section className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+        <div className="mx-auto max-w-4xl">
+          <div className="reveal-up text-center">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Сравнение</p>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              Кастом vs конструктор
+            </h2>
+          </div>
+
+          <div className="mt-10 overflow-hidden rounded-2xl border border-white/10">
+            {/* Шапка */}
+            <div className="grid grid-cols-[1fr_1fr_1fr] border-b border-white/10 bg-[#13131A]">
+              <div className="px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[#6B6B80] sm:px-6">Параметр</div>
+              <div className="border-l border-white/10 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[#6B6B80] sm:px-6">Конструктор</div>
+              <div className="border-l border-violet-500/20 bg-violet-500/5 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-violet-400 sm:px-6">gotovo</div>
+            </div>
+            {[
+              { label: "Дизайн", bad: "Ограничен шаблоном", good: "Под вашу задачу" },
+              { label: "Структура", bad: "Фиксированная", good: "Под сценарий продаж" },
+              { label: "Скорость", bad: "Зависит от платформы", good: "Оптимизирована" },
+              { label: "SEO", bad: "Частичный контроль", good: "Полный контроль" },
+              { label: "Масштаб", bad: "Сложнее расширять", good: "Легко добавлять" },
+            ].map((row, i) => (
+              <div key={row.label}
+                className={`grid grid-cols-[1fr_1fr_1fr] border-b border-white/[0.06] last:border-0 ${i % 2 === 0 ? "bg-[#0A0A0F]" : "bg-[#0D0D14]"}`}>
+                <div className="px-4 py-4 text-sm font-medium text-white sm:px-6">{row.label}</div>
+                <div className="border-l border-white/[0.06] px-4 py-4 text-sm text-[#6B6B80] sm:px-6">{row.bad}</div>
+                <div className="border-l border-violet-500/10 bg-violet-500/[0.03] px-4 py-4 text-sm font-medium text-violet-300 sm:px-6">{row.good}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <Faq title="Вопросы по услугам" subtitle="Отвечаем до старта — без обязательств" items={SERVICES_FAQ} />
+
+      <Cta
+        title="Покажем дизайн вашего сайта"
+        subtitle="Попробуйте генератор — это бесплатно и займёт 30 секунд. Нравится — обсудим разработку."
+        button="Сгенерировать дизайн"
+      />
+    </main>
+  );
+}

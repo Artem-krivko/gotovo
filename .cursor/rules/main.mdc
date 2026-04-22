@@ -1,0 +1,104 @@
+---
+description: Главные правила проекта AI Web Agency — читаются при каждом запросе
+alwaysApply: true
+---
+
+# AI Web Agency — Project Rules
+
+## Контекст проекта
+- Сайт веб-агентства с AI Design Generator
+- Стек: Next.js 16 App Router + TypeScript + Tailwind CSS 4
+- Монетизация: лид-генерация (клиент генерирует → видит превью → оставляет заявку)
+- Подробнее: читай `CLAUDE.md` в корне проекта
+
+---
+
+## КРИТИЧЕСКИЕ ПРАВИЛА NEXT.JS APP ROUTER
+
+```
+"use client"  → только если есть useState / useEffect / useRef / browser API
+"use server"  → только внутри async функций-действий (Server Actions)
+По умолчанию  → Server Component, никаких директив не нужно
+```
+
+❌ НИКОГДА не писать `"use server"` на обычном компоненте — сломает билд.
+
+---
+
+## TYPESCRIPT
+
+- Никаких `any` — используй конкретные типы или `unknown` + type guard
+- Пропсы компонентов — через `interface`, не `type`
+- Переиспользуемые типы — в `lib/types.ts`
+
+---
+
+## TEMPLATE LITERALS
+
+- ❌ `'translate(${x}px)'` — обычные кавычки НЕ интерполируют
+- ✅ `` `translate(${x}px)` `` — только backticks
+
+---
+
+## АРХИТЕКТУРА КОМПОНЕНТОВ
+
+- Данные НИКОГДА не хардкодятся внутри компонента
+- Статические данные → `content/название.ts`
+- Иконки → отдельные функциональные компоненты, не JSX в массивах
+- Крупные компоненты (>150 строк) → разбивать на под-компоненты
+
+---
+
+## СТРУКТУРА ФАЙЛА (всегда в этом порядке)
+
+1. Директива (`"use client"` если нужна)
+2. Импорты: React → Next → внешние → внутренние → типы
+3. Локальные константы
+4. Под-компоненты
+5. `interface Props`
+6. `export function ComponentName`
+   - state → memo → callbacks → effects → early returns → JSX
+
+---
+
+## API ROUTES — всегда try/catch
+
+```typescript
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json() as MyRequestType
+    // валидация
+    // логика
+    return NextResponse.json({ result }, { status: 200 })
+  } catch (error) {
+    console.error('[POST /api/route-name]', error)
+    return NextResponse.json({ error: 'Внутренняя ошибка' }, { status: 500 })
+  }
+}
+```
+
+---
+
+## ДОСТУПНОСТЬ (a11y)
+
+- Декоративные SVG → `aria-hidden="true"`
+- Кнопки без текста → `aria-label="..."`
+- `<label htmlFor>` связан с `<input id>`
+- Изображения → осмысленный `alt`
+
+---
+
+## ИЗОБРАЖЕНИЯ
+
+- Всегда `next/image`, не `<img>` (кроме случаев когда src динамический из внешнего API)
+- `priority` — только для above-the-fold изображений
+
+---
+
+## ЗАПРЕЩЕНО
+
+- `console.log` в коде (только `console.error` в catch)
+- `any` типы
+- Inline стили через `style={{}}` (только Tailwind классы)
+- Хардкод данных внутри компонентов
+- `"use server"` на не-async функциях

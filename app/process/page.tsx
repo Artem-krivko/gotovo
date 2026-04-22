@@ -1,0 +1,160 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Process } from "@/components/sections/process";
+import { ProcessClientView } from "@/components/sections/process-client-view";
+import { Cta } from "@/components/sections/cta";
+import { PROCESS_STEPS, PROCESS_CLIENT_STEPS } from "@/content/process";
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
+
+export const metadata: Metadata = {
+  title: "Как проходит разработка — 7 этапов от идеи до запуска | gotovo",
+  description: "Понятный процесс: генератор показывает дизайн до оплаты → бриф → прототип → разработка → запуск. 7–14 рабочих дней под ключ.",
+  alternates: { canonical: `${SITE_URL}/process` },
+  openGraph: { url: `${SITE_URL}/process`, images: [{ url: "/og-image.png", width: 1200, height: 630 }] },
+};
+
+const howToSchema = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "Как заказать разработку сайта в gotovo",
+  description: "7 шагов от бесплатного генератора до запуска сайта",
+  totalTime: "P14D",
+  step: PROCESS_STEPS.map((step, i) => ({
+    "@type": "HowToStep",
+    position: i + 1,
+    name: step.title,
+    text: step.description,
+  })),
+};
+
+const GUARANTEES = [
+  { icon: "👁", title: "Видите до оплаты", description: "Генератор показывает дизайн бесплатно. Платите только если понравилось." },
+  { icon: "📅", title: "Фиксированные сроки", description: "Лендинг 7–10 дней, бизнес-сайт 10–14. Прописываем до старта." },
+  { icon: "🔄", title: "2–3 круга правок", description: "Включено в стоимость. Доводим до финала без доплат." },
+  { icon: "🚀", title: "Запуск под ключ", description: "Домен, аналитика, формы — всё настроено и проверено." },
+] as const;
+
+export default function ProcessPage() {
+  return (
+    <main>
+      <script type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }} />
+
+      {/* ── Hero ────────────────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-[#0A0A0F] px-4 pb-20 pt-16 sm:px-6 sm:pb-28 sm:pt-24">
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true"
+          style={{ background: "radial-gradient(ellipse 70% 50% at 70% -5%, rgba(124,58,237,0.22), transparent 60%)" }} />
+        <div className="grid-overlay pointer-events-none absolute inset-0" aria-hidden="true" />
+
+        <div className="relative mx-auto max-w-5xl">
+          <div className="flex flex-col items-center text-center">
+            <span className="reveal-up inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-1.5 text-sm font-medium text-violet-400">
+              Процесс работы
+            </span>
+
+            <h1 className="reveal-up delay-1 mt-6 text-5xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl lg:text-7xl">
+              Понятно что происходит{" "}
+              <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-blue-400 bg-clip-text text-transparent">
+                на каждом шаге
+              </span>
+            </h1>
+
+            <p className="reveal-up delay-2 mt-6 max-w-xl text-lg leading-7 text-[#A1A1B5]">
+              Начинается с генератора — видите дизайн до оплаты.
+              Дальше 7 чётких этапов, фиксированные сроки и запуск под ключ.
+            </p>
+
+            <div className="reveal-up delay-3 mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+              <Link href="/generator"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/30 transition hover:opacity-90 hover:-translate-y-0.5">
+                <span aria-hidden="true">✦</span> Попробовать генератор
+              </Link>
+              <Link href="/pricing"
+                className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 text-sm font-medium text-white transition hover:bg-white/10">
+                Посмотреть цены
+              </Link>
+            </div>
+
+            {/* Метрики */}
+            <div className="reveal-up delay-4 mt-12 grid w-full max-w-lg grid-cols-3 gap-3">
+              {[
+                { value: "30 сек", label: "до первого превью" },
+                { value: "7 шагов", label: "от идеи до запуска" },
+                { value: "0 ₽", label: "до того как понравится" },
+              ].map((m) => (
+                <div key={m.label} className="rounded-2xl border border-white/10 bg-[#13131A] p-4 text-center">
+                  <p className="text-base font-bold text-white sm:text-lg">{m.value}</p>
+                  <p className="mt-1 text-xs leading-4 text-[#6B6B80]">{m.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Таймлайн ────────────────────────────────────────────────────────── */}
+      <section className="bg-[#16161F] px-4 py-16 sm:px-6 sm:py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="reveal-up text-center">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Этапы</p>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              Все этапы работы
+            </h2>
+            <p className="mt-3 text-[#A1A1B5]">От первого превью в генераторе до запуска — 7 шагов</p>
+          </div>
+          <div className="mt-10">
+            <Process title="" steps={PROCESS_STEPS} />
+          </div>
+        </div>
+      </section>
+
+      {/* ── Что получаете ───────────────────────────────────────────────────── */}
+      <section className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="reveal-up text-center">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Результат</p>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+              Что вы держите в руках
+            </h2>
+            <p className="mt-3 text-[#A1A1B5]">Не абстрактные фазы — конкретные результаты на каждом этапе</p>
+          </div>
+          <div className="mt-10">
+            <ProcessClientView steps={PROCESS_CLIENT_STEPS} />
+          </div>
+        </div>
+      </section>
+
+      {/* ── Гарантии ────────────────────────────────────────────────────────── */}
+      <section className="bg-[#16161F] px-4 py-16 sm:px-6 sm:py-24">
+        <div className="mx-auto max-w-4xl">
+          <div className="reveal-up rounded-3xl border border-violet-500/20 bg-gradient-to-br from-violet-500/10 via-[#13131A] to-blue-500/5 p-8 sm:p-12">
+            <div className="text-center">
+              <p className="text-xs font-semibold uppercase tracking-widest text-violet-400">Наши обязательства</p>
+              <h2 className="mt-3 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+                Что неизменно в каждом проекте
+              </h2>
+            </div>
+            <ul className="mt-8 grid gap-4 sm:grid-cols-2">
+              {GUARANTEES.map((g) => (
+                <li key={g.title} className="flex gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+                  <span className="text-2xl" aria-hidden="true">{g.icon}</span>
+                  <div>
+                    <p className="font-semibold text-white">{g.title}</p>
+                    <p className="mt-1 text-sm leading-6 text-[#A1A1B5]">{g.description}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <Cta
+        title="Готовы увидеть свой сайт?"
+        subtitle="Начните с генератора — бесплатно и 30 секунд. Или оставьте заявку."
+        button="Сгенерировать дизайн"
+      />
+    </main>
+  );
+}

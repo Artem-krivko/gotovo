@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="600" height="400">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0f8ff"/>
+      <stop offset="100%" stop-color="#e8f4fd"/>
+    </linearGradient>
+    <linearGradient id="hero" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e40af"/>
+      <stop offset="100%" stop-color="#0ea5e9"/>
+    </linearGradient>
+    <linearGradient id="card1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f0f9ff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Фон страницы -->
+  <rect width="600" height="400" fill="url(#bg)"/>
+
+  <!-- Навбар -->
+  <rect width="600" height="44" fill="white" opacity="0.95"/>
+  <rect width="600" height="1" y="44" fill="#e2e8f0"/>
+  <!-- Логотип -->
+  <circle cx="24" cy="22" r="8" fill="#1e40af"/>
+  <text x="38" y="27" font-family="Arial" font-size="12" font-weight="700" fill="#1e293b">SmilePro</text>
+  <!-- Навигация -->
+  <text x="310" y="27" font-family="Arial" font-size="10" fill="#64748b">Услуги</text>
+  <text x="370" y="27" font-family="Arial" font-size="10" fill="#64748b">Врачи</text>
+  <text x="420" y="27" font-family="Arial" font-size="10" fill="#64748b">Цены</text>
+  <!-- CTA кнопка -->
+  <rect x="480" y="12" width="104" height="22" rx="11" fill="#1e40af"/>
+  <text x="532" y="26" font-family="Arial" font-size="10" font-weight="600" fill="white" text-anchor="middle">Записаться</text>
+
+  <!-- Hero секция -->
+  <rect y="44" width="600" height="160" fill="url(#hero)"/>
+  <!-- Белые декоративные круги -->
+  <circle cx="480" cy="100" r="80" fill="white" opacity="0.06"/>
+  <circle cx="520" cy="140" r="50" fill="white" opacity="0.05"/>
+  <!-- Hero текст -->
+  <text x="36" y="90" font-family="Arial" font-size="11" fill="rgba(255,255,255,0.7)" font-weight="500">Стоматологическая клиника</text>
+  <text x="36" y="118" font-family="Arial" font-size="22" font-weight="800" fill="white">Здоровая улыбка —</text>
+  <text x="36" y="143" font-family="Arial" font-size="22" font-weight="800" fill="white">ваша уверенность</text>
+  <text x="36" y="165" font-family="Arial" font-size="11" fill="rgba(255,255,255,0.75)">Современные технологии · Безболезненное лечение</text>
+  <!-- Hero кнопки -->
+  <rect x="36" y="177" width="120" height="22" rx="11" fill="white"/>
+  <text x="96" y="191" font-family="Arial" font-size="10" font-weight="600" fill="#1e40af" text-anchor="middle">Записаться онлайн</text>
+  <rect x="168" y="177" width="90" height="22" rx="11" fill="rgba(255,255,255,0.15)" stroke="white" stroke-width="1"/>
+  <text x="213" y="191" font-family="Arial" font-size="10" fill="white" text-anchor="middle">Наши услуги</text>
+
+  <!-- Секция "Наши услуги" -->
+  <rect y="204" width="600" height="12" fill="#f8fafc"/>
+  <text x="300" y="226" font-family="Arial" font-size="13" font-weight="700" fill="#1e293b" text-anchor="middle">Наши услуги</text>
+  <text x="300" y="242" font-family="Arial" font-size="10" fill="#64748b" text-anchor="middle">Полный спектр стоматологических услуг</text>
+
+  <!-- Карточки услуг -->
+  <!-- Карточка 1 -->
+  <rect x="24" y="254" width="164" height="100" rx="12" fill="url(#card1)" stroke="#e2e8f0" stroke-width="1"/>
+  <circle cx="56" cy="284" r="18" fill="#eff6ff"/>
+  <text x="56" y="289" font-family="Arial" font-size="16" text-anchor="middle">🦷</text>
+  <text x="80" y="281" font-family="Arial" font-size="11" font-weight="700" fill="#1e293b">Лечение</text>
+  <text x="80" y="295" font-family="Arial" font-size="9" fill="#64748b">Безболезненно</text>
+  <text x="36" y="318" font-family="Arial" font-size="9" fill="#94a3b8">от 2 500 ₽</text>
+  <rect x="110" y="308" width="64" height="18" rx="9" fill="#1e40af"/>
+  <text x="142" y="320" font-family="Arial" font-size="9" fill="white" text-anchor="middle">Подробнее</text>
+
+  <!-- Карточка 2 -->
+  <rect x="200" y="254" width="164" height="100" rx="12" fill="url(#card1)" stroke="#e2e8f0" stroke-width="1"/>
+  <circle cx="232" cy="284" r="18" fill="#eff6ff"/>
+  <text x="232" y="289" font-family="Arial" font-size="16" text-anchor="middle">✨</text>
+  <text x="256" y="281" font-family="Arial" font-size="11" font-weight="700" fill="#1e293b">Отбеливание</text>
+  <text x="256" y="295" font-family="Arial" font-size="9" fill="#64748b">Hollywood Smile</text>
+  <text x="212" y="318" font-family="Arial" font-size="9" fill="#94a3b8">от 8 000 ₽</text>
+  <rect x="286" y="308" width="64" height="18" rx="9" fill="#1e40af"/>
+  <text x="318" y="320" font-family="Arial" font-size="9" fill="white" text-anchor="middle">Подробнее</text>
+
+  <!-- Карточка 3 -->
+  <rect x="376" y="254" width="164" height="100" rx="12" fill="url(#card1)" stroke="#e2e8f0" stroke-width="1"/>
+  <circle cx="408" cy="284" r="18" fill="#eff6ff"/>
+  <text x="408" y="289" font-family="Arial" font-size="16" text-anchor="middle">🦴</text>
+  <text x="432" y="281" font-family="Arial" font-size="11" font-weight="700" fill="#1e293b">Имплантация</text>
+  <text x="432" y="295" font-family="Arial" font-size="9" fill="#64748b">Гарантия 10 лет</text>
+  <text x="388" y="318" font-family="Arial" font-size="9" fill="#94a3b8">от 35 000 ₽</text>
+  <rect x="462" y="308" width="64" height="18" rx="9" fill="#1e40af"/>
+  <text x="494" y="320" font-family="Arial" font-size="9" fill="white" text-anchor="middle">Подробнее</text>
+
+  <!-- Доверие / цифры -->
+  <rect y="364" width="600" height="36" fill="#1e40af"/>
+  <text x="100" y="383" font-family="Arial" font-size="13" font-weight="800" fill="white" text-anchor="middle">12+</text>
+  <text x="100" y="395" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.7)" text-anchor="middle">лет работы</text>
+  <text x="240" y="383" font-family="Arial" font-size="13" font-weight="800" fill="white" text-anchor="middle">15 000+</text>
+  <text x="240" y="395" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.7)" text-anchor="middle">пациентов</text>
+  <text x="380" y="383" font-family="Arial" font-size="13" font-weight="800" fill="white" text-anchor="middle">4.9 ★</text>
+  <text x="380" y="395" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.7)" text-anchor="middle">рейтинг</text>
+  <text x="520" y="383" font-family="Arial" font-size="13" font-weight="800" fill="white" text-anchor="middle">24/7</text>
+  <text x="520" y="395" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.7)" text-anchor="middle">поддержка</text>
+</svg>
