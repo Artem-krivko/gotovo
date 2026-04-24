@@ -107,8 +107,9 @@ export default function PricingPage() {
           </div>
 
           {/* Мобилка: snap-scroll */}
-          <div className="-mx-4 mt-10 overflow-x-auto px-4 sm:hidden">
-            <div className="flex gap-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
+          <div className="-mx-4 mt-10 sm:hidden">
+            <div className="niches-scroll overflow-x-auto px-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
+              <div className="flex gap-4">
               {PRICING_PLANS.map((plan) => (
                 <div key={plan.name} style={{ scrollSnapAlign: "start" }}
                   className={`flex w-[82vw] max-w-[320px] shrink-0 flex-col rounded-2xl border p-6 ${
@@ -141,6 +142,7 @@ export default function PricingPage() {
                 </div>
               ))}
               <div className="w-4 shrink-0" aria-hidden="true" />
+              </div>
             </div>
           </div>
 
@@ -222,8 +224,9 @@ export default function PricingPage() {
           </div>
 
           {/* Мобилка */}
-          <div className="-mx-4 mt-10 overflow-x-auto px-4 sm:hidden">
-            <ul className="flex gap-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
+          <div className="-mx-4 mt-10 sm:hidden">
+            <div className="niches-scroll overflow-x-auto px-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
+              <ul className="flex gap-4" style={{ scrollSnapType: "x mandatory" }}>
               {CHOOSE_ITEMS.map((item) => (
                 <li key={item.scenario}
                   className="flex w-[80vw] max-w-[300px] shrink-0 flex-col rounded-2xl border border-white/10 bg-[#13131A] p-5"
@@ -234,7 +237,8 @@ export default function PricingPage() {
                 </li>
               ))}
               <li className="w-4 shrink-0" aria-hidden="true" />
-            </ul>
+              </ul>
+            </div>
           </div>
 
           {/* Десктоп */}

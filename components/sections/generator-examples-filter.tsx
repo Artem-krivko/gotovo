@@ -41,9 +41,10 @@ export function GeneratorExamplesFilter({ cases, categories }: Props) {
       </div>
 
       {/* Мобилка: snap-scroll */}
-      <div className="-mx-4 mt-8 overflow-x-auto px-4 sm:hidden">
-        <div className="flex gap-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
-          {filtered.map((c) => (
+      <div className="-mx-4 mt-8 sm:hidden">
+        <div className="niches-scroll overflow-x-auto px-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
+          <div className="flex gap-4">
+            {filtered.map((c) => (
             <div
               key={c.id}
               className="w-[78vw] max-w-[280px] shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-[#13131A]"
@@ -74,6 +75,7 @@ export function GeneratorExamplesFilter({ cases, categories }: Props) {
             </div>
           ))}
           <div className="w-4 shrink-0" aria-hidden="true" />
+          </div>
         </div>
       </div>
 

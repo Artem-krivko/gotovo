@@ -94,8 +94,9 @@ export default function AboutPage() {
           </div>
 
           {/* Мобилка: snap-scroll */}
-          <div className="-mx-4 mt-10 overflow-x-auto px-4 sm:hidden">
-            <ul className="flex gap-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
+          <div className="-mx-4 mt-10 sm:hidden">
+            <div className="niches-scroll overflow-x-auto px-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
+            <ul className="flex gap-4">
               {PRINCIPLES.map((p) => (
                 <li key={p.title}
                   className="flex w-[82vw] max-w-[300px] shrink-0 flex-col rounded-2xl border border-violet-500/20 bg-gradient-to-br from-violet-500/10 to-blue-500/5 p-5"
@@ -106,6 +107,7 @@ export default function AboutPage() {
               ))}
               <li className="w-4 shrink-0" aria-hidden="true" />
             </ul>
+            </div>
           </div>
 
           {/* Десктоп: 2×2 */}
@@ -138,8 +140,9 @@ export default function AboutPage() {
           </div>
 
           {/* Мобилка: snap-scroll */}
-          <div className="-mx-4 mt-10 overflow-x-auto px-4 sm:hidden">
-            <ol className="flex gap-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
+          <div className="-mx-4 mt-10 sm:hidden">
+            <div className="niches-scroll overflow-x-auto px-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
+            <ol className="flex gap-4">
               {SHORT_PROCESS.map((step) => (
                 <li key={step.num}
                   className="flex w-[75vw] max-w-[260px] shrink-0 flex-col rounded-2xl border border-white/10 bg-[#13131A] p-5"
@@ -151,6 +154,7 @@ export default function AboutPage() {
               ))}
               <li className="w-4 shrink-0" aria-hidden="true" />
             </ol>
+            </div>
           </div>
 
           {/* Десктоп: 4 колонки */}
@@ -180,17 +184,17 @@ export default function AboutPage() {
           </div>
 
           <div className="mt-10 overflow-hidden rounded-2xl border border-white/10">
-            <div className="grid grid-cols-[1fr_1fr_1fr] border-b border-white/10 bg-[#13131A]">
-              <div className="px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[#6B6B80] sm:px-6">Параметр</div>
-              <div className="border-l border-white/10 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[#6B6B80] sm:px-6">Типично</div>
-              <div className="border-l border-violet-500/20 bg-violet-500/5 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-violet-400 sm:px-6">gotovo</div>
+            <div className="grid grid-cols-[88px_1fr_1fr] border-b border-white/10 bg-[#13131A] sm:grid-cols-[1fr_1fr_1fr]">
+              <div className="px-3 py-3 text-[10px] font-semibold uppercase tracking-widest text-[#6B6B80] sm:px-6 sm:text-xs">Параметр</div>
+              <div className="border-l border-white/10 px-3 py-3 text-[10px] font-semibold uppercase tracking-widest text-[#6B6B80] sm:px-6 sm:text-xs">Типично</div>
+              <div className="border-l border-violet-500/20 bg-violet-500/5 px-3 py-3 text-[10px] font-semibold uppercase tracking-widest text-violet-400 sm:px-6 sm:text-xs">gotovo</div>
             </div>
             {COMPARISON_ROWS.map((row, i) => (
               <div key={row.label}
-                className={`grid grid-cols-[1fr_1fr_1fr] border-b border-white/[0.06] last:border-0 ${i % 2 === 0 ? "bg-[#0A0A0F]" : "bg-[#0D0D14]"}`}>
-                <div className="px-4 py-4 text-sm font-medium text-white sm:px-6">{row.label}</div>
-                <div className="border-l border-white/[0.06] px-4 py-4 text-sm text-[#6B6B80] sm:px-6">{row.typical}</div>
-                <div className="border-l border-violet-500/10 bg-violet-500/[0.03] px-4 py-4 text-sm font-medium text-violet-300 sm:px-6">{row.ours}</div>
+                className={`grid grid-cols-[88px_1fr_1fr] border-b border-white/[0.06] last:border-0 sm:grid-cols-[1fr_1fr_1fr] ${i % 2 === 0 ? "bg-[#0A0A0F]" : "bg-[#0D0D14]"}`}>
+                <div className="px-3 py-4 text-xs font-semibold text-white sm:px-6 sm:text-sm sm:font-medium">{row.label}</div>
+                <div className="border-l border-white/[0.06] px-3 py-4 text-xs leading-5 text-[#6B6B80] sm:px-6 sm:text-sm">{row.typical}</div>
+                <div className="border-l border-violet-500/10 bg-violet-500/[0.03] px-3 py-4 text-xs font-medium leading-5 text-violet-300 sm:px-6 sm:text-sm">{row.ours}</div>
               </div>
             ))}
           </div>

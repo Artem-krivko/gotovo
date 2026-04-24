@@ -103,8 +103,9 @@ export default function ServicesPage() {
           </div>
 
           {/* Мобилка: snap-scroll */}
-          <div className="-mx-4 mt-10 overflow-x-auto px-4 sm:hidden">
-            <div className="flex gap-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
+          <div className="-mx-4 mt-10 sm:hidden">
+            <div className="niches-scroll overflow-x-auto px-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
+            <div className="flex gap-4">
               {SERVICE_FORMATS.map((format, i) => (
                 <div key={format.title}
                   className="flex w-[80vw] max-w-[300px] shrink-0 flex-col rounded-2xl border border-white/10 bg-[#13131A] p-6"
@@ -126,6 +127,7 @@ export default function ServicesPage() {
                 </div>
               ))}
               <div className="w-4 shrink-0" aria-hidden="true" />
+            </div>
             </div>
           </div>
 
@@ -188,8 +190,9 @@ export default function ServicesPage() {
           </div>
 
           {/* Мобилка */}
-          <div className="-mx-4 mt-10 overflow-x-auto px-4 sm:hidden">
-            <div className="flex gap-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
+          <div className="-mx-4 mt-10 sm:hidden">
+            <div className="niches-scroll overflow-x-auto px-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
+            <div className="flex gap-4">
               {AUDIENCE_ITEMS.map((item) => (
                 <div key={item.title}
                   className="flex w-[80vw] max-w-[280px] shrink-0 flex-col rounded-2xl border border-white/10 bg-[#13131A] p-5"
@@ -202,6 +205,7 @@ export default function ServicesPage() {
                 </div>
               ))}
               <div className="w-4 shrink-0" aria-hidden="true" />
+            </div>
             </div>
           </div>
 
