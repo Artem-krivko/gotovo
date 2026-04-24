@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { createPortal } from "react-dom";
 
 // ─── Навигация ────────────────────────────────────────────────────────────────
 
@@ -30,76 +31,222 @@ function Logo() {
   );
 }
 
-function BurgerIcon({ open }: { open: boolean }) {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-      {open ? (
-        <path d="M4 4l12 12M16 4L4 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      ) : (
-        <path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      )}
-    </svg>
+// ─── Мобильное меню через Portal ─────────────────────────────────────────────
+
+interface MobileMenuProps {
+  open: boolean;
+  visible: boolean;
+  onClose: () => void;
+}
+
+function MobileMenu({ open, visible, onClose }: MobileMenuProps) {
+  if (!visible) return null;
+
+  return createPortal(
+    <div
+      className={`fixed inset-0 z-[9999] flex flex-col overflow-y-auto transition-all duration-300 ease-out md:hidden ${
+        open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"
+      }`}
+      style={{ backgroundColor: "#0A0A0F", top: "57px" }}
+      aria-hidden={!open}
+      aria-modal="true"
+      role="dialog"
+    >
+      {/* Амбиентный glow */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-48"
+        aria-hidden="true"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,58,237,0.18), transparent 70%)",
+        }}
+      />
+
+      <nav
+        className="relative flex flex-col px-5 pt-6"
+        aria-label="Мобильная навигация"
+      >
+        {NAV_LINKS.map((link, i) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            onClick={onClose}
+            className="group flex items-center justify-between border-b border-white/[0.06] py-4 text-xl font-semibold text-[#A1A1B5] hover:text-white"
+            style={{
+              opacity: open ? 1 : 0,
+              transform: open ? "translateY(0)" : "translateY(8px)",
+              transitionProperty: "opacity, transform, color",
+              transitionDuration: "300ms, 300ms, 200ms",
+              transitionTimingFunction: "ease",
+              transitionDelay: open ? `${i * 40}ms, ${i * 40}ms, 0ms` : "0ms",
+            }}
+          >
+            <span>{link.label}</span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              aria-hidden="true"
+              className="text-[#6B6B80] transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-violet-400"
+            >
+              <path
+                d="M3 8h10M8 3l5 5-5 5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </Link>
+        ))}
+      </nav>
+
+      {/* CTA снизу */}
+      <div className="relative mt-auto px-5 pb-10 pt-6">
+        <Link
+          href="/generator"
+          onClick={onClose}
+          className="btn-shimmer flex items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold text-white shadow-xl shadow-violet-500/30"
+          style={{
+            opacity: open ? 1 : 0,
+            transform: open ? "translateY(0)" : "translateY(12px)",
+            transitionProperty: "opacity, transform",
+            transitionDuration: "300ms",
+            transitionTimingFunction: "ease",
+            transitionDelay: open ? `${NAV_LINKS.length * 40 + 40}ms` : "0ms",
+          }}
+        >
+          <span aria-hidden="true">✦</span>
+          Сгенерировать дизайн
+        </Link>
+        <p
+          className="mt-3 text-center text-xs text-[#6B6B80]"
+          style={{
+            opacity: open ? 1 : 0,
+            transitionProperty: "opacity",
+            transitionDuration: "300ms",
+            transitionTimingFunction: "ease",
+            transitionDelay: open ? `${NAV_LINKS.length * 40 + 80}ms` : "0ms",
+          }}
+        >
+          Бесплатно · Без регистрации · 30 секунд
+        </p>
+      </div>
+    </div>,
+    document.body
   );
 }
 
+// ─── Основной компонент ───────────────────────────────────────────────────────
+
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
   const handleToggle = useCallback(() => setOpen((v) => !v), []);
   const handleClose = useCallback(() => setOpen(false), []);
 
+  // Portal доступен только после mount на клиенте
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Анимация: открытие — сразу mount, закрытие — ждём fade-out
+  useEffect(() => {
+    if (open) {
+      setVisible(true);
+    } else {
+      const t = setTimeout(() => setVisible(false), 300);
+      return () => clearTimeout(t);
+    }
+  }, [open]);
+
+  // Блокируем скролл body
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   return (
-    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#0A0A0F]/80 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5 sm:px-6">
-        <Logo />
+    <>
+      <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#0A0A0F]/80 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5 sm:px-6">
+          <Logo />
 
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Основная навигация">
-          {NAV_LINKS.map((link) => (
-            <Link key={link.href} href={link.href}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-[#A1A1B5] transition-colors hover:bg-white/5 hover:text-white">
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* Desktop CTA */}
-        <div className="hidden md:block">
-          <Link href="/generator"
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:opacity-90 hover:-translate-y-0.5">
-            <span aria-hidden="true">✦</span>
-            Сгенерировать дизайн
-          </Link>
-        </div>
-
-        {/* Mobile burger */}
-        <button
-          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-[#A1A1B5] transition hover:bg-white/5 hover:text-white md:hidden"
-          onClick={handleToggle}
-          aria-label={open ? "Закрыть меню" : "Открыть меню"}
-          aria-expanded={open}
-        >
-          <BurgerIcon open={open} />
-        </button>
-      </div>
-
-      {/* Mobile menu */}
-      {open && (
-        <div className="border-t border-white/[0.06] bg-[#0A0A0F] px-4 py-4 md:hidden">
-          <nav className="flex flex-col gap-1" aria-label="Мобильная навигация">
+          {/* Desktop nav */}
+          <nav
+            className="hidden items-center gap-1 md:flex"
+            aria-label="Основная навигация"
+          >
             {NAV_LINKS.map((link) => (
-              <Link key={link.href} href={link.href} onClick={handleClose}
-                className="rounded-xl px-4 py-3 text-sm font-medium text-[#A1A1B5] transition hover:bg-white/5 hover:text-white">
+              <Link
+                key={link.href}
+                href={link.href}
+                className="rounded-lg px-3 py-2 text-sm font-medium text-[#A1A1B5] transition-colors hover:bg-white/5 hover:text-white"
+              >
                 {link.label}
               </Link>
             ))}
-            <Link href="/generator" onClick={handleClose}
-              className="mt-3 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 py-3.5 text-sm font-semibold text-white">
+          </nav>
+
+          {/* Desktop CTA */}
+          <div className="hidden md:block">
+            <Link
+              href="/generator"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:opacity-90 hover:-translate-y-0.5"
+            >
               <span aria-hidden="true">✦</span>
               Сгенерировать дизайн
             </Link>
-          </nav>
+          </div>
+
+          {/* Mobile burger */}
+          <button
+            className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-[#A1A1B5] transition hover:bg-white/5 hover:text-white md:hidden"
+            onClick={handleToggle}
+            aria-label={open ? "Закрыть меню" : "Открыть меню"}
+            aria-expanded={open}
+          >
+            <span
+              className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${
+                open ? "opacity-0 rotate-90 scale-50" : "opacity-100 rotate-0 scale-100"
+              }`}
+            >
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                <path
+                  d="M2 5h14M2 9h14M2 13h14"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
+            <span
+              className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${
+                open ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-50"
+              }`}
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path
+                  d="M3 3l10 10M13 3L3 13"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
+          </button>
         </div>
+      </header>
+
+      {/* Portal — рендерится прямо в body, вне любых stacking contexts */}
+      {mounted && (
+        <MobileMenu open={open} visible={visible} onClose={handleClose} />
       )}
-    </header>
+    </>
   );
 }
