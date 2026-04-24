@@ -287,14 +287,75 @@ function GeneratorExamples() {
 
 // ─── ДЛЯ КОГО ─────────────────────────────────────────────────────────────────
 
+function IconCafe() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M6 2v4M10 2v4M14 2v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M4 6h12l-1.5 10a2 2 0 0 1-2 1.8H7.5a2 2 0 0 1-2-1.8L4 6z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+      <path d="M16 8h2a2 2 0 0 1 0 4h-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M3 20h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function IconBeauty() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 2C9 2 7 5 7 8c0 2.5 1.5 4.5 3.5 5.5V17h3v-3.5C15.5 12.5 17 10.5 17 8c0-3-2-6-5-6z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+      <path d="M10 17v1a2 2 0 0 0 4 0v-1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M9 8h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function IconClinic() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="6" width="18" height="15" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M3 11h18" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M12 2v4M10 4h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M10 15h4M12 13v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function IconExpert() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M16 3l1.5 1.5L21 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function IconBusiness() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="2" y="7" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M12 12v4M10 14h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function IconServices() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 2l2.5 5 5.5.8-4 3.9.9 5.5L12 14.8l-4.9 2.6.9-5.5L4 7.8l5.5-.8L12 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+      <path d="M5 20h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
 function ForWhom() {
   const categories = [
-    { icon: "☕", label: "Кафе и рестораны" },
-    { icon: "💅", label: "Салоны красоты" },
-    { icon: "🏥", label: "Клиники и медицина" },
-    { icon: "🎓", label: "Эксперты и коучи" },
-    { icon: "🏢", label: "Малый бизнес" },
-    { icon: "⚙️", label: "Компании и услуги" },
+    { icon: <IconCafe />, color: "text-amber-400", bg: "bg-amber-500/10 border-amber-500/20", label: "Кафе и рестораны" },
+    { icon: <IconBeauty />, color: "text-pink-400", bg: "bg-pink-500/10 border-pink-500/20", label: "Салоны красоты" },
+    { icon: <IconClinic />, color: "text-blue-400", bg: "bg-blue-500/10 border-blue-500/20", label: "Клиники и медицина" },
+    { icon: <IconExpert />, color: "text-violet-400", bg: "bg-violet-500/10 border-violet-500/20", label: "Эксперты и коучи" },
+    { icon: <IconBusiness />, color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20", label: "Малый бизнес" },
+    { icon: <IconServices />, color: "text-fuchsia-400", bg: "bg-fuchsia-500/10 border-fuchsia-500/20", label: "Компании и услуги" },
   ];
 
   return (
@@ -311,7 +372,9 @@ function ForWhom() {
               <div key={cat.label}
                 className="flex w-[40vw] max-w-[160px] shrink-0 flex-col items-center gap-3 rounded-2xl border border-white/10 bg-[#13131A] p-5 text-center"
                 style={{ scrollSnapAlign: "start" }}>
-                <span className="text-3xl" aria-hidden="true">{cat.icon}</span>
+                <div className={`inline-flex h-11 w-11 items-center justify-center rounded-xl border ${cat.bg} ${cat.color}`}>
+                  {cat.icon}
+                </div>
                 <p className="text-sm font-medium text-[#A1A1B5]">{cat.label}</p>
               </div>
             ))}
@@ -324,7 +387,9 @@ function ForWhom() {
             return (
               <div key={cat.label}
                 className={`reveal-up flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-[#13131A] p-5 text-center transition hover:border-white/20 hover:bg-[#1C1C28] ${delay}`}>
-                <span className="text-3xl" aria-hidden="true">{cat.icon}</span>
+                <div className={`inline-flex h-12 w-12 items-center justify-center rounded-xl border ${cat.bg} ${cat.color}`}>
+                  {cat.icon}
+                </div>
                 <p className="text-sm font-medium text-[#A1A1B5]">{cat.label}</p>
               </div>
             );
