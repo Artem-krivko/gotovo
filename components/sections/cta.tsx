@@ -8,7 +8,10 @@ interface CtaProps {
 
 export function Cta({ title, subtitle, button }: CtaProps) {
   return (
-    <section className="bg-[#16161F] px-4 py-16 sm:px-6 sm:py-24">
+    <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+      {/* Ambient glow: violet по центру снизу */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[300px]" aria-hidden="true"
+        style={{ background: "radial-gradient(ellipse 70% 100% at 50% 100%, rgba(124,58,237,0.12), transparent)" }} />
       <div className="mx-auto max-w-3xl">
         <div className="relative overflow-hidden rounded-3xl border border-violet-500/20 bg-gradient-to-br from-violet-500/10 via-[#13131A] to-blue-500/5 p-8 text-center sm:p-14">
           <div className="pointer-events-none absolute inset-0 rounded-3xl" aria-hidden="true"
