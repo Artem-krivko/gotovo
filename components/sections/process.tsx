@@ -1,6 +1,4 @@
-import { Section } from "@/components/shared/section";
-import { SectionTitle } from "@/components/shared/section-title";
-import { ProcessAccordion } from "@/components/sections/process-accordion";
+// Server Component — директива не нужна
 import type { ProcessStep } from "@/content/process";
 
 // ─── Типы ────────────────────────────────────────────────────────────────────
@@ -11,86 +9,137 @@ interface ProcessProps {
   steps: ProcessStep[];
 }
 
-// ─── Под-компоненты (только десктоп) ─────────────────────────────────────────
+// ─── Иконка терминала ─────────────────────────────────────────────────────────
 
-function AiBadge() {
+function TerminalPrompt() {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-white/80 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-violet-700">
-      <span className="h-1.5 w-1.5 rounded-full bg-violet-500" aria-hidden="true" />
-      AI stage
+    <span className="select-none font-mono text-violet-500" aria-hidden="true">
+      ►
     </span>
   );
 }
 
-function StepNumber({ number }: { number: number }) {
+function AiBadge() {
   return (
-    <div
-      className="absolute left-1/2 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-zinc-200 bg-white text-sm font-semibold text-zinc-900 shadow-sm"
-      aria-hidden="true"
-    >
-      {number}
-    </div>
+    <span className="inline-flex items-center gap-1 rounded-md border border-violet-500/30 bg-violet-500/10 px-2 py-0.5 font-mono text-[10px] font-medium uppercase tracking-widest text-violet-400">
+      <span className="h-1 w-1 rounded-full bg-violet-400" aria-hidden="true" />
+      AI
+    </span>
   );
 }
 
-function StepHint({ text, isRight }: { text: string; isRight: boolean }) {
+function StatusDot({ isAi }: { isAi: boolean }) {
   return (
-    <div
-      className={`flex items-center ${
-        isRight ? "justify-end pr-10" : "justify-start pl-10"
+    <span
+      className={`mt-[3px] h-2 w-2 shrink-0 rounded-full ${
+        isAi ? "bg-violet-500 shadow-[0_0_6px_rgba(124,58,237,0.8)]" : "bg-[#3B82F6]/60"
       }`}
-    >
-      <p className="reveal-up delay-2 max-w-xs rounded-[1.5rem] border border-zinc-200 bg-zinc-50 px-5 py-4 text-sm leading-6 text-zinc-500">
-        {text}
-      </p>
-    </div>
+      aria-hidden="true"
+    />
   );
 }
 
-function DesktopStepCard({
+// ─── Строка шага (десктоп) ────────────────────────────────────────────────────
+
+function StepRow({
   step,
   index,
 }: {
   step: ProcessStep;
   index: number;
 }) {
-  const isRight = index % 2 !== 0;
+  const numStr = String(index + 1).padStart(2, "0");
 
   return (
-    <li className="relative grid gap-4 sm:grid-cols-2 sm:gap-8">
-      {/* Карточка */}
-      <div className={`${isRight ? "sm:order-2" : ""}`}>
-        <div
-          className={`reveal-up hover-lift rounded-[1.75rem] border p-5 shadow-sm transition sm:p-6 ${
-            step.isAiStep
-              ? "border-violet-200 bg-gradient-to-br from-violet-50 to-blue-50"
-              : "border-zinc-200 bg-white"
-          }`}
-        >
-          <div className="mb-4 flex items-center justify-between gap-3">
-            <span className="inline-flex items-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-zinc-500">
-              Шаг {String(index + 1).padStart(2, "0")}
-            </span>
+    <li className="group relative">
+      {/* Hover glow фон */}
+      <div
+        className="pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        style={{
+          background:
+            "radial-gradient(ellipse 60% 80% at 0% 50%, rgba(124,58,237,0.06), transparent 70%)",
+        }}
+        aria-hidden="true"
+      />
+
+      <div className="relative flex items-start gap-6 border-b border-white/[0.06] px-2 py-5 transition-colors group-hover:border-white/10 sm:gap-8 sm:px-4">
+
+        {/* Левая колонка: номер */}
+        <div className="flex w-8 shrink-0 items-start justify-start pt-0.5 sm:w-12">
+          <span
+            className="select-none font-mono text-2xl font-black leading-none text-white/[0.06] transition-colors duration-300 group-hover:text-white/10 sm:text-4xl"
+            aria-hidden="true"
+          >
+            {numStr}
+          </span>
+        </div>
+
+        {/* Центр: prompt + контент */}
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          {/* Строка-заголовок */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            <TerminalPrompt />
+            <h3 className="text-sm font-semibold text-white sm:text-base">
+              {step.title}
+            </h3>
             {step.isAiStep && <AiBadge />}
           </div>
 
-          <h3 className="text-xl font-semibold tracking-tight text-zinc-950 sm:text-2xl">
-            {step.title}
-          </h3>
-
-          <p className="mt-3 text-sm leading-7 text-zinc-600 sm:text-base">
+          {/* Описание */}
+          <p className="pl-4 text-sm leading-6 text-[#6B6B80] sm:pl-5">
             {step.description}
           </p>
+
+          {/* Hint — inline под описанием */}
+          <p className="pl-4 pt-0.5 font-mono text-[11px] text-[#A1A1B5]/50 sm:pl-5">
+            // {step.hint}
+          </p>
+        </div>
+
+        {/* Правая колонка: статус-dot */}
+        <div className="flex shrink-0 items-start pt-1">
+          <StatusDot isAi={step.isAiStep} />
         </div>
       </div>
+    </li>
+  );
+}
 
-      {/* Подсказка */}
-      <div className={isRight ? "sm:order-1" : ""}>
-        <StepHint text={step.hint} isRight={isRight} />
+// ─── Мобильная карточка (аккордеон-style, без JS) ─────────────────────────────
+
+function MobileStepCard({
+  step,
+  index,
+}: {
+  step: ProcessStep;
+  index: number;
+}) {
+  const numStr = String(index + 1).padStart(2, "0");
+
+  return (
+    <li className="relative overflow-hidden rounded-xl border border-white/[0.06] bg-[#13131A] p-4">
+      {/* Декоративный номер */}
+      <span
+        className="pointer-events-none absolute right-3 top-2 select-none font-mono text-5xl font-black leading-none text-white/[0.04]"
+        aria-hidden="true"
+      >
+        {numStr}
+      </span>
+
+      <div className="relative flex flex-col gap-2">
+        {/* Заголовок */}
+        <div className="flex items-center gap-2">
+          <StatusDot isAi={step.isAiStep} />
+          <span className="font-mono text-[10px] font-medium uppercase tracking-widest text-[#6B6B80]">
+            шаг {numStr}
+          </span>
+          {step.isAiStep && <AiBadge />}
+        </div>
+
+        <h3 className="text-base font-semibold text-white">{step.title}</h3>
+        <p className="text-sm leading-6 text-[#6B6B80]">{step.description}</p>
+        <p className="font-mono text-[11px] text-[#A1A1B5]/40">// {step.hint}</p>
       </div>
-
-      {/* Номер на линии */}
-      <StepNumber number={index + 1} />
     </li>
   );
 }
@@ -99,31 +148,64 @@ function DesktopStepCard({
 
 export function Process({ title, subtitle, steps }: ProcessProps) {
   return (
-    <Section id="process">
-      <div className="flex flex-col gap-10 sm:gap-14">
-        <SectionTitle title={title} subtitle={subtitle} />
+    <div className="flex flex-col gap-8">
+      {/* Заголовок блока (если передан) */}
+      {title && (
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">
+            {title}
+          </p>
+          {subtitle && (
+            <p className="mt-2 text-[#A1A1B5]">{subtitle}</p>
+          )}
+        </div>
+      )}
 
-        {/* ── Мобилка: аккордеон (скрыт на sm+) ──────────────────────────── */}
-        <div className="sm:hidden">
-          <ProcessAccordion steps={steps} />
+      {/* ── Мобилка: вертикальный список карточек (hidden sm+) ────────────── */}
+      <ol className="flex flex-col gap-3 sm:hidden" aria-label="Этапы работы">
+        {steps.map((step, index) => (
+          <MobileStepCard key={step.title} step={step} index={index} />
+        ))}
+      </ol>
+
+      {/* ── Десктоп: terminal log (hidden на мобилке) ─────────────────────── */}
+      <div className="hidden sm:block">
+        {/* Terminal header */}
+        <div className="mb-0 flex items-center gap-2 rounded-t-xl border border-b-0 border-white/[0.06] bg-[#13131A] px-4 py-2.5">
+          <div className="flex gap-1.5" aria-hidden="true">
+            <span className="h-2.5 w-2.5 rounded-full bg-red-500/40" />
+            <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/40" />
+            <span className="h-2.5 w-2.5 rounded-full bg-green-500/40" />
+          </div>
+          <span className="ml-2 font-mono text-xs text-[#6B6B80]">
+            gotovo — process.log
+          </span>
+          <div className="ml-auto flex items-center gap-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-green-400" aria-hidden="true" />
+            <span className="font-mono text-[10px] text-green-400">running</span>
+          </div>
         </div>
 
-        {/* ── Десктоп: зигзаг-таймлайн (скрыт на мобилке) ────────────────── */}
-        <div className="relative hidden sm:block">
-          {/* Вертикальная линия */}
-          <div
-            className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-zinc-200"
-            aria-hidden="true"
-          />
-
-          <ol className="flex flex-col gap-6 sm:gap-8">
+        {/* Terminal body */}
+        <div className="rounded-b-xl border border-white/[0.06] bg-[#0D0D14]">
+          <ol aria-label="Этапы работы">
             {steps.map((step, index) => (
-              <DesktopStepCard key={step.title} step={step} index={index} />
+              <StepRow key={step.title} step={step} index={index} />
             ))}
           </ol>
-        </div>
 
+          {/* Terminal footer */}
+          <div className="flex items-center gap-2 border-t border-white/[0.04] px-4 py-3">
+            <TerminalPrompt />
+            <span className="font-mono text-xs text-[#6B6B80]">
+              {steps.length} steps completed
+            </span>
+            <span className="ml-auto font-mono text-[10px] text-[#3B82F6]">
+              exit code 0 ✓
+            </span>
+          </div>
+        </div>
       </div>
-    </Section>
+    </div>
   );
 }
