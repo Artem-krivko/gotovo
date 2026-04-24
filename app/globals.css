@@ -23,7 +23,8 @@ html {
 body {
   background: var(--bg-base);
   color: var(--text-primary);
-  font-family: var(--font-sora), system-ui, sans-serif;
+  /* Plus Jakarta Sans — основной шрифт gotovo */
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -155,18 +156,12 @@ body {
 }
 
 /* ── Mockup: зацикленная прокрутка ──────────────────────────────────────────── */
-/*
-  Контент внутри мокапа анимируется translateY вверх — имитация скролла страницы.
-  52% — насколько уходит вверх. Паузы в 45–50% и 95–100% создают
-  ощущение "долистал → вернулся наверх".
-  8s — полный цикл. Cubic-bezier(0.45,0,0.55,1) — плавное ускорение/замедление.
-*/
 @keyframes scroll-loop {
   0%   { transform: translateY(0); }
-  10%  { transform: translateY(0); }       /* пауза наверху */
-  45%  { transform: translateY(-52%); }    /* долистали до конца */
-  55%  { transform: translateY(-52%); }    /* пауза внизу */
-  90%  { transform: translateY(0); }       /* вернулись наверх */
+  10%  { transform: translateY(0); }
+  45%  { transform: translateY(-52%); }
+  55%  { transform: translateY(-52%); }
+  90%  { transform: translateY(0); }
   100% { transform: translateY(0); }
 }
 
@@ -176,13 +171,6 @@ body {
 }
 
 /* ── Mockup: 3D наклон ───────────────────────────────────────────────────────── */
-/*
-  perspective(1200px) — глубина 3D сцены. Чем больше — тем менее агрессивный наклон.
-  rotateY(-12deg) — поворот по горизонтальной оси (левый край ближе к зрителю).
-  rotateX(4deg)  — лёгкий наклон по вертикали (верх чуть дальше).
-  scale(0.96)    — немного уменьшен чтобы не обрезало при наклоне.
-  При hover — выпрямляется в нейтральное положение.
-*/
 .mockup-3d {
   transform: perspective(1200px) rotateY(-12deg) rotateX(4deg) scale(0.96);
   transform-origin: center center;

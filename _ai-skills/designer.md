@@ -137,9 +137,9 @@ box-shadow: 0 4px 24px rgba(124,58,237,0.4);
 // Способ 3: padding + subtle border
 <section className="border-t border-white/[0.04]">
 
-// Способ 4: наложение (overlap) — карточка выходит за край секции
-<section className="pb-32">  // секция снизу даёт место
-<div className="-mt-16 relative z-10">  // следующий элемент заходит вверх
+// Способ 4: наложение (overlap)
+<section className="pb-32">
+<div className="-mt-16 relative z-10">
 ```
 
 ### Иконки и визуальные акценты
@@ -170,61 +170,52 @@ box-shadow: 0 4px 24px rgba(124,58,237,0.4);
 - **Название:** gotovo
 - **Характер:** технологичный, уверенный, дружелюбный. Не корпоративный.
 - **Тема:** ТЁМНАЯ. Всегда. bg-[#0A0A0F] на всё.
-- **Шрифт:** Sora (не Inter, не Geist)
-- **Референсы:** Linear.app, Vercel.com — технологичность + элегантность
+- **Шрифт:** Space Grotesk — технологичный, характерный, запоминающийся
+- **Референсы:** Linear.app, Vercel.com, Raycast.com
 
 ### Цветовая палитра
 
 ```css
---bg-base: #0A0A0F;         /* Основной фон */
---bg-surface: #13131A;      /* Карточки */
---bg-elevated: #1C1C28;     /* Hover, модалы */
---bg-subtle: #16161F;       /* Чередование секций */
-
---accent-purple: #7C3AED;   /* Primary */
---accent-blue: #3B82F6;     /* Secondary */
---accent-pink: #EC4899;     /* В градиентах */
-
+--bg-base: #0A0A0F;
+--bg-surface: #13131A;
+--bg-elevated: #1C1C28;
+--bg-subtle: #16161F;
+--accent-purple: #7C3AED;
+--accent-blue: #3B82F6;
+--accent-pink: #EC4899;
 --text-primary: #F8F8FF;
 --text-secondary: #A1A1B5;
 --text-muted: #6B6B80;
-
 --border-subtle: rgba(255,255,255,0.06);
 --border-default: rgba(255,255,255,0.10);
 ```
 
-### Tailwind классы — шпаргалка
+### Tailwind — шпаргалка
 
 ```tsx
 // Фоны
 bg-[#0A0A0F]  bg-[#13131A]  bg-[#1C1C28]  bg-[#16161F]
 
 // Текст
-text-white  text-[#A1A1B5]  text-[#6B6B80]
-text-violet-400  text-blue-400
+text-white  text-[#A1A1B5]  text-[#6B6B80]  text-violet-400  text-blue-400
 
 // Границы
 border-white/[0.06]  border-white/10  border-white/20
 border-violet-500/30  border-violet-500/50
 
-// Акцент
+// Акцент CTA
 bg-gradient-to-r from-violet-600 to-blue-600
-bg-gradient-to-r from-violet-500 via-fuchsia-500 to-blue-500
-text — bg-gradient-to-r + bg-clip-text + text-transparent
-
-// Shadows (glow)
 shadow-lg shadow-violet-500/25
-shadow-xl shadow-violet-500/30
 ```
 
 ### Кнопки
 
 ```tsx
 // PRIMARY
-<button className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:opacity-90 hover:-translate-y-0.5">
+<button className="rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:opacity-90 hover:-translate-y-0.5">
 
 // SECONDARY
-<button className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-6 py-3.5 text-sm font-medium text-white backdrop-blur transition hover:bg-white/10 hover:border-white/20">
+<button className="rounded-xl border border-white/10 bg-white/5 px-6 py-3.5 text-sm font-medium text-white transition hover:bg-white/10 hover:border-white/20">
 
 // GHOST
 <button className="text-sm text-[#A1A1B5] hover:text-white transition-colors">
@@ -247,28 +238,131 @@ shadow-xl shadow-violet-500/30
 
 ## ✍️ ТИПОГРАФИКА GOTOVO
 
-### Шрифт: Sora
+### Шрифт: Space Grotesk
+
 ```tsx
-import { Sora } from "next/font/google"
-const sora = Sora({ subsets: ["latin", "cyrillic"], variable: "--font-sora" })
+import { Space_Grotesk } from "next/font/google"
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-sans",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+})
+
+// В html: className={spaceGrotesk.variable}
+// В body: style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}
 ```
 
-### Размеры
+**Почему Space Grotesk:**
+- Геометрический гротеск с характерной "quirk" — запоминается
+- Технологичный без излишней холодности
+- Отлично читается на тёмном фоне при любом размере
+- Используется в Linear, Raycast, Vercel-style продуктах
+- Поддерживает latin + latin-ext (кириллица — системный фоллбек)
+
+### Размеры и веса
+
 ```
-Hero H1:    text-5xl sm:text-6xl lg:text-7xl  font-bold tracking-tight
-H2:         text-3xl sm:text-4xl              font-bold tracking-tight
-H3:         text-xl sm:text-2xl              font-semibold
-Body:       text-base sm:text-lg             leading-7 text-[#A1A1B5]
-Small:      text-sm                          text-[#6B6B80]
-Badge:      text-xs uppercase tracking-widest font-semibold
+Hero H1:    text-5xl sm:text-6xl lg:text-7xl  font-bold (700)     leading-[1.05]  tracking-tight
+H2:         text-3xl sm:text-4xl              font-bold (700)     leading-[1.1]   tracking-tight
+H3:         text-xl sm:text-2xl              font-semibold (600) leading-[1.3]
+Body large: text-lg                           font-normal (400)   leading-7
+Body:       text-base                         font-normal (400)   leading-6–7
+Small:      text-sm                           font-medium (500)   text-[#6B6B80]
+Badge:      text-xs  uppercase tracking-widest font-semibold (600)
 ```
 
-### Градиентный текст (только для ключевых слов)
+### Градиентный текст (только для ключевых слов в H1)
+
 ```tsx
 <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-blue-400 bg-clip-text text-transparent">
   ключевое слово
 </span>
-// НЕ делай весь заголовок градиентным — теряется акцент
+// НЕ делай весь заголовок градиентным — только 1 строка максимум
+```
+
+---
+
+## 🔤 ПОДБОР ШРИФТОВ ПОД СТИЛЬ САЙТА
+
+> **ОБЯЗАТЕЛЬНЫЙ РАЗДЕЛ.** Перед любым новым проектом — выбирай шрифт осознанно.
+> Шрифт — это голос бренда. Неправильный шрифт = неправильное первое впечатление.
+
+### Матрица выбора шрифта по характеру сайта
+
+| Характер сайта | Лучший шрифт | Запасной | Почему |
+|----------------|-------------|----------|--------|
+| **AI / Tech / SaaS** | Space Grotesk | DM Sans | Геометрия, технологичность, характер |
+| **Стартап / Агентство** | Bricolage Grotesque | Cabinet Grotesk | Смелость, уникальность |
+| **Минимализм / Инструмент** | Geist / Inter | DM Mono | Функциональность, нейтральность |
+| **Премиум / Luxury** | Cormorant Garamond | Playfair Display | Засечки = ценность и элегантность |
+| **Дружелюбный / B2C** | Plus Jakarta Sans | Nunito | Округлые формы, мягкость, доступность |
+| **Корпоративный / B2B** | IBM Plex Sans | Manrope | Нейтральность, надёжность |
+| **Творческий / Портфолио** | Clash Display | Satoshi | Характер, editorial |
+| **Медицина / Здоровье** | DM Sans | Source Sans 3 | Чистота, доверие, читаемость |
+| **Ресторан / Еда** | Playfair Display (H) + DM Sans | Cormorant + Lato | Тепло + изысканность |
+| **Фитнес / Спорт** | Bebas Neue (H) + Inter | Barlow Condensed | Сила, динамика |
+| **Образование / Курсы** | Nunito | Outfit | Дружелюбность, доступность |
+| **Строительство** | Manrope | Barlow | Надёжность, структура |
+| **Юриспруденция** | IBM Plex Serif (H) + IBM Plex Sans | Source Serif | Авторитет, традиции |
+| **Тату / Барбер** | Unbounded (H) + DM Sans | Black Han Sans | Характер, субкультура |
+
+### Правила комбинирования
+
+```
+✅ Один шрифт разных весов (400/600/700/800) — чаще всего достаточно
+✅ Display + Body (разные семейства): Playfair (H1) + DM Sans (body)
+✅ Serif заголовок + Sans body = премиум/editorial
+✅ Гротеск + Mono = tech/dev инструменты
+❌ 3+ разных шрифта — всегда хаос
+❌ Два похожих гротеска (Inter + DM Sans) — нет контраста, нет смысла
+❌ Декоративный шрифт для body — нечитаемо
+```
+
+### Технические правила подключения в Next.js
+
+```tsx
+// ВСЕГДА через next/font/google — не через @import в CSS
+// ВСЕГДА display: "swap" — не блокирует рендеринг страницы
+// ВСЕГДА variable: "--font-sans" — используй CSS переменную, не className напрямую
+
+import { Space_Grotesk, DM_Sans } from "next/font/google"
+
+// Один шрифт:
+const font = Space_Grotesk({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-sans",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+})
+
+// Два шрифта (display + body):
+const display = Playfair_Display({ subsets: ["latin"], variable: "--font-display", display: "swap" })
+const body = DM_Sans({ subsets: ["latin"], variable: "--font-body", display: "swap" })
+// В html: className={`${display.variable} ${body.variable}`}
+// В CSS: h1, h2 { font-family: var(--font-display); }
+//        body { font-family: var(--font-body); }
+
+// Кириллица — шрифты с поддержкой:
+// Manrope, IBM Plex Sans, Noto Sans, PT Sans, Roboto
+// Space Grotesk, DM Sans, Inter — только latin (кириллица = системный фоллбек)
+```
+
+### Шрифтовые пары под конкретные ниши
+
+```
+AI/Tech агентство (gotovo):     Space Grotesk 400/600/700
+Медицинский сайт:               Plus Jakarta Sans 400/500/700
+Ресторан высокой кухни:         Cormorant Garamond (H) + Lato (body)
+Кафе/кофейня:                   Playfair Display (H) + DM Sans (body)
+Юридическая компания:           IBM Plex Serif (H) + IBM Plex Sans (body)
+Тату-салон:                     Unbounded (H) + DM Sans (body)
+Фитнес-клуб:                    Bebas Neue (H) + Inter (body)
+IT-компания/стартап:            Bricolage Grotesque 400/700
+Образование/онлайн-курсы:       Nunito 400/600/800
+Строительство и ремонт:         Manrope 400/600/700
+Салон красоты:                  Cormorant (H) + Plus Jakarta Sans (body)
 ```
 
 ---
@@ -277,13 +371,15 @@ Badge:      text-xs uppercase tracking-widest font-semibold
 
 ```
 ❌ Белый фон (#fff) на страницах gotovo
-❌ Шрифт Geist или Inter в gotovo — только Sora
+❌ Шрифты кроме Space Grotesk в gotovo — не Sora, не Inter, не Geist
 ❌ border-radius меньше rounded-xl (12px)
 ❌ Серые безликие карточки без характера
-❌ Весь заголовок в градиентном цвете
+❌ Весь заголовок в градиентном цвете — только одна строка максимум
 ❌ Одинаковые кнопки — primary/secondary/ghost должны различаться
 ❌ Анимации которые мешают контенту
 ❌ Текст меньше text-xs (10px)
 ❌ Иконки без смысла
 ❌ Симметрия ради симметрии — асимметрия живее
+❌ 3+ шрифта на одном сайте — всегда хаос
+❌ Декоративный шрифт для основного текста — нечитаемо
 ```

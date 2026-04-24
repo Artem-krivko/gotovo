@@ -1,20 +1,19 @@
 import type { Metadata } from "next";
-import { Sora } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
 
-// Sora не поддерживает cyrillic — используем latin-ext
-// Кириллица рендерится системным шрифтом как фоллбек
-const sora = Sora({
+// Space Grotesk — технологичный, характерный, запоминающийся
+// Используется в Linear-style продуктах. Отлично читается на тёмном фоне.
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin", "latin-ext"],
-  variable: "--font-sora",
+  variable: "--font-sans",
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
-
-// ─── Метаданные ───────────────────────────────────────────────────────────────
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -23,15 +22,14 @@ export const metadata: Metadata = {
     template: "%s | gotovo",
   },
   description:
-    "AI-генератор дизайна сайтов. Опишите бизнес — ИИ создаёт превью за 30 секунд бесплатно. Нравится — заказываете разработку. Лендинги от €500.",
+    "AI-генератор дизайна сайтов. Опишите бизнес — ИИ создаёт превью за 30 секунд бесплатно. Нравится — заказываете разработку. Лендинги от 500$.",
   keywords: [
     "создание сайтов для бизнеса",
     "ai генератор сайтов",
     "заказать лендинг",
     "разработка сайта под ключ",
-    "создать сайт с помощью ии",
-    "веб студия",
-    "сайт для малого бизнеса",
+    "разработка сайтов минск",
+    "веб студия беларусь",
     "gotovo",
   ],
   authors: [{ name: "gotovo" }],
@@ -42,13 +40,13 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: "gotovo",
     title: "gotovo — AI-генератор дизайна сайтов",
-    description: "Опишите бизнес — ИИ создаёт дизайн за 30 секунд. Бесплатно. Лендинги от €500.",
+    description: "Опишите бизнес — ИИ создаёт дизайн за 30 секунд. Бесплатно. От 500$.",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "gotovo — AI веб-агентство" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "gotovo — AI-генератор дизайна сайтов",
-    description: "Превью дизайна за 30 секунд — бесплатно. Лендинги от €500.",
+    description: "Превью дизайна за 30 секунд — бесплатно. От 500$.",
     images: ["/og-image.png"],
   },
   robots: {
@@ -58,8 +56,6 @@ export const metadata: Metadata = {
   },
 };
 
-// ─── Schema.org ───────────────────────────────────────────────────────────────
-
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
@@ -67,22 +63,27 @@ const organizationSchema = {
   description: "AI-агентство по разработке сайтов. Генератор дизайна за 30 секунд бесплатно.",
   url: SITE_URL,
   serviceType: "Web Development",
-  areaServed: "Worldwide",
-  priceRange: "€€",
+  areaServed: [
+    { "@type": "City", name: "Минск", addressCountry: "BY" },
+    { "@type": "Country", name: "Беларусь" },
+  ],
+  priceRange: "$$",
 };
-
-// ─── Layout ───────────────────────────────────────────────────────────────────
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" suppressHydrationWarning className={sora.variable}>
+    <html lang="ru" suppressHydrationWarning className={spaceGrotesk.variable}>
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
       </head>
-      <body className="bg-[#0A0A0F] text-white antialiased" suppressHydrationWarning>
+      <body
+        className="bg-[#0A0A0F] text-white antialiased"
+        style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}
+        suppressHydrationWarning
+      >
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />

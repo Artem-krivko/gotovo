@@ -36,9 +36,17 @@ bg-[#1C1C28]   ← elevated / hover
 Градиент:    from-violet-600 to-blue-600 — primary CTA
 ```
 
-### Шрифт: Sora (не Inter, не Geist)
+### Шрифт: Space Grotesk (не Sora, не Inter, не Geist)
 ```tsx
-import { Sora } from "next/font/google"
+import { Space_Grotesk } from "next/font/google"
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-sans",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+})
+// В html: className={spaceGrotesk.variable}
+// В body: style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}
 ```
 
 ### Текст
@@ -75,7 +83,7 @@ className="rounded-2xl border border-violet-500/30 bg-gradient-to-br from-violet
 3. **Читай `_ai-skills/developer.md`** перед написанием ЛЮБОГО кода
 4. **Читай `_ai-skills/seo.md`** перед метаданными, Schema.org, sitemap
 5. **Тёмная тема везде** — bg-[#0A0A0F], никакого белого фона на страницах
-6. **Шрифт Sora** — не Inter, не Geist
+6. **Шрифт Space Grotesk** — переменная `--font-sans`, не Sora, не Inter, не Geist
 7. **Template literals** — ТОЛЬКО через backticks
 8. **Компоненты** — Server Components по умолчанию
 9. **Данные** — в `content/`, не хардкодить в компонентах
@@ -147,7 +155,7 @@ ai-agency-starter/
 ├── CLAUDE.md
 ├── _ai-skills/
 │   ├── developer.md      ← код (читать перед кодом)
-│   ├── designer.md       ← дизайн (читать перед версткой)
+│   ├── designer.md       ← дизайн + подбор шрифтов (читать перед версткой)
 │   ├── seo.md            ← SEO (читать перед метаданными)
 │   ├── pm.md
 │   ├── copywriter.md
@@ -156,13 +164,18 @@ ai-agency-starter/
 │   ├── page.tsx
 │   ├── generator/
 │   ├── services/ pricing/ process/ about/ contacts/ thank-you/
+│   ├── razrabotka-sajtov-minsk/
+│   ├── lending-minsk/
+│   ├── sozdanie-sajtov-dlya-biznesa/
+│   ├── razrabotka-sajtov-ceny/
+│   ├── ai-generator-sajta/
 │   └── api/ (generate/, lead/)
 ├── components/
-│   ├── generator/        ← GeneratorForm, GeneratorPreview
+│   ├── generator/
 │   ├── layout/
 │   ├── sections/
 │   └── shared/
-├── content/              ← все данные страниц
+├── content/
 └── lib/
     ├── types.ts
     └── prompts.ts
@@ -175,12 +188,12 @@ ai-agency-starter/
 - **AI Generator:** Claude API → HTML → `<iframe srcDoc>`
 - **Без API ключа:** HTML-заглушка (генератор работает всегда)
 - **Заявки:** Resend API → email
-- **Деплой:** Vercel
+- **Деплой:** Vercel (Artem-krivko/gotovo)
 - **ENV:** `ANTHROPIC_API_KEY`, `RESEND_API_KEY`, `LEAD_NOTIFICATION_EMAIL`, `NEXT_PUBLIC_SITE_URL`
 
 ---
 
 ## 👤 Команда
 
-**Владелец:** Артём (Беларусь)
+**Владелец:** Артём (Беларусь, Минск)
 **Инструменты:** Claude (claude.ai), Cursor IDE, Vercel
