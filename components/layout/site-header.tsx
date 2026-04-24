@@ -17,10 +17,14 @@ const NAV_LINKS = [
 
 function Logo() {
   return (
-    <Link href="/" className="group flex items-center gap-2">
-      <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-blue-600 text-sm font-bold text-white shadow-lg shadow-violet-500/30 transition group-hover:shadow-violet-500/50">
-        g
-      </span>
+    <Link href="/" className="group flex items-center gap-2.5">
+      <img
+        src="/favicon.svg"
+        alt="gotovo"
+        width={32}
+        height={32}
+        className="transition group-hover:opacity-80"
+      />
       <span className="text-base font-bold tracking-tight text-white">gotovo</span>
     </Link>
   );
