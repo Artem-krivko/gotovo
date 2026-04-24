@@ -232,6 +232,24 @@ body {
   animation: cta-pulse 3s ease-in-out infinite;
 }
 
+/* ── Кастомный скроллбар для горизонтальных лент ──────────────────── */
+.niches-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(124, 58, 237, 0.5) rgba(255, 255, 255, 0.04);
+}
+.niches-scroll::-webkit-scrollbar {
+  height: 3px;
+}
+.niches-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 99px;
+  margin: 0 16px;
+}
+.niches-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(90deg, #7C3AED, #3B82F6);
+  border-radius: 99px;
+}
+
 /* ── Reduced motion ──────────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .reveal-up, .reveal-in { opacity: 1; animation: none; }

@@ -366,18 +366,21 @@ function ForWhom() {
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">Для любого бизнеса</h2>
         </div>
 
-        <div className="-mx-4 mt-10 overflow-x-auto px-4 sm:hidden">
-          <div className="flex gap-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
-            {categories.map((cat) => (
-              <div key={cat.label}
-                className="flex w-[40vw] max-w-[160px] shrink-0 flex-col items-center gap-3 rounded-2xl border border-white/10 bg-[#13131A] p-5 text-center"
-                style={{ scrollSnapAlign: "start" }}>
-                <div className={`inline-flex h-11 w-11 items-center justify-center rounded-xl border ${cat.bg} ${cat.color}`}>
-                  {cat.icon}
+        <div className="-mx-4 mt-10 sm:hidden">
+          <div className="niches-scroll overflow-x-auto px-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
+            <div className="flex gap-4">
+              {categories.map((cat) => (
+                <div key={cat.label}
+                  className="flex w-[40vw] max-w-[160px] shrink-0 flex-col items-center gap-3 rounded-2xl border border-white/10 bg-[#13131A] p-5 text-center"
+                  style={{ scrollSnapAlign: "start" }}>
+                  <div className={`inline-flex h-11 w-11 items-center justify-center rounded-xl border ${cat.bg} ${cat.color}`}>
+                    {cat.icon}
+                  </div>
+                  <p className="text-sm font-medium text-[#A1A1B5]">{cat.label}</p>
                 </div>
-                <p className="text-sm font-medium text-[#A1A1B5]">{cat.label}</p>
-              </div>
-            ))}
+              ))}
+              <div className="w-4 shrink-0" aria-hidden="true" />
+            </div>
           </div>
         </div>
 
