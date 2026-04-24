@@ -8,11 +8,19 @@ const NAV_LINKS = [
   { href: "/contacts", label: "Контакты" },
 ] as const;
 
+const SEO_LINKS = [
+  { href: "/razrabotka-sajtov-minsk", label: "Разработка сайтов в Минске" },
+  { href: "/lending-minsk", label: "Лендинги в Минске" },
+  { href: "/sozdanie-sajtov-dlya-biznesa", label: "Сайты для бизнеса" },
+  { href: "/razrabotka-sajtov-ceny", label: "Цены на разработку" },
+  { href: "/ai-generator-sajta", label: "AI генератор сайтов" },
+] as const;
+
 export function SiteFooter() {
   return (
     <footer className="border-t border-white/[0.06] bg-[#0A0A0F]">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:py-16">
-        <div className="grid gap-10 md:grid-cols-[1.5fr_1fr_1fr]">
+        <div className="grid gap-10 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
 
           {/* Brand */}
           <div>
@@ -32,7 +40,9 @@ export function SiteFooter() {
 
           {/* Навигация */}
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Навигация</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">
+              Навигация
+            </p>
             <nav className="mt-4 flex flex-col gap-2.5" aria-label="Навигация в футере">
               {NAV_LINKS.map((link) => (
                 <Link key={link.href} href={link.href}
@@ -43,9 +53,26 @@ export function SiteFooter() {
             </nav>
           </div>
 
+          {/* SEO-ссылки */}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">
+              Услуги
+            </p>
+            <nav className="mt-4 flex flex-col gap-2.5" aria-label="SEO навигация">
+              {SEO_LINKS.map((link) => (
+                <Link key={link.href} href={link.href}
+                  className="text-sm text-[#A1A1B5] transition-colors hover:text-white">
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
           {/* Контакты */}
           <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Контакты</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">
+              Контакты
+            </p>
             <div className="mt-4 flex flex-col gap-2.5 text-sm text-[#A1A1B5]">
               <a href="mailto:info@usegotovo.by" className="transition-colors hover:text-white">
                 info@usegotovo.by
@@ -55,7 +82,10 @@ export function SiteFooter() {
               </a>
             </div>
             <div className="mt-6 grid grid-cols-2 gap-3">
-              {[{ value: "30 сек", label: "генерация" }, { value: "€500", label: "от" }].map((m) => (
+              {[
+                { value: "30 сек", label: "генерация" },
+                { value: "500$", label: "от" },
+              ].map((m) => (
                 <div key={m.label} className="rounded-xl border border-white/10 bg-[#13131A] p-3 text-center">
                   <p className="text-base font-bold text-white">{m.value}</p>
                   <p className="text-xs text-[#6B6B80]">{m.label}</p>
@@ -66,8 +96,11 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-12 flex flex-col gap-3 border-t border-white/[0.06] pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-[#6B6B80]">© {new Date().getFullYear()} gotovo. Все права защищены.</p>
-          <Link href="/privacy" className="text-xs text-[#6B6B80] transition-colors hover:text-[#A1A1B5]">
+          <p className="text-xs text-[#6B6B80]">
+            © {new Date().getFullYear()} gotovo. Все права защищены.
+          </p>
+          <Link href="/privacy"
+            className="text-xs text-[#6B6B80] transition-colors hover:text-[#A1A1B5]">
             Политика конфиденциальности
           </Link>
         </div>

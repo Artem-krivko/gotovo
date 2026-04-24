@@ -7,8 +7,7 @@ import { useState, useCallback } from "react";
 
 const NAV_LINKS = [
   { href: "/services", label: "Услуги" },
-  { href: "/uslugi", label: "По нишам" },
-  { href: "/goroda", label: "Города" },
+  { href: "/process", label: "Процесс" },
   { href: "/pricing", label: "Цены" },
   { href: "/about", label: "О нас" },
   { href: "/contacts", label: "Контакты" },
@@ -50,7 +49,7 @@ export function SiteHeader() {
         <Logo />
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-1 lg:flex" aria-label="Основная навигация">
+        <nav className="hidden items-center gap-1 md:flex" aria-label="Основная навигация">
           {NAV_LINKS.map((link) => (
             <Link key={link.href} href={link.href}
               className="rounded-lg px-3 py-2 text-sm font-medium text-[#A1A1B5] transition-colors hover:bg-white/5 hover:text-white">
@@ -60,7 +59,7 @@ export function SiteHeader() {
         </nav>
 
         {/* Desktop CTA */}
-        <div className="hidden lg:block">
+        <div className="hidden md:block">
           <Link href="/generator"
             className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:opacity-90 hover:-translate-y-0.5">
             <span aria-hidden="true">✦</span>
@@ -70,7 +69,7 @@ export function SiteHeader() {
 
         {/* Mobile burger */}
         <button
-          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-[#A1A1B5] transition hover:bg-white/5 hover:text-white lg:hidden"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-[#A1A1B5] transition hover:bg-white/5 hover:text-white md:hidden"
           onClick={handleToggle}
           aria-label={open ? "Закрыть меню" : "Открыть меню"}
           aria-expanded={open}
@@ -81,7 +80,7 @@ export function SiteHeader() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="border-t border-white/[0.06] bg-[#0A0A0F] px-4 py-4 lg:hidden">
+        <div className="border-t border-white/[0.06] bg-[#0A0A0F] px-4 py-4 md:hidden">
           <nav className="flex flex-col gap-1" aria-label="Мобильная навигация">
             {NAV_LINKS.map((link) => (
               <Link key={link.href} href={link.href} onClick={handleClose}
