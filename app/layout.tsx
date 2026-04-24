@@ -6,8 +6,7 @@ import { SiteFooter } from "@/components/layout/site-footer";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
 
-// Space Grotesk — технологичный, характерный, запоминающийся
-// Используется в Linear-style продуктах. Отлично читается на тёмном фоне.
+// Space Grotesk — технологичный, характерный шрифт gotovo
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin", "latin-ext"],
   variable: "--font-sans",
@@ -34,6 +33,22 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "gotovo" }],
   alternates: { canonical: SITE_URL },
+
+  // ─── Фавикон и иконки ─────────────────────────────────────────────────────
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+    other: [
+      { rel: "manifest", url: "/site.webmanifest" },
+    ],
+  },
+
   openGraph: {
     type: "website",
     locale: "ru_RU",
@@ -56,6 +71,8 @@ export const metadata: Metadata = {
   },
 };
 
+// ─── Schema.org ───────────────────────────────────────────────────────────────
+
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
@@ -69,6 +86,8 @@ const organizationSchema = {
   ],
   priceRange: "$$",
 };
+
+// ─── Layout ───────────────────────────────────────────────────────────────────
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
