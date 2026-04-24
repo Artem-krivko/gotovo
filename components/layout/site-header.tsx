@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { useState, useCallback } from "react";
 
-// ─── Навигационные ссылки ─────────────────────────────────────────────────────
+// ─── Навигация ────────────────────────────────────────────────────────────────
 
 const NAV_LINKS = [
   { href: "/services", label: "Услуги" },
-  { href: "/process", label: "Процесс" },
+  { href: "/uslugi", label: "По нишам" },
+  { href: "/goroda", label: "Города" },
   { href: "/pricing", label: "Цены" },
   { href: "/about", label: "О нас" },
   { href: "/contacts", label: "Контакты" },
@@ -18,68 +19,50 @@ const NAV_LINKS = [
 function Logo() {
   return (
     <Link href="/" className="group flex items-center gap-2">
-      {/* Иконка g */}
       <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-blue-600 text-sm font-bold text-white shadow-lg shadow-violet-500/30 transition group-hover:shadow-violet-500/50">
         g
       </span>
-      <span className="text-base font-bold tracking-tight text-white">
-        gotovo
-      </span>
+      <span className="text-base font-bold tracking-tight text-white">gotovo</span>
     </Link>
   );
 }
-
-// ─── Иконка бургера/закрытия ──────────────────────────────────────────────────
 
 function BurgerIcon({ open }: { open: boolean }) {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
       {open ? (
-        <>
-          <path d="M4 4l12 12M16 4L4 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </>
+        <path d="M4 4l12 12M16 4L4 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       ) : (
-        <>
-          <path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        </>
+        <path d="M3 6h14M3 10h14M3 14h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       )}
     </svg>
   );
 }
 
-// ─── Основной компонент ───────────────────────────────────────────────────────
-
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
-
   const handleToggle = useCallback(() => setOpen((v) => !v), []);
   const handleClose = useCallback(() => setOpen(false), []);
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#0A0A0F]/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5 sm:px-6">
-
         <Logo />
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Основная навигация">
+        <nav className="hidden items-center gap-1 lg:flex" aria-label="Основная навигация">
           {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-[#A1A1B5] transition-colors hover:bg-white/5 hover:text-white"
-            >
+            <Link key={link.href} href={link.href}
+              className="rounded-lg px-3 py-2 text-sm font-medium text-[#A1A1B5] transition-colors hover:bg-white/5 hover:text-white">
               {link.label}
             </Link>
           ))}
         </nav>
 
         {/* Desktop CTA */}
-        <div className="hidden md:block">
-          <Link
-            href="/generator"
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:opacity-90 hover:-translate-y-0.5"
-          >
+        <div className="hidden lg:block">
+          <Link href="/generator"
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:opacity-90 hover:-translate-y-0.5">
             <span aria-hidden="true">✦</span>
             Сгенерировать дизайн
           </Link>
@@ -87,7 +70,7 @@ export function SiteHeader() {
 
         {/* Mobile burger */}
         <button
-          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-[#A1A1B5] transition hover:bg-white/5 hover:text-white md:hidden"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-[#A1A1B5] transition hover:bg-white/5 hover:text-white lg:hidden"
           onClick={handleToggle}
           aria-label={open ? "Закрыть меню" : "Открыть меню"}
           aria-expanded={open}
@@ -98,24 +81,16 @@ export function SiteHeader() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="border-t border-white/[0.06] bg-[#0A0A0F] px-4 py-4 md:hidden">
+        <div className="border-t border-white/[0.06] bg-[#0A0A0F] px-4 py-4 lg:hidden">
           <nav className="flex flex-col gap-1" aria-label="Мобильная навигация">
             {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={handleClose}
-                className="rounded-xl px-4 py-3 text-sm font-medium text-[#A1A1B5] transition hover:bg-white/5 hover:text-white"
-              >
+              <Link key={link.href} href={link.href} onClick={handleClose}
+                className="rounded-xl px-4 py-3 text-sm font-medium text-[#A1A1B5] transition hover:bg-white/5 hover:text-white">
                 {link.label}
               </Link>
             ))}
-
-            <Link
-              href="/generator"
-              onClick={handleClose}
-              className="mt-3 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 py-3.5 text-sm font-semibold text-white"
-            >
+            <Link href="/generator" onClick={handleClose}
+              className="mt-3 inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 py-3.5 text-sm font-semibold text-white">
               <span aria-hidden="true">✦</span>
               Сгенерировать дизайн
             </Link>
