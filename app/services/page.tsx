@@ -276,10 +276,10 @@ export default function ServicesPage() {
 
           <div className="mt-10 overflow-hidden rounded-2xl border border-white/10">
             {/* Шапка */}
-            <div className="grid grid-cols-[1fr_1fr_1fr] border-b border-white/10 bg-[#13131A]">
-              <div className="px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[#6B6B80] sm:px-6">Параметр</div>
-              <div className="border-l border-white/10 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-[#6B6B80] sm:px-6">Конструктор</div>
-              <div className="border-l border-violet-500/20 bg-violet-500/5 px-4 py-3 text-xs font-semibold uppercase tracking-widest text-violet-400 sm:px-6">gotovo</div>
+            <div className="grid grid-cols-[88px_1fr_1fr] border-b border-white/10 bg-[#13131A] sm:grid-cols-[1fr_1fr_1fr]">
+              <div className="px-3 py-3 text-[10px] font-semibold uppercase tracking-widest text-[#6B6B80] sm:px-6 sm:text-xs">Параметр</div>
+              <div className="border-l border-white/10 px-3 py-3 text-[10px] font-semibold uppercase tracking-widest text-[#6B6B80] sm:px-6 sm:text-xs">Конструктор</div>
+              <div className="border-l border-violet-500/20 bg-violet-500/5 px-3 py-3 text-[10px] font-semibold uppercase tracking-widest text-violet-400 sm:px-6 sm:text-xs">gotovo</div>
             </div>
             {[
               { label: "Дизайн", bad: "Ограничен шаблоном", good: "Под вашу задачу" },
@@ -289,10 +289,10 @@ export default function ServicesPage() {
               { label: "Масштаб", bad: "Сложнее расширять", good: "Легко добавлять" },
             ].map((row, i) => (
               <div key={row.label}
-                className={`grid grid-cols-[1fr_1fr_1fr] border-b border-white/[0.06] last:border-0 ${i % 2 === 0 ? "bg-[#0A0A0F]" : "bg-[#0D0D14]"}`}>
-                <div className="px-4 py-4 text-sm font-medium text-white sm:px-6">{row.label}</div>
-                <div className="border-l border-white/[0.06] px-4 py-4 text-sm text-[#6B6B80] sm:px-6">{row.bad}</div>
-                <div className="border-l border-violet-500/10 bg-violet-500/[0.03] px-4 py-4 text-sm font-medium text-violet-300 sm:px-6">{row.good}</div>
+                className={`grid grid-cols-[88px_1fr_1fr] border-b border-white/[0.06] last:border-0 sm:grid-cols-[1fr_1fr_1fr] ${i % 2 === 0 ? "bg-[#0A0A0F]" : "bg-[#0D0D14]"}`}>
+                <div className="px-3 py-4 text-xs font-semibold text-white sm:px-6 sm:text-sm sm:font-medium">{row.label}</div>
+                <div className="border-l border-white/[0.06] px-3 py-4 text-xs leading-5 text-[#6B6B80] sm:px-6 sm:text-sm">{row.bad}</div>
+                <div className="border-l border-violet-500/10 bg-violet-500/[0.03] px-3 py-4 text-xs font-medium leading-5 text-violet-300 sm:px-6 sm:text-sm">{row.good}</div>
               </div>
             ))}
           </div>
