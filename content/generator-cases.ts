@@ -7,6 +7,7 @@ export interface GeneratorCase {
   image: string | null;
   colorClasses: string;
   accentClass: string;
+  category: string;
 }
 
 export const GENERATOR_CASES: GeneratorCase[] = [
@@ -17,6 +18,7 @@ export const GENERATOR_CASES: GeneratorCase[] = [
     image: "/images/generator/dentist-preview.svg",
     colorClasses: "from-sky-900/40 to-blue-950/60",
     accentClass: "bg-blue-500",
+    category: "Медицина",
   },
   {
     id: 2,
@@ -25,6 +27,7 @@ export const GENERATOR_CASES: GeneratorCase[] = [
     image: "/images/generator/tattoo-preview.svg",
     colorClasses: "from-zinc-900/60 to-neutral-950/80",
     accentClass: "bg-zinc-400",
+    category: "Красота",
   },
   {
     id: 3,
@@ -33,5 +36,6 @@ export const GENERATOR_CASES: GeneratorCase[] = [
     image: "/images/generator/gym-preview.svg",
     colorClasses: "from-orange-900/40 to-zinc-950/60",
     accentClass: "bg-orange-500",
+    category: "Спорт",
   },
 ];

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { Faq } from "@/components/sections/faq";
+import { GeneratorExamplesFilter } from "@/components/sections/generator-examples-filter";
 import { homeContent } from "@/content/pages/home";
 import { GENERATOR_CASES } from "@/content/generator-cases";
 
@@ -151,7 +152,7 @@ function Hero() {
       <div className="relative mx-auto max-w-6xl">
         <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
           <div className="flex flex-col items-start pt-4">
-            <div className="reveal-up inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-4 py-1.5 text-sm font-medium text-violet-400">
+            <div className="reveal-up badge-animated inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium text-violet-300">
               <span className="pulse-glow h-1.5 w-1.5 rounded-full bg-violet-400" aria-hidden="true" />
               AI-генератор дизайна сайтов
             </div>
@@ -172,7 +173,7 @@ function Hero() {
 
             <div className="reveal-up delay-3 mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
               <Link href="/generator"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-600 px-7 py-4 text-sm font-bold text-white shadow-xl shadow-violet-500/40 transition hover:opacity-90 hover:-translate-y-0.5">
+                className="btn-shimmer inline-flex items-center justify-center gap-2 rounded-xl px-7 py-4 text-sm font-bold text-white shadow-xl shadow-violet-500/40 transition hover:opacity-90 hover:-translate-y-0.5">
                 <span className="text-base" aria-hidden="true">✦</span>
                 Сгенерировать дизайн
               </Link>
@@ -231,18 +232,32 @@ function HowItWorks() {
         </div>
         <ol className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {steps.map((step, i) => (
-            <li key={step.num}
-              className={`reveal-up rounded-2xl border border-white/10 bg-[#13131A] p-6 transition hover:border-white/20 ${
-                i === 0 ? "delay-1" : i === 1 ? "delay-2" : i === 2 ? "delay-3" : "delay-4"
-              }`}>
-              <div className="mb-4 flex items-center gap-3">
-                <span className="text-2xl" aria-hidden="true">{step.icon}</span>
-                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-violet-500/30 bg-violet-500/10 text-xs font-bold text-violet-400">
+            <li key={step.num} className="relative">
+              {/* Стрелка между шагами на десктопе */}
+              {i < steps.length - 1 && (
+                <div className="pointer-events-none absolute -right-3 top-8 z-10 hidden lg:block" aria-hidden="true">
+                  <svg width="24" height="16" viewBox="0 0 24 16" fill="none">
+                    <path d="M0 8h20M14 2l8 6-8 6" stroke="rgba(124,58,237,0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              )}
+              <div
+                className={`reveal-up rounded-2xl border border-white/10 bg-[#13131A] p-6 transition hover:border-violet-500/30 hover:bg-[#1C1C28] ${
+                  i === 0 ? "delay-1" : i === 1 ? "delay-2" : i === 2 ? "delay-3" : "delay-4"
+                }`}>
+                {/* Декоративный номер */}
+                <span className="pointer-events-none absolute right-4 top-3 select-none text-6xl font-black leading-none text-white/[0.04]" aria-hidden="true">
                   {step.num}
                 </span>
+                <div className="mb-4 flex items-center gap-3">
+                  <span className="text-2xl" aria-hidden="true">{step.icon}</span>
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-violet-500/30 bg-violet-500/10 text-xs font-bold text-violet-400">
+                    {step.num}
+                  </span>
+                </div>
+                <h3 className="font-semibold text-white">{step.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-[#6B6B80]">{step.desc}</p>
               </div>
-              <h3 className="font-semibold text-white">{step.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-[#6B6B80]">{step.desc}</p>
             </li>
           ))}
         </ol>
@@ -254,7 +269,7 @@ function HowItWorks() {
 // ─── ПРИМЕРЫ ДИЗАЙНОВ ────────────────────────────────────────────────────────
 
 function GeneratorExamples() {
-  const categories = ["Все", "Медицина", "Красота", "Спорт"];
+  const categories = ["Медицина", "Красота", "Спорт"];
 
   return (
     <section className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
@@ -264,88 +279,7 @@ function GeneratorExamples() {
           <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">Примеры дизайнов</h2>
           <p className="mt-3 text-[#A1A1B5]">Реальные результаты нашего генератора для разных ниш бизнеса</p>
         </div>
-
-        <div className="reveal-up delay-1 mt-8 flex flex-wrap justify-center gap-2">
-          {categories.map((cat, i) => (
-            <span key={cat}
-              className={`cursor-pointer rounded-full px-4 py-1.5 text-sm font-medium transition ${
-                i === 0 ? "bg-violet-600 text-white" : "border border-white/10 bg-white/5 text-[#A1A1B5] hover:bg-white/10 hover:text-white"
-              }`}>
-              {cat}
-            </span>
-          ))}
-        </div>
-
-        {/* Мобилка: snap-scroll */}
-        <div className="-mx-4 mt-8 overflow-x-auto px-4 sm:hidden">
-          <div className="flex gap-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
-            {GENERATOR_CASES.map((c) => (
-              <div key={c.id}
-                className="w-[78vw] max-w-[280px] shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-[#13131A]"
-                style={{ scrollSnapAlign: "start" }}>
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  {c.image ? (
-                    <Image
-                      src={c.image}
-                      alt={`Пример дизайна — ${c.label}`}
-                      fill
-                      className="object-cover object-top"
-                      sizes="280px"
-                    />
-                  ) : (
-                    <div className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${c.colorClasses}`}>
-                      <span className="text-4xl" aria-hidden="true">🎨</span>
-                    </div>
-                  )}
-                </div>
-                <div className="p-4">
-                  <p className="font-semibold text-white">{c.label}</p>
-                  <p className="mt-1 line-clamp-2 text-xs text-[#6B6B80]">{c.prompt}</p>
-                </div>
-              </div>
-            ))}
-            <div className="w-4 shrink-0" aria-hidden="true" />
-          </div>
-        </div>
-
-        {/* Десктоп: grid */}
-        <div className="mt-8 hidden gap-5 sm:grid sm:grid-cols-3">
-          {GENERATOR_CASES.map((c, i) => {
-            const delay = i === 0 ? "delay-1" : i === 1 ? "delay-2" : "delay-3";
-            return (
-              <div key={c.id}
-                className={`reveal-up group overflow-hidden rounded-2xl border border-white/10 bg-[#13131A] transition hover:border-white/20 hover:-translate-y-1 ${delay}`}>
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  {c.image ? (
-                    <Image
-                      src={c.image}
-                      alt={`Пример дизайна — ${c.label}`}
-                      fill
-                      className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                      sizes="(max-width: 1200px) 33vw, 380px"
-                    />
-                  ) : (
-                    <div className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${c.colorClasses}`}>
-                      <span className="text-5xl" aria-hidden="true">🎨</span>
-                    </div>
-                  )}
-                </div>
-                <div className="p-5">
-                  <p className="font-semibold text-white">{c.label}</p>
-                  <p className="mt-1 line-clamp-2 text-sm text-[#6B6B80]">{c.prompt}</p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="reveal-up mt-10 text-center">
-          <Link href="/generator"
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:opacity-90 hover:-translate-y-0.5">
-            <span aria-hidden="true">✦</span> Попробовать бесплатно
-          </Link>
-          <p className="mt-3 text-sm text-[#6B6B80]">Бесплатно · Без регистрации · 30 секунд</p>
-        </div>
+        <GeneratorExamplesFilter cases={GENERATOR_CASES} categories={categories} />
       </div>
     </section>
   );
@@ -478,16 +412,22 @@ function FinalCta() {
     <section className="bg-[#16161F] px-4 py-16 sm:px-6 sm:py-24">
       <div className="mx-auto max-w-3xl">
         <div className="relative overflow-hidden rounded-3xl border border-violet-500/20 bg-gradient-to-br from-violet-500/10 via-[#13131A] to-blue-500/5 p-8 text-center sm:p-14">
-          <div className="pointer-events-none absolute inset-0 rounded-3xl" aria-hidden="true"
-            style={{ background: "radial-gradient(ellipse 60% 50% at 50% 0%, rgba(124,58,237,0.2), transparent 70%)" }} />
+          {/* Анимированный glow */}
+          <div
+            className="cta-glow-pulse pointer-events-none absolute inset-0 rounded-3xl"
+            aria-hidden="true"
+            style={{ background: "radial-gradient(ellipse 70% 60% at 50% 0%, rgba(124,58,237,0.5), transparent 70%)" }}
+          />
+          {/* Сетка */}
+          <div className="grid-overlay pointer-events-none absolute inset-0 rounded-3xl opacity-40" aria-hidden="true" />
           <div className="relative">
             <p className="text-xs font-semibold uppercase tracking-widest text-violet-400">Готовы получить сайт за 30 секунд?</p>
             <h2 className="mt-4 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Опишите свой бизнес и получите дизайн прямо сейчас
+              Опишите свой бизнес и получите дизайн<br className="hidden sm:block" /> прямо сейчас
             </h2>
             <p className="mt-4 text-[#A1A1B5]">Бесплатно. Без регистрации. Нравится — заказываете разработку.</p>
             <Link href="/generator"
-              className="mt-8 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-8 py-4 text-sm font-bold text-white shadow-xl shadow-violet-500/30 transition hover:opacity-90 hover:-translate-y-0.5">
+              className="btn-shimmer mt-8 inline-flex items-center gap-2 rounded-xl px-8 py-4 text-sm font-bold text-white shadow-xl shadow-violet-500/30 transition hover:opacity-90 hover:-translate-y-0.5">
               <span aria-hidden="true">✦</span> Попробовать бесплатно
             </Link>
           </div>
