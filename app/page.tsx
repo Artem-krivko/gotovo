@@ -213,12 +213,62 @@ function Hero() {
 
 // ─── КАК ЭТО РАБОТАЕТ ────────────────────────────────────────────────────────
 
+function StepIconDescribe() {
+  return (
+    <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-violet-800 shadow-lg shadow-violet-500/30">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M3 14.5V17h2.5l7.37-7.37-2.5-2.5L3 14.5z" fill="white" fillOpacity="0.9"/>
+        <path d="M16.71 5.04a1 1 0 0 0 0-1.41l-1.34-1.34a1 1 0 0 0-1.41 0l-1.05 1.05 2.75 2.75 1.05-1.05z" fill="white"/>
+        <path d="M3 5h6M3 8h4" stroke="white" strokeWidth="1.3" strokeLinecap="round" strokeOpacity="0.4"/>
+      </svg>
+    </div>
+  );
+}
+
+function StepIconAI() {
+  return (
+    <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 shadow-lg shadow-blue-500/30">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <circle cx="10" cy="10" r="3" fill="white"/>
+        <path d="M10 3v2M10 15v2M3 10h2M15 10h2" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M5.05 5.05l1.42 1.42M13.54 13.54l1.41 1.41M5.05 14.95l1.42-1.41M13.54 6.46l1.41-1.41" stroke="white" strokeWidth="1.3" strokeLinecap="round" strokeOpacity="0.6"/>
+        <circle cx="10" cy="10" r="6" stroke="white" strokeWidth="1" strokeOpacity="0.2"/>
+      </svg>
+    </div>
+  );
+}
+
+function StepIconEye() {
+  return (
+    <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-fuchsia-500 to-pink-600 shadow-lg shadow-fuchsia-500/30">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M2 10s3-5.5 8-5.5S18 10 18 10s-3 5.5-8 5.5S2 10 2 10z" stroke="white" strokeWidth="1.5" strokeLinejoin="round" fill="white" fillOpacity="0.1"/>
+        <circle cx="10" cy="10" r="2.5" fill="white"/>
+        <circle cx="10" cy="10" r="1" fill="white" fillOpacity="0.4"/>
+      </svg>
+    </div>
+  );
+}
+
+function StepIconRocket() {
+  return (
+    <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-blue-500 shadow-lg shadow-emerald-500/30">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M10 2C10 2 14 4 14 9c0 2.5-1 4.5-4 6-3-1.5-4-3.5-4-6 0-5 4-7 4-7z" fill="white" fillOpacity="0.9" stroke="white" strokeWidth="0.5"/>
+        <circle cx="10" cy="8" r="1.5" fill="white" fillOpacity="0.4"/>
+        <path d="M7 13l-2 3M13 13l2 3" stroke="white" strokeWidth="1.3" strokeLinecap="round" strokeOpacity="0.6"/>
+        <path d="M8 16h4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeOpacity="0.5"/>
+      </svg>
+    </div>
+  );
+}
+
 function HowItWorks() {
   const steps = [
-    { num: "1", icon: "✍️", title: "Опишите бизнес", desc: "Расскажите о своей компании в паре предложений" },
-    { num: "2", icon: "⚡", title: "AI создаёт дизайн", desc: "Искусственный интеллект генерирует дизайн сайта за 30 секунд" },
-    { num: "3", icon: "👀", title: "Посмотрите и оцените", desc: "Оцените дизайн. Нравится — переходим к разработке" },
-    { num: "4", icon: "🚀", title: "Получите готовый сайт", desc: "Мы создадим сайт под ключ и запустим его для вашего бизнеса" },
+    { num: "1", icon: <StepIconDescribe />, title: "Опишите бизнес", desc: "Расскажите о своей компании в паре предложений" },
+    { num: "2", icon: <StepIconAI />, title: "AI создаёт дизайн", desc: "Искусственный интеллект генерирует дизайн сайта за 30 секунд" },
+    { num: "3", icon: <StepIconEye />, title: "Посмотрите и оцените", desc: "Оцените дизайн. Нравится — переходим к разработке" },
+    { num: "4", icon: <StepIconRocket />, title: "Получите готовый сайт", desc: "Мы создадим сайт под ключ и запустим его для вашего бизнеса" },
   ];
 
   return (
@@ -232,7 +282,7 @@ function HowItWorks() {
         </div>
         <ol className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {steps.map((step, i) => (
-            <li key={step.num} className="relative">
+            <li key={step.num} className="relative flex">
               {/* Стрелка между шагами на десктопе */}
               {i < steps.length - 1 && (
                 <div className="pointer-events-none absolute -right-3 top-8 z-10 hidden lg:block" aria-hidden="true">
@@ -242,7 +292,7 @@ function HowItWorks() {
                 </div>
               )}
               <div
-                className={`reveal-up rounded-2xl border border-white/10 bg-[#13131A] p-6 transition hover:border-violet-500/30 hover:bg-[#1C1C28] ${
+                className={`reveal-up flex h-full w-full flex-col rounded-2xl border border-white/10 bg-[#13131A] p-6 transition hover:border-violet-500/30 hover:bg-[#1C1C28] ${
                   i === 0 ? "delay-1" : i === 1 ? "delay-2" : i === 2 ? "delay-3" : "delay-4"
                 }`}>
                 {/* Декоративный номер */}
@@ -250,13 +300,13 @@ function HowItWorks() {
                   {step.num}
                 </span>
                 <div className="mb-4 flex items-center gap-3">
-                  <span className="text-2xl" aria-hidden="true">{step.icon}</span>
+                  {step.icon}
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-violet-500/30 bg-violet-500/10 text-xs font-bold text-violet-400">
                     {step.num}
                   </span>
                 </div>
                 <h3 className="font-semibold text-white">{step.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-[#6B6B80]">{step.desc}</p>
+                <p className="mt-2 flex-1 text-sm leading-6 text-[#6B6B80]">{step.desc}</p>
               </div>
             </li>
           ))}
