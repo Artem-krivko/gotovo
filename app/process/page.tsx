@@ -28,11 +28,49 @@ const howToSchema = {
   })),
 };
 
+// ─── Иконки гарантий ────────────────────────────────────────────────────────
+
+function IconEye() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M1 12C1 12 5 4 12 4s11 8 11 8-4 8-11 8S1 12 1 12z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5"/>
+    </svg>
+  );
+}
+
+function IconCalendar() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M3 9h18M8 2v4M16 2v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+function IconRefresh() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 12a9 9 0 0 1-15 6.7L3 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      <path d="M17 8h4V4M7 16H3v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+function IconRocket() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path d="M12 2C12 2 7 6 7 13l5 5c7 0 10-5 10-5L12 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+      <path d="M7 13c0 0-4 1-5 5 4-1 5-5 5-5zM15 9a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
 const GUARANTEES = [
-  { icon: "👁", title: "Видите до оплаты", description: "Генератор показывает дизайн бесплатно. Платите только если понравилось." },
-  { icon: "📅", title: "Фиксированные сроки", description: "Лендинг 7–10 дней, бизнес-сайт 10–14. Прописываем до старта." },
-  { icon: "🔄", title: "2–3 круга правок", description: "Включено в стоимость. Доводим до финала без доплат." },
-  { icon: "🚀", title: "Запуск под ключ", description: "Домен, аналитика, формы — всё настроено и проверено." },
+  { icon: <IconEye />, color: "text-violet-400", bg: "bg-violet-500/10 border-violet-500/20", title: "Видите до оплаты", description: "Генератор показывает дизайн бесплатно. Платите только если понравилось." },
+  { icon: <IconCalendar />, color: "text-blue-400", bg: "bg-blue-500/10 border-blue-500/20", title: "Фиксированные сроки", description: "Лендинг 7–10 дней, бизнес-сайт 10–14. Прописываем до старта." },
+  { icon: <IconRefresh />, color: "text-fuchsia-400", bg: "bg-fuchsia-500/10 border-fuchsia-500/20", title: "2–3 круга правок", description: "Включено в стоимость. Доводим до финала без доплат." },
+  { icon: <IconRocket />, color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20", title: "Запуск под ключ", description: "Домен, аналитика, формы — всё настроено и проверено." },
 ] as const;
 
 export default function ProcessPage() {
@@ -94,7 +132,7 @@ export default function ProcessPage() {
       </section>
 
       {/* ── Таймлайн ────────────────────────────────────────────────────────── */}
-      <section className="bg-[#16161F] px-4 py-16 sm:px-6 sm:py-24">
+      <section className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-6xl">
           <div className="reveal-up text-center">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Этапы</p>
@@ -110,7 +148,7 @@ export default function ProcessPage() {
       </section>
 
       {/* ── Что получаете ───────────────────────────────────────────────────── */}
-      <section className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+      <section className="relative bg-[#16161F] px-4 py-16 sm:px-6 sm:py-24">
         <div className="mx-auto max-w-6xl">
           <div className="reveal-up text-center">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Результат</p>
@@ -119,7 +157,7 @@ export default function ProcessPage() {
             </h2>
             <p className="mt-3 text-[#A1A1B5]">Не абстрактные фазы — конкретные результаты на каждом этапе</p>
           </div>
-          <div className="mt-10">
+          <div className="mt-10 max-w-5xl mx-auto">
             <ProcessClientView steps={PROCESS_CLIENT_STEPS} />
           </div>
         </div>
@@ -137,8 +175,10 @@ export default function ProcessPage() {
             </div>
             <ul className="mt-8 grid gap-4 sm:grid-cols-2">
               {GUARANTEES.map((g) => (
-                <li key={g.title} className="flex gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur">
-                  <span className="text-2xl" aria-hidden="true">{g.icon}</span>
+                <li key={g.title} className="flex gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur transition hover:border-white/20 hover:bg-white/[0.07]">
+                  <div className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border ${g.bg} ${g.color}`}>
+                    {g.icon}
+                  </div>
                   <div>
                     <p className="font-semibold text-white">{g.title}</p>
                     <p className="mt-1 text-sm leading-6 text-[#A1A1B5]">{g.description}</p>
