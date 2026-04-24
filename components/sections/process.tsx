@@ -52,22 +52,28 @@ function StepRow({
 
   return (
     <li className="group relative">
-      {/* Hover glow фон */}
+      {/* Left accent bar */}
       <div
-        className="pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        className="absolute left-0 top-0 h-full w-[2px] origin-center scale-y-0 rounded-full bg-gradient-to-b from-violet-500/0 via-violet-500 to-violet-500/0 transition-transform duration-300 ease-out group-hover:scale-y-100"
+        aria-hidden="true"
+      />
+
+      {/* Row background */}
+      <div
+        className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
         style={{
           background:
-            "radial-gradient(ellipse 60% 80% at 0% 50%, rgba(124,58,237,0.06), transparent 70%)",
+            "linear-gradient(90deg, rgba(124,58,237,0.07) 0%, rgba(124,58,237,0.02) 50%, transparent 100%)",
         }}
         aria-hidden="true"
       />
 
-      <div className="relative flex items-start gap-6 border-b border-white/[0.06] px-2 py-5 transition-colors group-hover:border-white/10 sm:gap-8 sm:px-4">
+      <div className="relative flex items-start gap-6 border-b border-white/[0.06] px-2 py-5 transition-colors duration-300 group-hover:border-violet-500/20 sm:gap-8 sm:px-4">
 
-        {/* Левая колонка: номер */}
-        <div className="flex w-8 shrink-0 items-start justify-start pt-0.5 sm:w-12">
+        {/* Левая колонка: номер — сдвигается вправо при hover */}
+        <div className="flex w-8 shrink-0 items-start justify-start pt-0.5 transition-transform duration-300 ease-out group-hover:translate-x-1 sm:w-12">
           <span
-            className="select-none font-mono text-2xl font-black leading-none text-white/[0.06] transition-colors duration-300 group-hover:text-white/10 sm:text-4xl"
+            className="select-none font-mono text-2xl font-black leading-none text-white/[0.06] transition-all duration-300 group-hover:text-white/[0.18] sm:text-4xl"
             aria-hidden="true"
           >
             {numStr}
@@ -79,19 +85,19 @@ function StepRow({
           {/* Строка-заголовок */}
           <div className="flex flex-wrap items-center gap-2.5">
             <TerminalPrompt />
-            <h3 className="text-sm font-semibold text-white sm:text-base">
+            <h3 className="text-sm font-semibold text-white transition-colors duration-300 group-hover:text-violet-100 sm:text-base">
               {step.title}
             </h3>
             {step.isAiStep && <AiBadge />}
           </div>
 
           {/* Описание */}
-          <p className="pl-4 text-sm leading-6 text-[#6B6B80] sm:pl-5">
+          <p className="pl-4 text-sm leading-6 text-[#6B6B80] transition-colors duration-300 group-hover:text-[#A1A1B5] sm:pl-5">
             {step.description}
           </p>
 
-          {/* Hint — inline под описанием */}
-          <p className="pl-4 pt-0.5 font-mono text-[11px] text-[#A1A1B5]/50 sm:pl-5">
+          {/* Hint — светлеет при hover */}
+          <p className="pl-4 pt-0.5 font-mono text-[11px] text-[#A1A1B5]/40 transition-colors duration-300 group-hover:text-violet-400/60 sm:pl-5">
             // {step.hint}
           </p>
         </div>
