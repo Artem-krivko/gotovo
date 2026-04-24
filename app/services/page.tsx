@@ -31,7 +31,46 @@ function CheckIcon() {
   );
 }
 
-const FORMAT_ICONS = ["🖥️", "🏢", "🔍"] as const;
+function IconLanding() {
+  return (
+    <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-blue-600 shadow-lg shadow-violet-500/30">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <rect x="2" y="3" width="16" height="11" rx="2" stroke="white" strokeWidth="1.4" fill="white" fillOpacity="0.08"/>
+        <path d="M2 10h16" stroke="white" strokeWidth="1.2" strokeOpacity="0.4"/>
+        <circle cx="5" cy="6.5" r="1" fill="white" fillOpacity="0.5"/>
+        <circle cx="8" cy="6.5" r="1" fill="white" fillOpacity="0.5"/>
+        <path d="M7 17h6M10 14v3" stroke="white" strokeWidth="1.4" strokeLinecap="round"/>
+      </svg>
+    </div>
+  );
+}
+
+function IconBusiness() {
+  return (
+    <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 shadow-lg shadow-blue-500/30">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <rect x="3" y="7" width="14" height="10" rx="1.5" stroke="white" strokeWidth="1.4" fill="white" fillOpacity="0.08"/>
+        <path d="M7 7V5a3 3 0 0 1 6 0v2" stroke="white" strokeWidth="1.4" strokeLinecap="round"/>
+        <path d="M3 11h14" stroke="white" strokeWidth="1.2" strokeOpacity="0.4"/>
+        <rect x="8.5" y="9.5" width="3" height="3" rx="0.5" fill="white" fillOpacity="0.6"/>
+      </svg>
+    </div>
+  );
+}
+
+function IconSeo() {
+  return (
+    <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-blue-500 shadow-lg shadow-emerald-500/30">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <circle cx="9" cy="9" r="5.5" stroke="white" strokeWidth="1.4" fill="white" fillOpacity="0.08"/>
+        <path d="M13 13l3.5 3.5" stroke="white" strokeWidth="1.6" strokeLinecap="round"/>
+        <path d="M7 9h4M9 7v4" stroke="white" strokeWidth="1.3" strokeLinecap="round" strokeOpacity="0.7"/>
+      </svg>
+    </div>
+  );
+}
+
+const FORMAT_ICON_COMPONENTS = [<IconLanding key="landing" />, <IconBusiness key="business" />, <IconSeo key="seo" />];
 
 // ─── Страница ─────────────────────────────────────────────────────────────────
 
@@ -110,7 +149,7 @@ export default function ServicesPage() {
                 <div key={format.title}
                   className="flex w-[80vw] max-w-[300px] shrink-0 flex-col rounded-2xl border border-white/10 bg-[#13131A] p-6"
                   style={{ scrollSnapAlign: "start" }}>
-                  <span className="text-3xl" aria-hidden="true">{FORMAT_ICONS[i % FORMAT_ICONS.length]}</span>
+                  <span className="text-3xl" aria-hidden="true">{FORMAT_ICON_COMPONENTS[i % FORMAT_ICON_COMPONENTS.length]}</span>
                   <div className="mt-4 flex items-baseline gap-2">
                     <span className="text-2xl font-bold text-white">{format.price}</span>
                     <span className="text-sm text-[#6B6B80]">{format.duration}</span>
@@ -144,7 +183,7 @@ export default function ServicesPage() {
                       : "border-white/10 bg-[#13131A] hover:border-white/20 hover:bg-[#1C1C28]"
                   }`}>
                   <div className="flex items-start justify-between">
-                    <span className="text-3xl" aria-hidden="true">{FORMAT_ICONS[i]}</span>
+                    <span className="text-3xl" aria-hidden="true">{FORMAT_ICON_COMPONENTS[i]}</span>
                     {isFeatured && (
                       <span className="rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-violet-400">
                         Популярный
