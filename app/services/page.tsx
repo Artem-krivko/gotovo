@@ -131,7 +131,12 @@ export default function ServicesPage() {
       </section>
 
       {/* ── Форматы работы ──────────────────────────────────────────────────── */}
-      <section className="bg-[#16161F] px-4 py-16 sm:px-6 sm:py-24">
+      <div className="relative px-6" aria-hidden="true">
+        <div className="h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
+      </div>
+      <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+        <div className="pointer-events-none absolute -top-20 -left-20 h-[400px] w-[400px]" aria-hidden="true"
+          style={{ background: "radial-gradient(circle, rgba(124,58,237,0.11), transparent 65%)", filter: "blur(60px)" }} />
         <div className="mx-auto max-w-6xl">
           <div className="reveal-up text-center">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Форматы</p>
@@ -275,7 +280,12 @@ export default function ServicesPage() {
       </section>
 
       {/* ── Что входит в результат ──────────────────────────────────────────── */}
-      <section className="bg-[#16161F] px-4 py-16 sm:px-6 sm:py-24">
+      <div className="relative px-6" aria-hidden="true">
+        <div className="h-px bg-gradient-to-r from-transparent via-fuchsia-500/15 to-transparent" />
+      </div>
+      <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+        <div className="pointer-events-none absolute -bottom-10 left-1/2 -translate-x-1/2 h-[300px] w-[600px]" aria-hidden="true"
+          style={{ background: "radial-gradient(ellipse, rgba(217,70,239,0.07), transparent 65%)", filter: "blur(60px)" }} />
         <div className="mx-auto max-w-6xl">
           <div className="reveal-up text-center">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Результат</p>

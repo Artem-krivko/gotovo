@@ -272,7 +272,15 @@ function HowItWorks() {
   ];
 
   return (
-    <section className="bg-[#16161F] px-4 py-16 sm:px-6 sm:py-24">
+    <>
+    <div className="relative px-6" aria-hidden="true">
+      <div className="h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
+    </div>
+    <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+      <div className="pointer-events-none absolute -top-24 -right-24 h-[400px] w-[400px]" aria-hidden="true"
+        style={{ background: "radial-gradient(circle, rgba(124,58,237,0.11), transparent 65%)", filter: "blur(60px)" }} />
+      <div className="pointer-events-none absolute bottom-0 -left-20 h-[300px] w-[300px]" aria-hidden="true"
+        style={{ background: "radial-gradient(circle, rgba(59,130,246,0.08), transparent 65%)", filter: "blur(60px)" }} />
       <div className="mx-auto max-w-6xl">
         <div className="reveal-up text-center">
           <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Как это работает</p>
@@ -313,6 +321,7 @@ function HowItWorks() {
         </ol>
       </div>
     </section>
+    </>
   );
 }
 
@@ -409,7 +418,13 @@ function ForWhom() {
   ];
 
   return (
-    <section className="bg-[#16161F] px-4 py-16 sm:px-6 sm:py-24">
+    <>
+    <div className="relative px-6" aria-hidden="true">
+      <div className="h-px bg-gradient-to-r from-transparent via-fuchsia-500/15 to-transparent" />
+    </div>
+    <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 h-[350px] w-[700px]" aria-hidden="true"
+        style={{ background: "radial-gradient(ellipse, rgba(217,70,239,0.07), transparent 65%)", filter: "blur(60px)" }} />
       <div className="mx-auto max-w-6xl">
         <div className="reveal-up text-center">
           <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Кому подойдёт</p>
@@ -450,6 +465,7 @@ function ForWhom() {
         </div>
       </div>
     </section>
+    </>
   );
 }
 
@@ -527,7 +543,11 @@ function PricingPreview() {
 
 function FinalCta() {
   return (
-    <section className="bg-[#16161F] px-4 py-16 sm:px-6 sm:py-24">
+    <>
+    <div className="relative px-6" aria-hidden="true">
+      <div className="h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
+    </div>
+    <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
       <div className="mx-auto max-w-3xl">
         <div className="relative overflow-hidden rounded-3xl border border-violet-500/20 bg-gradient-to-br from-violet-500/10 via-[#13131A] to-blue-500/5 p-8 text-center sm:p-14">
           {/* Анимированный glow */}
@@ -552,6 +572,7 @@ function FinalCta() {
         </div>
       </div>
     </section>
+    </>
   );
 }
 

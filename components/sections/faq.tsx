@@ -85,7 +85,13 @@ export function Faq({ title, subtitle, items }: FaqProps) {
   }, []);
 
   return (
-    <section className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+    <>
+    <div className="relative px-6" aria-hidden="true">
+      <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+    </div>
+    <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 h-[300px] w-[600px]" aria-hidden="true"
+        style={{ background: "radial-gradient(ellipse, rgba(124,58,237,0.07), transparent 65%)", filter: "blur(60px)" }} />
       <div className="mx-auto max-w-3xl">
 
         <div className="reveal-up text-center">
@@ -108,5 +114,6 @@ export function Faq({ title, subtitle, items }: FaqProps) {
 
       </div>
     </section>
+    </>
   );
 }
