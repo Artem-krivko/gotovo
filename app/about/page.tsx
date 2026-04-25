@@ -128,11 +128,11 @@ export default function AboutPage() {
           {/* Метрики */}
           <div className="reveal-up delay-4 mt-12 grid max-w-lg mx-auto grid-cols-3 gap-3">
             {[
-              { value: "30 сек", label: "до первого превью" },
-              { value: "AI + Human", label: "скорость + качество" },
-              { value: "Под ключ", label: "от дизайна до запуска" },
+              { value: "30 сек", label: "до первого превью", border: "border-violet-500/40", glow: "shadow-lg shadow-violet-500/20" },
+              { value: "AI + Human", label: "скорость + качество", border: "border-blue-500/40", glow: "shadow-lg shadow-blue-500/20" },
+              { value: "Под ключ", label: "от дизайна до запуска", border: "border-emerald-500/40", glow: "shadow-lg shadow-emerald-500/20" },
             ].map((m) => (
-              <div key={m.label} className="rounded-2xl border border-white/10 bg-[#13131A] p-4 text-center">
+              <div key={m.label} className={`rounded-2xl border ${m.border} bg-[#13131A] p-4 text-center shadow-lg ${m.glow}`}>
                 <p className="text-base font-bold text-white sm:text-lg">{m.value}</p>
                 <p className="mt-1 text-xs leading-4 text-[#6B6B80]">{m.label}</p>
               </div>
@@ -141,8 +141,19 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* ── Разделитель ──────────────────────────────────────────────────────── */}
+      <div className="relative px-6" aria-hidden="true">
+        <div className="h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
+      </div>
+
       {/* ── Принципы ────────────────────────────────────────────────────────── */}
-      <section className="bg-[#16161F] px-4 py-16 sm:px-6 sm:py-24">
+      <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+        {/* Ambient glow: фиолетовый слева-сверху */}
+        <div className="pointer-events-none absolute -top-32 -left-32 h-[500px] w-[500px]" aria-hidden="true"
+          style={{ background: "radial-gradient(circle, rgba(124,58,237,0.13), transparent 65%)", filter: "blur(60px)" }} />
+        {/* Ambient glow: синий справа */}
+        <div className="pointer-events-none absolute top-1/2 -right-40 h-[400px] w-[400px]" aria-hidden="true"
+          style={{ background: "radial-gradient(circle, rgba(59,130,246,0.08), transparent 65%)", filter: "blur(70px)" }} />
         <div className="mx-auto max-w-6xl">
           <div className="reveal-up text-center">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Принципы</p>
@@ -219,8 +230,16 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* ── Разделитель ──────────────────────────────────────────────────────── */}
+      <div className="relative px-6" aria-hidden="true">
+        <div className="h-px bg-gradient-to-r from-transparent via-blue-500/15 to-transparent" />
+      </div>
+
       {/* ── Как выглядит работа ─────────────────────────────────────────────── */}
-      <section className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+      <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+        {/* Ambient glow: синий по центру снизу */}
+        <div className="pointer-events-none absolute -bottom-20 left-1/2 -translate-x-1/2 h-[350px] w-[600px]" aria-hidden="true"
+          style={{ background: "radial-gradient(ellipse, rgba(59,130,246,0.1), transparent 65%)", filter: "blur(60px)" }} />
         <div className="mx-auto max-w-6xl">
           <div className="reveal-up flex flex-col items-start gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -267,8 +286,16 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* ── Разделитель ──────────────────────────────────────────────────────── */}
+      <div className="relative px-6" aria-hidden="true">
+        <div className="h-px bg-gradient-to-r from-transparent via-fuchsia-500/15 to-transparent" />
+      </div>
+
       {/* ── Сравнение ───────────────────────────────────────────────────────── */}
-      <section className="bg-[#16161F] px-4 py-16 sm:px-6 sm:py-24">
+      <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+        {/* Ambient glow: fuchsia справа-сверху */}
+        <div className="pointer-events-none absolute -top-20 -right-20 h-[400px] w-[400px]" aria-hidden="true"
+          style={{ background: "radial-gradient(circle, rgba(217,70,239,0.09), transparent 65%)", filter: "blur(70px)" }} />
         <div className="mx-auto max-w-4xl">
           <div className="reveal-up text-center">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Сравнение</p>
@@ -294,8 +321,16 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* ── Разделитель ──────────────────────────────────────────────────────── */}
+      <div className="relative px-6" aria-hidden="true">
+        <div className="h-px bg-gradient-to-r from-transparent via-emerald-500/15 to-transparent" />
+      </div>
+
       {/* ── Для кого ────────────────────────────────────────────────────────── */}
-      <section className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+      <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+        {/* Ambient glow: emerald слева по центру */}
+        <div className="pointer-events-none absolute top-1/3 -left-32 h-[400px] w-[400px]" aria-hidden="true"
+          style={{ background: "radial-gradient(circle, rgba(16,185,129,0.08), transparent 65%)", filter: "blur(70px)" }} />
         <div className="mx-auto max-w-3xl">
           <div className="reveal-up text-center">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Честно</p>
@@ -319,8 +354,16 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* ── Разделитель ──────────────────────────────────────────────────────── */}
+      <div className="relative px-6" aria-hidden="true">
+        <div className="h-px bg-gradient-to-r from-transparent via-violet-500/15 to-transparent" />
+      </div>
+
       {/* ── Навигация ───────────────────────────────────────────────────────── */}
-      <section className="bg-[#16161F] px-4 py-10 sm:px-6">
+      <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-10 sm:px-6">
+        {/* Ambient glow: violet по центру */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[200px]" aria-hidden="true"
+          style={{ background: "radial-gradient(ellipse 60% 100% at 50% 0%, rgba(124,58,237,0.07), transparent)" }} />
         <div className="mx-auto max-w-6xl grid gap-4 sm:grid-cols-3">
           {[
             { label: "Услуги", description: "Форматы разработки и для кого", href: "/services", color: "border-blue-500/20 hover:border-blue-500/40" },

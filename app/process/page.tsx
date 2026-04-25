@@ -117,9 +117,9 @@ export default function ProcessPage() {
             {/* Метрики */}
             <div className="reveal-up delay-4 mt-12 grid w-full max-w-lg grid-cols-3 gap-3">
               {[
-                { value: "30 сек", label: "до первого превью", border: "border-violet-500/30", glow: "shadow-violet-500/10" },
-                { value: "7 шагов", label: "от идеи до запуска", border: "border-blue-500/30", glow: "shadow-blue-500/10" },
-                { value: "0 ₽", label: "до того как понравится", border: "border-emerald-500/30", glow: "shadow-emerald-500/10" },
+                { value: "30 сек", label: "до первого превью", border: "border-violet-500/40", glow: "shadow-lg shadow-violet-500/20" },
+                { value: "7 шагов", label: "от идеи до запуска", border: "border-blue-500/40", glow: "shadow-lg shadow-blue-500/20" },
+                { value: "0 ₽", label: "до того как понравится", border: "border-emerald-500/40", glow: "shadow-lg shadow-emerald-500/20" },
               ].map((m) => (
                 <div key={m.label} className={`rounded-2xl border ${m.border} bg-[#13131A] p-4 text-center shadow-lg ${m.glow}`}>
                   <p className="text-base font-bold text-white sm:text-lg">{m.value}</p>
