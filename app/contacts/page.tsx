@@ -70,7 +70,14 @@ export default function ContactsPage() {
         </div>
       </section>
 
-      <section className="bg-[#16161F] px-4 py-16 sm:px-6 sm:py-24">
+      <div className="relative px-6" aria-hidden="true">
+        <div className="h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
+      </div>
+      <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+        <div className="pointer-events-none absolute -top-20 -left-20 h-[400px] w-[400px]" aria-hidden="true"
+          style={{ background: "radial-gradient(circle, rgba(124,58,237,0.1), transparent 65%)", filter: "blur(60px)" }} />
+        <div className="pointer-events-none absolute -bottom-10 -right-10 h-[300px] w-[300px]" aria-hidden="true"
+          style={{ background: "radial-gradient(circle, rgba(59,130,246,0.08), transparent 65%)", filter: "blur(60px)" }} />
         <div className="mx-auto max-w-6xl grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
 
           {/* Форма */}

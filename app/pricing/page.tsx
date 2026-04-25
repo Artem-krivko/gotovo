@@ -83,11 +83,11 @@ export default function PricingPage() {
           {/* Метрики */}
           <div className="reveal-up delay-4 mt-12 grid max-w-lg mx-auto grid-cols-3 gap-3">
             {[
-              { value: "€500", label: "от — лендинг" },
-              { value: "7–14 дней", label: "типичный срок" },
-              { value: "50/50", label: "схема оплаты" },
+              { value: "€500", label: "от — лендинг", border: "border-violet-500/30", glow: "shadow-violet-500/10" },
+              { value: "7–14 дней", label: "типичный срок", border: "border-blue-500/30", glow: "shadow-blue-500/10" },
+              { value: "50/50", label: "схема оплаты", border: "border-emerald-500/30", glow: "shadow-emerald-500/10" },
             ].map((m) => (
-              <div key={m.label} className="rounded-2xl border border-white/10 bg-[#13131A] p-4 text-center">
+              <div key={m.label} className={`rounded-2xl border ${m.border} bg-[#13131A] p-4 text-center shadow-lg ${m.glow}`}>
                 <p className="text-base font-bold text-white sm:text-xl">{m.value}</p>
                 <p className="mt-1 text-xs leading-4 text-[#6B6B80]">{m.label}</p>
               </div>
