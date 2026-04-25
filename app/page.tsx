@@ -351,15 +351,20 @@ function HowItWorks() {
 // ─── ПРИМЕРЫ ДИЗАЙНОВ ────────────────────────────────────────────────────────
 
 function GeneratorExamples() {
-  const categories = ["Медицина", "Красота", "Спорт"];
+  const categories = ["Медицина", "Красота", "Спорт", "Еда", "B2B", "IT"];
 
   return (
     <section className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
       <div className="mx-auto max-w-6xl">
         <div className="reveal-up text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Примеры</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">Примеры дизайнов</h2>
-          <p className="mt-3 text-[#A1A1B5]">Реальные результаты нашего генератора для разных ниш бизнеса</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Результаты генератора</p>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+            Посмотрите что{" "}
+            <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+              создаёт AI
+            </span>
+          </h2>
+          <p className="mt-3 text-[#A1A1B5]">6 ниш — 6 разных стилей. Каждый дизайн под характер бизнеса.</p>
         </div>
         <GeneratorExamplesFilter cases={GENERATOR_CASES} categories={categories} />
       </div>
