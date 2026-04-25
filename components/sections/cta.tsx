@@ -5,9 +5,11 @@ interface CtaProps {
   title: string;
   subtitle: string;
   button: string;
+  /** Куда ведёт основная кнопка. По умолчанию /generator */
+  href?: string;
 }
 
-export function Cta({ title, subtitle, button }: CtaProps) {
+export function Cta({ title, subtitle, button, href = "/generator" }: CtaProps) {
   return (
     <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
       {/* Ambient glow: violet по центру снизу */}
@@ -21,13 +23,15 @@ export function Cta({ title, subtitle, button }: CtaProps) {
             <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">{title}</h2>
             <p className="mt-4 text-[#A1A1B5]">{subtitle}</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-              <Link href="/generator"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-7 py-3.5 text-sm font-bold text-white shadow-xl shadow-violet-500/30 transition hover:opacity-90 hover:-translate-y-0.5">
+              <Link
+                href={href}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-7 py-3.5 text-sm font-bold text-white shadow-xl shadow-violet-500/30 transition hover:opacity-90 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500"
+              >
                 <span aria-hidden="true">✦</span>
                 {button}
               </Link>
               <a href="mailto:info@usegotovo.by"
-                className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 text-sm font-medium text-white transition hover:bg-white/10">
+                className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 text-sm font-medium text-white transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/40">
                 Написать напрямую
               </a>
             </div>

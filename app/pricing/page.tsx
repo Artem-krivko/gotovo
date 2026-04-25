@@ -71,12 +71,12 @@ export default function PricingPage() {
           </p>
 
           <div className="reveal-up delay-3 mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            <Link href="/generator"
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/30 transition hover:opacity-90 hover:-translate-y-0.5">
-              <span aria-hidden="true">✦</span> Попробовать бесплатно
+            <Link href="/contacts"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/30 transition hover:opacity-90 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500">
+              Обсудить проект →
             </Link>
             <a href="#pricing-cards"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 text-sm font-medium text-white transition hover:bg-white/10">
+              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 text-sm font-medium text-white transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/40">
               Смотреть пакеты
             </a>
           </div>
@@ -141,11 +141,13 @@ export default function PricingPage() {
                     </li>
                   ))}
                 </ul>
-                <Link href="/generator"
-                  className={`mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition ${
-                    plan.featured ? "bg-gradient-to-r from-violet-600 to-blue-600 text-white shadow-lg shadow-violet-500/25" : "border border-white/10 bg-white/5 text-white"
+                <Link href="/contacts"
+                  className={`mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+                    plan.featured
+                      ? "bg-gradient-to-r from-violet-600 to-blue-600 text-white shadow-lg shadow-violet-500/25 focus-visible:outline-violet-500"
+                      : "border border-white/10 bg-white/5 text-white focus-visible:outline-white/40"
                   }`}>
-                  {plan.cta} <ArrowRight />
+                  Обсудить проект <ArrowRight />
                 </Link>
               </div>
             ))}
@@ -182,16 +184,26 @@ export default function PricingPage() {
                       </li>
                     ))}
                   </ul>
-                  <Link href="/generator"
-                    className={`mt-7 inline-flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition hover:-translate-y-0.5 ${
-                      plan.featured ? "bg-gradient-to-r from-violet-600 to-blue-600 text-white shadow-lg shadow-violet-500/25 hover:opacity-90" : "border border-white/10 bg-white/5 text-white hover:bg-white/10"
+                  <Link href="/contacts"
+                    className={`mt-7 inline-flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+                      plan.featured
+                        ? "bg-gradient-to-r from-violet-600 to-blue-600 text-white shadow-lg shadow-violet-500/25 hover:opacity-90 focus-visible:outline-violet-500"
+                        : "border border-white/10 bg-white/5 text-white hover:bg-white/10 focus-visible:outline-white/40"
                     }`}>
-                    {plan.cta} <ArrowRight />
+                    Обсудить проект <ArrowRight />
                   </Link>
                 </div>
               );
             })}
           </div>
+
+          {/* Подсказка под карточками */}
+          <p className="mt-6 text-center text-sm text-[#6B6B80]">
+            Не уверены в формате?{" "}
+            <Link href="/generator" className="text-[#A1A1B5] transition-colors hover:text-white underline underline-offset-2">
+              Попробуйте генератор бесплатно →
+            </Link>
+          </p>
         </div>
       </ScrollGlow>
 
@@ -266,7 +278,7 @@ export default function PricingPage() {
       </ScrollGlow>
 
       <Faq title="Вопросы по стоимости" subtitle="Отвечаем до старта — без обязательств" items={PRICING_FAQ} />
-      <Cta title="Не знаете с чего начать?" subtitle="Попробуйте генератор — увидите дизайн до оплаты. Или напишите напрямую." button="Сгенерировать дизайн" />
+      <Cta title="Готовы обсудить проект?" subtitle="Опишите задачу — ответим в течение нескольких часов. Или сначала попробуйте генератор бесплатно." button="Обсудить проект" href="/contacts" />
 
       <section className="bg-[#0A0A0F] px-4 py-8 sm:px-6">
         <p className="text-center text-sm text-[#6B6B80]">
