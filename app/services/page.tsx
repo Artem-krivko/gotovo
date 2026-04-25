@@ -93,7 +93,7 @@ export default function ServicesPage() {
 
             <h1 className="reveal-up delay-1 mt-6 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl lg:text-7xl">
               Сайты которые{" "}
-              <span className="gradient-reveal">
+              <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-blue-400 bg-clip-text text-transparent">
                 работают на бизнес
               </span>
             </h1>

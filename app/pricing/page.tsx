@@ -61,7 +61,7 @@ export default function PricingPage() {
 
             <h1 className="reveal-up delay-1 mt-6 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl lg:text-7xl">
               Фиксированная стоимость —{" "}
-              <span className="gradient-reveal">
+              <span className="bg-gradient-to-r from-blue-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
                 без сюрпризов
               </span>
           </h1>
