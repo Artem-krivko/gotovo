@@ -1,83 +1,68 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" font-family="system-ui, -apple-system, sans-serif">
-  <!-- Тёмный фон кофейни -->
-  <rect width="800" height="500" fill="#0f0a05"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <!-- BG warm dark -->
+  <rect width="800" height="500" fill="#1A1208"/>
 
-  <!-- Header -->
-  <rect width="800" height="60" fill="#1a1008" opacity="0.95"/>
-  <text x="40" y="37" font-size="18" font-weight="700" fill="#f59e0b" letter-spacing="2">☕ ГРАММ</text>
-  <text x="460" y="37" font-size="12" fill="#a8a29e">Меню</text>
-  <text x="520" y="37" font-size="12" fill="#a8a29e">О нас</text>
-  <text x="580" y="37" font-size="12" fill="#a8a29e">Локации</text>
-  <rect x="660" y="18" width="100" height="28" rx="6" fill="#f59e0b"/>
-  <text x="710" y="36" font-size="12" font-weight="600" fill="#1a1008" text-anchor="middle">Забронировать</text>
+  <!-- NAV -->
+  <rect width="800" height="56" fill="#1E1510"/>
+  <rect x="0" y="55" width="800" height="1" fill="#2E2010"/>
+  <text x="32" y="24" font-family="Georgia,serif" font-size="10" fill="#8B7355" letter-spacing="2">☕</text>
+  <text x="52" y="34" font-family="Georgia,serif" font-size="16" font-weight="700" fill="#F5DEB3">ГРАММ</text>
+  <text x="230" y="32" font-family="system-ui,sans-serif" font-size="10" fill="#8B7355">Меню</text>
+  <text x="290" y="32" font-family="system-ui,sans-serif" font-size="10" fill="#8B7355">О нас</text>
+  <text x="350" y="32" font-family="system-ui,sans-serif" font-size="10" fill="#8B7355">События</text>
+  <text x="430" y="32" font-family="system-ui,sans-serif" font-size="10" fill="#8B7355">Контакты</text>
+  <rect x="614" y="14" width="150" height="30" rx="15" fill="#C8860A"/>
+  <text x="689" y="33" font-family="system-ui,sans-serif" font-size="10" font-weight="600" fill="white" text-anchor="middle">Забронировать стол</text>
 
-  <!-- Hero с тёмным фоном -->
-  <defs>
-    <linearGradient id="coffeeHero" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#1a0e05"/>
-      <stop offset="60%" style="stop-color:#2d1a0a"/>
-      <stop offset="100%" style="stop-color:#1a0e05"/>
-    </linearGradient>
-    <radialGradient id="warmLight" cx="40%" cy="30%" r="50%">
-      <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:0.15"/>
-      <stop offset="100%" style="stop-color:#1a0e05;stop-opacity:0"/>
-    </radialGradient>
-  </defs>
-  <rect y="60" width="800" height="220" fill="url(#coffeeHero)"/>
-  <rect y="60" width="800" height="220" fill="url(#warmLight)"/>
+  <!-- HERO -->
+  <rect x="0" y="56" width="800" height="200" fill="#1A1208"/>
+  <!-- ambient glow -->
+  <ellipse cx="400" cy="156" rx="300" ry="100" fill="#C8860A" opacity="0.06"/>
 
-  <!-- Окна кофейни -->
-  <rect x="30" y="75" width="100" height="80" rx="4" fill="none" stroke="#f59e0b" stroke-width="1.5" opacity="0.3"/>
-  <rect x="36" y="81" width="88" height="68" fill="#f59e0b" opacity="0.03"/>
-  <line x1="80" y1="81" x2="80" y2="149" stroke="#f59e0b" stroke-width="1" opacity="0.2"/>
+  <text x="400" y="96" font-family="system-ui,sans-serif" font-size="9" fill="#8B7355" text-anchor="middle" letter-spacing="4">SPECIALTY КОФЕ · АВТОРСКИЕ ДЕСЕРТЫ</text>
+  <text x="400" y="138" font-family="Georgia,serif" font-size="34" font-weight="700" fill="#F5DEB3" text-anchor="middle">Specialty кофе</text>
+  <text x="400" y="175" font-family="Georgia,serif" font-size="34" font-weight="700" fill="#C8860A" text-anchor="middle">с характером</text>
+  <text x="400" y="204" font-family="system-ui,sans-serif" font-size="10" fill="#6B5A3A" text-anchor="middle">Авторские напитки · Сезонные обжарки · Уютная атмосфера</text>
+  <rect x="316" y="218" width="168" height="34" rx="17" fill="#C8860A"/>
+  <text x="400" y="239" font-family="system-ui,sans-serif" font-size="10" font-weight="600" fill="white" text-anchor="middle">Посмотреть меню</text>
 
-  <!-- Столы -->
-  <ellipse cx="180" cy="265" rx="40" ry="10" fill="#78450a" opacity="0.5"/>
-  <rect x="170" y="230" width="20" height="35" rx="3" fill="#5a2d08" opacity="0.7"/>
+  <!-- DIVIDER -->
+  <rect x="0" y="256" width="800" height="1" fill="#2E2010"/>
 
-  <!-- Hero text -->
-  <text x="400" y="140" font-size="42" font-weight="800" fill="white" text-anchor="middle">Specialty кофе</text>
-  <text x="400" y="185" font-size="42" font-weight="800" fill="#f59e0b" text-anchor="middle">с характером</text>
-  <text x="400" y="225" font-size="14" fill="#a8a29e" text-anchor="middle">Авторские напитки · Сезонные обжарки · Уютная атмосфера</text>
+  <!-- MENU SECTION -->
+  <rect x="0" y="257" width="800" height="243" fill="#160F06"/>
+  <text x="400" y="284" font-family="Georgia,serif" font-size="12" fill="#8B7355" text-anchor="middle" letter-spacing="2">Наше кофе</text>
 
-  <!-- CTA -->
-  <rect x="300" y="248" width="200" height="38" rx="10" fill="#f59e0b"/>
-  <text x="400" y="271" font-size="13" font-weight="700" fill="#1a1008" text-anchor="middle">Посмотреть меню</text>
+  <!-- menu items -->
+  <rect x="28" y="296" width="224" height="150" rx="8" fill="#1E1510" stroke="#2E2010" stroke-width="1"/>
+  <rect x="28" y="296" width="224" height="90" rx="8" fill="#2A1E0E"/>
+  <!-- cup illustration -->
+  <ellipse cx="140" cy="335" rx="30" ry="8" fill="#3D2A10"/>
+  <rect x="118" y="316" width="44" height="28" rx="4" fill="#4A3418"/>
+  <rect x="122" y="320" width="36" height="20" rx="3" fill="#C8860A" opacity="0.4"/>
+  <rect x="162" y="324" width="12" height="16" rx="8" fill="none" stroke="#4A3418" stroke-width="2"/>
+  <text x="140" y="408" font-family="Georgia,serif" font-size="13" font-weight="700" fill="#F5DEB3" text-anchor="middle">Фильтр</text>
+  <text x="140" y="424" font-family="system-ui,sans-serif" font-size="9" fill="#6B5A3A" text-anchor="middle">Чистый вкус · Нет горечи</text>
+  <text x="140" y="440" font-family="system-ui,sans-serif" font-size="10" fill="#C8860A" text-anchor="middle">280 ₽</text>
 
-  <!-- Coffee cards section -->
-  <rect y="280" width="800" height="220" fill="#130c04"/>
-  <text x="400" y="316" font-size="16" font-weight="700" fill="#f9f6f3" text-anchor="middle">Наш кофе</text>
-  <text x="400" y="335" font-size="12" fill="#78716c" text-anchor="middle">Тщательно отобранные обжарки со всего мира</text>
+  <rect x="268" y="296" width="224" height="150" rx="8" fill="#1E1510" stroke="#2E2010" stroke-width="1"/>
+  <rect x="268" y="296" width="224" height="90" rx="8" fill="#261A0A"/>
+  <ellipse cx="380" cy="335" rx="30" ry="8" fill="#3D2A10"/>
+  <rect x="358" y="308" width="44" height="36" rx="4" fill="#4A3418"/>
+  <rect x="362" y="312" width="36" height="28" rx="3" fill="#C8860A" opacity="0.5"/>
+  <rect x="402" y="320" width="12" height="16" rx="8" fill="none" stroke="#4A3418" stroke-width="2"/>
+  <text x="380" y="408" font-family="Georgia,serif" font-size="13" font-weight="700" fill="#F5DEB3" text-anchor="middle">Флэт Хайт</text>
+  <text x="380" y="424" font-family="system-ui,sans-serif" font-size="9" fill="#6B5A3A" text-anchor="middle">Молочный · Нежный</text>
+  <text x="380" y="440" font-family="system-ui,sans-serif" font-size="10" fill="#C8860A" text-anchor="middle">320 ₽</text>
 
-  <!-- Card 1 -->
-  <rect x="40" y="350" width="220" height="130" rx="14" fill="#1c1007"/>
-  <rect x="40" y="350" width="220" height="75" rx="14" fill="#2d1a0a"/>
-  <!-- Coffee cup icon -->
-  <rect x="120" y="365" width="60" height="45" rx="8" fill="#f59e0b" opacity="0.15"/>
-  <ellipse cx="150" cy="390" rx="20" ry="15" fill="#92400e" opacity="0.6"/>
-  <ellipse cx="150" cy="382" rx="18" ry="8" fill="#f59e0b" opacity="0.3"/>
-  <text x="150" y="443" font-size="13" font-weight="700" fill="#f9f6f3" text-anchor="middle">Фильтр</text>
-  <text x="150" y="460" font-size="11" fill="#78716c" text-anchor="middle">Эфиопия Иргачеффе</text>
-  <text x="150" y="474" font-size="12" font-weight="600" fill="#f59e0b" text-anchor="middle">280 ₽</text>
-
-  <!-- Card 2 — Featured -->
-  <rect x="290" y="345" width="220" height="140" rx="14" fill="#1c1007"/>
-  <rect x="290" y="345" width="220" height="4" rx="2" fill="#f59e0b"/>
-  <rect x="290" y="345" width="220" height="80" rx="14" fill="#3d2010"/>
-  <ellipse cx="400" cy="393" rx="22" ry="16" fill="#b45309" opacity="0.6"/>
-  <ellipse cx="400" cy="384" rx="20" ry="9" fill="#f59e0b" opacity="0.4"/>
-  <rect x="350" y="356" width="60" height="12" rx="6" fill="#f59e0b" opacity="0.2"/>
-  <text x="380" y="364" font-size="10" fill="#f59e0b" text-anchor="middle">⭐ Хит продаж</text>
-  <text x="400" y="451" font-size="13" font-weight="700" fill="#f9f6f3" text-anchor="middle">Флэт Уайт</text>
-  <text x="400" y="467" font-size="11" fill="#78716c" text-anchor="middle">Бленд Южной Америки</text>
-  <text x="400" y="480" font-size="12" font-weight="600" fill="#f59e0b" text-anchor="middle">320 ₽</text>
-
-  <!-- Card 3 -->
-  <rect x="540" y="350" width="220" height="130" rx="14" fill="#1c1007"/>
-  <rect x="540" y="350" width="220" height="75" rx="14" fill="#2d1a0a"/>
-  <ellipse cx="650" cy="393" rx="20" ry="15" fill="#92400e" opacity="0.5"/>
-  <ellipse cx="650" cy="384" rx="18" ry="8" fill="#d97706" opacity="0.3"/>
-  <text x="650" y="443" font-size="13" font-weight="700" fill="#f9f6f3" text-anchor="middle">Авторский</text>
-  <text x="650" y="460" font-size="11" fill="#78716c" text-anchor="middle">Сезонный рецепт</text>
-  <text x="650" y="474" font-size="12" font-weight="600" fill="#f59e0b" text-anchor="middle">350 ₽</text>
+  <rect x="508" y="296" width="264" height="150" rx="8" fill="#221809" stroke="#2E2010" stroke-width="1"/>
+  <rect x="508" y="296" width="264" height="90" rx="8" fill="#2E1F0C"/>
+  <ellipse cx="640" cy="335" rx="30" ry="8" fill="#3D2A10"/>
+  <rect x="614" y="310" width="44" height="34" rx="22" fill="#4A3418"/>
+  <rect x="618" y="314" width="36" height="26" rx="18" fill="#C8860A" opacity="0.6"/>
+  <text x="640" y="408" font-family="Georgia,serif" font-size="13" font-weight="700" fill="#F5DEB3" text-anchor="middle">Авторский</text>
+  <text x="640" y="424" font-family="system-ui,sans-serif" font-size="9" fill="#6B5A3A" text-anchor="middle">Сезонный · Ограничен</text>
+  <text x="640" y="440" font-family="system-ui,sans-serif" font-size="10" fill="#C8860A" text-anchor="middle">380 ₽</text>
+  <rect x="590" y="452" width="100" height="22" rx="11" fill="#C8860A"/>
+  <text x="640" y="467" font-family="system-ui,sans-serif" font-size="9" font-weight="600" fill="white" text-anchor="middle">В корзину</text>
 </svg>

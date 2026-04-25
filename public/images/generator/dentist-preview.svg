@@ -1,96 +1,87 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="600" height="400">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#f0f8ff"/>
-      <stop offset="100%" stop-color="#e8f4fd"/>
-    </linearGradient>
-    <linearGradient id="hero" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#1e40af"/>
-      <stop offset="100%" stop-color="#0ea5e9"/>
-    </linearGradient>
-    <linearGradient id="card1" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff"/>
-      <stop offset="100%" stop-color="#f0f9ff"/>
-    </linearGradient>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <!-- BG -->
+  <rect width="800" height="500" fill="#F0F7FF"/>
 
-  <!-- Фон страницы -->
-  <rect width="600" height="400" fill="url(#bg)"/>
+  <!-- NAV -->
+  <rect width="800" height="56" fill="#FFFFFF"/>
+  <rect x="28" y="18" width="36" height="20" rx="4" fill="#2563EB"/>
+  <text x="72" y="32" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="#1E3A5F">DentalPro</text>
+  <text x="240" y="32" font-family="system-ui,sans-serif" font-size="11" fill="#64748B">Услуги</text>
+  <text x="310" y="32" font-family="system-ui,sans-serif" font-size="11" fill="#64748B">О клинике</text>
+  <text x="390" y="32" font-family="system-ui,sans-serif" font-size="11" fill="#64748B">Врачи</text>
+  <text x="450" y="32" font-family="system-ui,sans-serif" font-size="11" fill="#64748B">Цены</text>
+  <rect x="580" y="14" width="120" height="28" rx="6" fill="#2563EB"/>
+  <text x="640" y="32" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="white" text-anchor="middle">Записаться</text>
 
-  <!-- Навбар -->
-  <rect width="600" height="44" fill="white" opacity="0.95"/>
-  <rect width="600" height="1" y="44" fill="#e2e8f0"/>
-  <!-- Логотип -->
-  <circle cx="24" cy="22" r="8" fill="#1e40af"/>
-  <text x="38" y="27" font-family="Arial" font-size="12" font-weight="700" fill="#1e293b">SmilePro</text>
-  <!-- Навигация -->
-  <text x="310" y="27" font-family="Arial" font-size="10" fill="#64748b">Услуги</text>
-  <text x="370" y="27" font-family="Arial" font-size="10" fill="#64748b">Врачи</text>
-  <text x="420" y="27" font-family="Arial" font-size="10" fill="#64748b">Цены</text>
-  <!-- CTA кнопка -->
-  <rect x="480" y="12" width="104" height="22" rx="11" fill="#1e40af"/>
-  <text x="532" y="26" font-family="Arial" font-size="10" font-weight="600" fill="white" text-anchor="middle">Записаться</text>
+  <!-- HERO -->
+  <rect x="0" y="56" width="480" height="240" fill="#EFF6FF"/>
+  <text x="40" y="110" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="#2563EB">✦ Современная стоматология</text>
+  <text x="40" y="140" font-family="system-ui,sans-serif" font-size="26" font-weight="800" fill="#1E3A5F">Ваша улыбка —</text>
+  <text x="40" y="170" font-family="system-ui,sans-serif" font-size="26" font-weight="800" fill="#1E3A5F">наша забота</text>
+  <text x="40" y="200" font-family="system-ui,sans-serif" font-size="11" fill="#64748B">Лечение без боли · Современное оборудование</text>
+  <text x="40" y="216" font-family="system-ui,sans-serif" font-size="11" fill="#64748B">Опытные врачи · Гарантия результата</text>
+  <rect x="40" y="232" width="130" height="34" rx="7" fill="#2563EB"/>
+  <text x="105" y="254" font-family="system-ui,sans-serif" font-size="11" font-weight="600" fill="white" text-anchor="middle">Записаться онлайн</text>
+  <rect x="184" y="232" width="110" height="34" rx="7" fill="none" stroke="#2563EB" stroke-width="1.5"/>
+  <text x="239" y="254" font-family="system-ui,sans-serif" font-size="11" fill="#2563EB" text-anchor="middle">Наши услуги</text>
 
-  <!-- Hero секция -->
-  <rect y="44" width="600" height="160" fill="url(#hero)"/>
-  <!-- Белые декоративные круги -->
-  <circle cx="480" cy="100" r="80" fill="white" opacity="0.06"/>
-  <circle cx="520" cy="140" r="50" fill="white" opacity="0.05"/>
-  <!-- Hero текст -->
-  <text x="36" y="90" font-family="Arial" font-size="11" fill="rgba(255,255,255,0.7)" font-weight="500">Стоматологическая клиника</text>
-  <text x="36" y="118" font-family="Arial" font-size="22" font-weight="800" fill="white">Здоровая улыбка —</text>
-  <text x="36" y="143" font-family="Arial" font-size="22" font-weight="800" fill="white">ваша уверенность</text>
-  <text x="36" y="165" font-family="Arial" font-size="11" fill="rgba(255,255,255,0.75)">Современные технологии · Безболезненное лечение</text>
-  <!-- Hero кнопки -->
-  <rect x="36" y="177" width="120" height="22" rx="11" fill="white"/>
-  <text x="96" y="191" font-family="Arial" font-size="10" font-weight="600" fill="#1e40af" text-anchor="middle">Записаться онлайн</text>
-  <rect x="168" y="177" width="90" height="22" rx="11" fill="rgba(255,255,255,0.15)" stroke="white" stroke-width="1"/>
-  <text x="213" y="191" font-family="Arial" font-size="10" fill="white" text-anchor="middle">Наши услуги</text>
+  <!-- HERO IMAGE placeholder -->
+  <rect x="480" y="56" width="320" height="240" fill="#DBEAFE"/>
+  <rect x="530" y="90" width="220" height="170" rx="12" fill="white" opacity="0.7"/>
+  <!-- tooth icon -->
+  <ellipse cx="640" cy="155" rx="40" ry="45" fill="#2563EB" opacity="0.15"/>
+  <ellipse cx="640" cy="155" rx="25" ry="30" fill="#2563EB" opacity="0.25"/>
+  <text x="640" y="163" font-family="system-ui,sans-serif" font-size="28" fill="#2563EB" text-anchor="middle">🦷</text>
+  <text x="640" y="198" font-family="system-ui,sans-serif" font-size="10" fill="#2563EB" text-anchor="middle" font-weight="600">Безболезненно</text>
 
-  <!-- Секция "Наши услуги" -->
-  <rect y="204" width="600" height="12" fill="#f8fafc"/>
-  <text x="300" y="226" font-family="Arial" font-size="13" font-weight="700" fill="#1e293b" text-anchor="middle">Наши услуги</text>
-  <text x="300" y="242" font-family="Arial" font-size="10" fill="#64748b" text-anchor="middle">Полный спектр стоматологических услуг</text>
+  <!-- STATS BAR -->
+  <rect x="0" y="296" width="800" height="60" fill="white"/>
+  <rect x="0" y="296" width="800" height="1" fill="#E2E8F0"/>
+  <rect x="0" y="355" width="800" height="1" fill="#E2E8F0"/>
+  <!-- stat 1 -->
+  <text x="130" y="321" font-family="system-ui,sans-serif" font-size="18" font-weight="800" fill="#1E3A5F" text-anchor="middle">15 000+</text>
+  <text x="130" y="341" font-family="system-ui,sans-serif" font-size="10" fill="#64748B" text-anchor="middle">пациентов</text>
+  <rect x="240" y="306" width="1" height="40" fill="#E2E8F0"/>
+  <!-- stat 2 -->
+  <text x="360" y="321" font-family="system-ui,sans-serif" font-size="18" font-weight="800" fill="#1E3A5F" text-anchor="middle">12 лет</text>
+  <text x="360" y="341" font-family="system-ui,sans-serif" font-size="10" fill="#64748B" text-anchor="middle">на рынке</text>
+  <rect x="480" y="306" width="1" height="40" fill="#E2E8F0"/>
+  <!-- stat 3 -->
+  <text x="600" y="321" font-family="system-ui,sans-serif" font-size="18" font-weight="800" fill="#2563EB" text-anchor="middle">4.9 ★</text>
+  <text x="600" y="341" font-family="system-ui,sans-serif" font-size="10" fill="#64748B" text-anchor="middle">рейтинг</text>
+  <rect x="720" y="306" width="1" height="40" fill="#E2E8F0"/>
+  <!-- stat 4 -->
+  <text x="760" y="321" font-family="system-ui,sans-serif" font-size="18" font-weight="800" fill="#1E3A5F" text-anchor="middle">30+</text>
+  <text x="760" y="341" font-family="system-ui,sans-serif" font-size="10" fill="#64748B" text-anchor="middle">врачей</text>
 
-  <!-- Карточки услуг -->
-  <!-- Карточка 1 -->
-  <rect x="24" y="254" width="164" height="100" rx="12" fill="url(#card1)" stroke="#e2e8f0" stroke-width="1"/>
-  <circle cx="56" cy="284" r="18" fill="#eff6ff"/>
-  <text x="56" y="289" font-family="Arial" font-size="16" text-anchor="middle">🦷</text>
-  <text x="80" y="281" font-family="Arial" font-size="11" font-weight="700" fill="#1e293b">Лечение</text>
-  <text x="80" y="295" font-family="Arial" font-size="9" fill="#64748b">Безболезненно</text>
-  <text x="36" y="318" font-family="Arial" font-size="9" fill="#94a3b8">от 2 500 ₽</text>
-  <rect x="110" y="308" width="64" height="18" rx="9" fill="#1e40af"/>
-  <text x="142" y="320" font-family="Arial" font-size="9" fill="white" text-anchor="middle">Подробнее</text>
+  <!-- SERVICES SECTION -->
+  <text x="400" y="386" font-family="system-ui,sans-serif" font-size="14" font-weight="700" fill="#1E3A5F" text-anchor="middle">Наши услуги</text>
 
-  <!-- Карточка 2 -->
-  <rect x="200" y="254" width="164" height="100" rx="12" fill="url(#card1)" stroke="#e2e8f0" stroke-width="1"/>
-  <circle cx="232" cy="284" r="18" fill="#eff6ff"/>
-  <text x="232" y="289" font-family="Arial" font-size="16" text-anchor="middle">✨</text>
-  <text x="256" y="281" font-family="Arial" font-size="11" font-weight="700" fill="#1e293b">Отбеливание</text>
-  <text x="256" y="295" font-family="Arial" font-size="9" fill="#64748b">Hollywood Smile</text>
-  <text x="212" y="318" font-family="Arial" font-size="9" fill="#94a3b8">от 8 000 ₽</text>
-  <rect x="286" y="308" width="64" height="18" rx="9" fill="#1e40af"/>
-  <text x="318" y="320" font-family="Arial" font-size="9" fill="white" text-anchor="middle">Подробнее</text>
+  <!-- service cards -->
+  <rect x="28" y="398" width="170" height="80" rx="10" fill="white" stroke="#E2E8F0" stroke-width="1"/>
+  <rect x="28" y="398" width="170" height="4" rx="2" fill="#2563EB"/>
+  <text x="113" y="422" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="#1E3A5F" text-anchor="middle">Лечение кариеса</text>
+  <text x="113" y="438" font-family="system-ui,sans-serif" font-size="10" fill="#64748B" text-anchor="middle">от 3 500 ₽</text>
+  <text x="113" y="456" font-family="system-ui,sans-serif" font-size="10" fill="#64748B" text-anchor="middle">Безболезненно</text>
+  <text x="113" y="470" font-family="system-ui,sans-serif" font-size="10" fill="#2563EB" text-anchor="middle">Подробнее →</text>
 
-  <!-- Карточка 3 -->
-  <rect x="376" y="254" width="164" height="100" rx="12" fill="url(#card1)" stroke="#e2e8f0" stroke-width="1"/>
-  <circle cx="408" cy="284" r="18" fill="#eff6ff"/>
-  <text x="408" y="289" font-family="Arial" font-size="16" text-anchor="middle">🦴</text>
-  <text x="432" y="281" font-family="Arial" font-size="11" font-weight="700" fill="#1e293b">Имплантация</text>
-  <text x="432" y="295" font-family="Arial" font-size="9" fill="#64748b">Гарантия 10 лет</text>
-  <text x="388" y="318" font-family="Arial" font-size="9" fill="#94a3b8">от 35 000 ₽</text>
-  <rect x="462" y="308" width="64" height="18" rx="9" fill="#1e40af"/>
-  <text x="494" y="320" font-family="Arial" font-size="9" fill="white" text-anchor="middle">Подробнее</text>
+  <rect x="214" y="398" width="170" height="80" rx="10" fill="white" stroke="#E2E8F0" stroke-width="1"/>
+  <rect x="214" y="398" width="170" height="4" rx="2" fill="#0EA5E9"/>
+  <text x="299" y="422" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="#1E3A5F" text-anchor="middle">Отбеливание</text>
+  <text x="299" y="438" font-family="system-ui,sans-serif" font-size="10" fill="#64748B" text-anchor="middle">от 8 000 ₽</text>
+  <text x="299" y="456" font-family="system-ui,sans-serif" font-size="10" fill="#64748B" text-anchor="middle">Hollywood Smile</text>
+  <text x="299" y="470" font-family="system-ui,sans-serif" font-size="10" fill="#0EA5E9" text-anchor="middle">Подробнее →</text>
 
-  <!-- Доверие / цифры -->
-  <rect y="364" width="600" height="36" fill="#1e40af"/>
-  <text x="100" y="383" font-family="Arial" font-size="13" font-weight="800" fill="white" text-anchor="middle">12+</text>
-  <text x="100" y="395" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.7)" text-anchor="middle">лет работы</text>
-  <text x="240" y="383" font-family="Arial" font-size="13" font-weight="800" fill="white" text-anchor="middle">15 000+</text>
-  <text x="240" y="395" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.7)" text-anchor="middle">пациентов</text>
-  <text x="380" y="383" font-family="Arial" font-size="13" font-weight="800" fill="white" text-anchor="middle">4.9 ★</text>
-  <text x="380" y="395" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.7)" text-anchor="middle">рейтинг</text>
-  <text x="520" y="383" font-family="Arial" font-size="13" font-weight="800" fill="white" text-anchor="middle">24/7</text>
-  <text x="520" y="395" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.7)" text-anchor="middle">поддержка</text>
+  <rect x="400" y="398" width="170" height="80" rx="10" fill="white" stroke="#E2E8F0" stroke-width="1"/>
+  <rect x="400" y="398" width="170" height="4" rx="2" fill="#6366F1"/>
+  <text x="485" y="422" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="#1E3A5F" text-anchor="middle">Имплантация</text>
+  <text x="485" y="438" font-family="system-ui,sans-serif" font-size="10" fill="#64748B" text-anchor="middle">от 35 000 ₽</text>
+  <text x="485" y="456" font-family="system-ui,sans-serif" font-size="10" fill="#64748B" text-anchor="middle">Гарантия 10 лет</text>
+  <text x="485" y="470" font-family="system-ui,sans-serif" font-size="10" fill="#6366F1" text-anchor="middle">Подробнее →</text>
+
+  <rect x="586" y="398" width="186" height="80" rx="10" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="1"/>
+  <text x="679" y="422" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="#1E3A5F" text-anchor="middle">Детская</text>
+  <text x="679" y="436" font-family="system-ui,sans-serif" font-size="11" font-weight="700" fill="#1E3A5F" text-anchor="middle">стоматология</text>
+  <text x="679" y="452" font-family="system-ui,sans-serif" font-size="10" fill="#64748B" text-anchor="middle">от 2 000 ₽</text>
+  <text x="679" y="468" font-family="system-ui,sans-serif" font-size="10" fill="#2563EB" text-anchor="middle">Подробнее →</text>
 </svg>

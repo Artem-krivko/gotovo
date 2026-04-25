@@ -351,7 +351,7 @@ function HowItWorks() {
 // ─── ПРИМЕРЫ ДИЗАЙНОВ ────────────────────────────────────────────────────────
 
 function GeneratorExamples() {
-  const categories = ["Медицина", "Красота", "Спорт", "Еда", "B2B", "IT"];
+  const categories = ["Медицина", "Красота", "Спорт", "Еда", "B2B"];
 
   return (
     <section className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">

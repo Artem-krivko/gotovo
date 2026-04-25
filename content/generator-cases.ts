@@ -95,19 +95,4 @@ export const GENERATOR_CASES: GeneratorCase[] = [
     fallbackGradient: "from-emerald-950 to-slate-950",
     styleTag: "Авторитет · B2B",
   },
-  {
-    id: 6,
-    label: "IT-стартап",
-    prompt: "SaaS продукт — тёмная тема, фиолетовый акцент, современный tech",
-    image: "/images/generator/startup-preview.svg",
-    category: "IT",
-    accent: {
-      border: "border-violet-500/30",
-      glow: "hover:shadow-violet-500/15",
-      badge: "bg-violet-500/10 text-violet-400 border-violet-500/20",
-      dot: "bg-violet-400",
-    },
-    fallbackGradient: "from-violet-950 to-indigo-950",
-    styleTag: "Tech · SaaS",
-  },
 ];

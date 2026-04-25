@@ -1,117 +1,71 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="600" height="400">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0a0a0a"/>
-      <stop offset="100%" stop-color="#111111"/>
-    </linearGradient>
-    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#d4af37"/>
-      <stop offset="100%" stop-color="#f5d060"/>
-    </linearGradient>
-    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#1a1a1a"/>
-      <stop offset="100%" stop-color="#141414"/>
-    </linearGradient>
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <!-- BG dark -->
+  <rect width="800" height="500" fill="#0C0C0C"/>
 
-  <!-- Фон -->
-  <rect width="600" height="400" fill="url(#bg)"/>
+  <!-- NAV -->
+  <rect width="800" height="56" fill="#111111"/>
+  <rect x="0" y="55" width="800" height="1" fill="#222"/>
+  <text x="32" y="34" font-family="system-ui,sans-serif" font-size="14" font-weight="800" fill="white" letter-spacing="3">INKSTUDIO</text>
+  <text x="280" y="32" font-family="system-ui,sans-serif" font-size="10" fill="#888">ПОРТФОЛИО</text>
+  <text x="370" y="32" font-family="system-ui,sans-serif" font-size="10" fill="#888">МАСТЕРА</text>
+  <text x="450" y="32" font-family="system-ui,sans-serif" font-size="10" fill="#888">СТИЛИ</text>
+  <text x="520" y="32" font-family="system-ui,sans-serif" font-size="10" fill="#888">ЦЕНЫ</text>
+  <rect x="614" y="16" width="140" height="28" rx="0" fill="none" stroke="white" stroke-width="1"/>
+  <text x="684" y="34" font-family="system-ui,sans-serif" font-size="10" font-weight="600" fill="white" text-anchor="middle" letter-spacing="1">ЗАПИСАТЬСЯ</text>
 
-  <!-- Тонкая декоративная линия сверху -->
-  <rect width="600" height="2" fill="url(#accent)"/>
+  <!-- HERO -->
+  <rect x="0" y="56" width="800" height="220" fill="#0C0C0C"/>
+  <!-- decorative lines -->
+  <line x1="0" y1="100" x2="200" y2="100" stroke="#222" stroke-width="1"/>
+  <line x1="600" y1="100" x2="800" y2="100" stroke="#222" stroke-width="1"/>
 
-  <!-- Навбар -->
-  <rect y="2" width="600" height="44" fill="#0f0f0f"/>
-  <rect y="46" width="600" height="1" fill="rgba(212,175,55,0.2)"/>
-  <!-- Логотип -->
-  <text x="24" y="30" font-family="Georgia, serif" font-size="16" font-weight="700" fill="#d4af37" letter-spacing="3">INK</text>
-  <text x="58" y="30" font-family="Georgia, serif" font-size="16" fill="rgba(255,255,255,0.9)" letter-spacing="1">STUDIO</text>
-  <!-- Навигация -->
-  <text x="290" y="30" font-family="Arial" font-size="10" fill="rgba(255,255,255,0.5)" letter-spacing="1">ПОРТФОЛИО</text>
-  <text x="378" y="30" font-family="Arial" font-size="10" fill="rgba(255,255,255,0.5)" letter-spacing="1">МАСТЕРА</text>
-  <text x="448" y="30" font-family="Arial" font-size="10" fill="rgba(255,255,255,0.5)" letter-spacing="1">ЗАПИСЬ</text>
-  <!-- Кнопка -->
-  <rect x="510" y="14" width="76" height="20" rx="0" fill="none" stroke="#d4af37" stroke-width="1"/>
-  <text x="548" y="27" font-family="Arial" font-size="9" fill="#d4af37" text-anchor="middle" letter-spacing="1">ЗАПИСАТЬСЯ</text>
+  <text x="400" y="108" font-family="system-ui,sans-serif" font-size="10" fill="#666" text-anchor="middle" letter-spacing="4">АВТОРСКАЯ ТАТУИРОВКА</text>
+  <text x="400" y="148" font-family="Georgia,serif" font-size="36" font-weight="700" fill="white" text-anchor="middle">Искусство</text>
+  <text x="400" y="188" font-family="Georgia,serif" font-size="36" font-weight="700" fill="white" text-anchor="middle">на вашей коже</text>
+  <text x="400" y="216" font-family="system-ui,sans-serif" font-size="11" fill="#666" text-anchor="middle">Индивидуальный эскиз · Стерильность · Опыт 10 лет</text>
 
-  <!-- Hero -->
-  <rect y="46" width="600" height="130" fill="#0f0f0f"/>
-  <!-- Декоративные элементы -->
-  <circle cx="500" cy="110" r="70" fill="rgba(212,175,55,0.04)"/>
-  <circle cx="500" cy="110" r="45" fill="rgba(212,175,55,0.03)"/>
-  <!-- Вертикальная линия-акцент -->
-  <rect x="36" y="66" width="2" height="90" fill="url(#accent)"/>
-  <!-- Hero текст -->
-  <text x="52" y="88" font-family="Arial" font-size="10" fill="#d4af37" letter-spacing="3">АВТОРСКАЯ ТАТУИРОВКА</text>
-  <text x="52" y="116" font-family="Georgia, serif" font-size="24" font-weight="700" fill="white">Искусство</text>
-  <text x="52" y="144" font-family="Georgia, serif" font-size="24" font-weight="700" fill="white">на вашей коже</text>
-  <text x="52" y="165" font-family="Arial" font-size="10" fill="rgba(255,255,255,0.4)">Индивидуальные эскизы · Стерильность · Опыт 10 лет</text>
+  <rect x="278" y="232" width="110" height="32" rx="0" fill="white"/>
+  <text x="333" y="252" font-family="system-ui,sans-serif" font-size="10" font-weight="700" fill="black" text-anchor="middle" letter-spacing="1">ЗАПИСАТЬСЯ</text>
+  <rect x="402" y="232" width="120" height="32" rx="0" fill="none" stroke="#444" stroke-width="1"/>
+  <text x="462" y="252" font-family="system-ui,sans-serif" font-size="10" fill="#888" text-anchor="middle" letter-spacing="1">ПОРТФОЛИО</text>
 
-  <!-- Кнопки -->
-  <rect x="52" y="174" width="120" height="22" rx="0" fill="url(#accent)"/>
-  <text x="112" y="188" font-family="Arial" font-size="10" font-weight="700" fill="#0a0a0a" text-anchor="middle" letter-spacing="1">ЗАПИСАТЬСЯ</text>
-  <rect x="184" y="174" width="100" height="22" rx="0" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-  <text x="234" y="188" font-family="Arial" font-size="10" fill="rgba(255,255,255,0.6)" text-anchor="middle">ПОРТФОЛИО →</text>
+  <!-- PORTFOLIO GRID -->
+  <rect x="0" y="276" width="800" height="224" fill="#0F0F0F"/>
+  <text x="400" y="300" font-family="system-ui,sans-serif" font-size="11" fill="#555" text-anchor="middle" letter-spacing="3">ПОРТФОЛИО</text>
 
-  <!-- Портфолио секция -->
-  <text x="300" y="222" font-family="Georgia, serif" font-size="14" font-weight="700" fill="white" text-anchor="middle" letter-spacing="1">ПОРТФОЛИО</text>
-  <rect x="270" y="226" width="60" height="1" fill="url(#accent)"/>
+  <!-- portfolio items -->
+  <rect x="28" y="312" width="158" height="140" rx="4" fill="#1A1A1A"/>
+  <rect x="28" y="312" width="158" height="100" rx="4" fill="#222"/>
+  <!-- abstract tattoo shapes -->
+  <circle cx="107" cy="362" r="28" fill="none" stroke="#444" stroke-width="1.5"/>
+  <circle cx="107" cy="362" r="18" fill="none" stroke="#555" stroke-width="1"/>
+  <line x1="79" y1="362" x2="135" y2="362" stroke="#444" stroke-width="1"/>
+  <line x1="107" y1="334" x2="107" y2="390" stroke="#444" stroke-width="1"/>
+  <text x="107" y="426" font-family="system-ui,sans-serif" font-size="9" fill="#666" text-anchor="middle">Геометрия · Blackwork</text>
+  <text x="107" y="440" font-family="system-ui,sans-serif" font-size="8" fill="#444" text-anchor="middle">Мастер: Алекс</text>
 
-  <!-- Карточки работ -->
-  <!-- Работа 1 — графика, темно-серая -->
-  <rect x="24" y="236" width="116" height="116" rx="4" fill="#1a1a1a" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-  <!-- Имитация тату — абстрактный паттерн -->
-  <line x1="44" y1="256" x2="44" y2="332" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-  <line x1="64" y1="256" x2="64" y2="332" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-  <line x1="24" y1="276" x2="140" y2="276" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-  <line x1="24" y1="296" x2="140" y2="296" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-  <!-- Основной рисунок — цветок -->
-  <circle cx="82" cy="286" r="22" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
-  <circle cx="82" cy="286" r="8" fill="none" stroke="rgba(212,175,55,0.7)" stroke-width="1"/>
-  <line x1="82" y1="264" x2="82" y2="308" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-  <line x1="60" y1="286" x2="104" y2="286" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
-  <line x1="66" y1="270" x2="98" y2="302" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-  <line x1="98" y1="270" x2="66" y2="302" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
-  <rect x="24" y="336" width="116" height="16" rx="0 0 4 4" fill="#141414"/>
-  <text x="82" y="347" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.5)" text-anchor="middle">Геометрия · Черно-белое</text>
+  <rect x="202" y="312" width="158" height="140" rx="4" fill="#1A1A1A"/>
+  <rect x="202" y="312" width="158" height="100" rx="4" fill="#1E1E1E"/>
+  <!-- flower shapes -->
+  <ellipse cx="281" cy="355" rx="20" ry="28" fill="none" stroke="#555" stroke-width="1.5" transform="rotate(0,281,355)"/>
+  <ellipse cx="281" cy="355" rx="20" ry="28" fill="none" stroke="#444" stroke-width="1" transform="rotate(45,281,355)"/>
+  <ellipse cx="281" cy="355" rx="20" ry="28" fill="none" stroke="#444" stroke-width="1" transform="rotate(90,281,355)"/>
+  <circle cx="281" cy="355" r="6" fill="#333"/>
+  <text x="281" y="426" font-family="system-ui,sans-serif" font-size="9" fill="#666" text-anchor="middle">Флoral · Fine Line</text>
+  <text x="281" y="440" font-family="system-ui,sans-serif" font-size="8" fill="#444" text-anchor="middle">Мастер: Мария</text>
 
-  <!-- Работа 2 — золотой акцент -->
-  <rect x="152" y="236" width="116" height="116" rx="4" fill="#1a1a1a" stroke="rgba(212,175,55,0.15)" stroke-width="1"/>
-  <circle cx="210" cy="280" r="28" fill="none" stroke="rgba(212,175,55,0.4)" stroke-width="1.5"/>
-  <circle cx="210" cy="280" r="16" fill="none" stroke="rgba(212,175,55,0.25)" stroke-width="1"/>
-  <!-- Роза SVG упрощённая -->
-  <path d="M210 260 C220 265 225 275 220 282 C215 290 205 292 200 285 C195 278 198 268 210 260Z" fill="rgba(212,175,55,0.15)" stroke="rgba(212,175,55,0.5)" stroke-width="1"/>
-  <path d="M210 260 C200 265 195 275 200 282 C205 290 215 292 220 285 C225 278 222 268 210 260Z" fill="rgba(212,175,55,0.1)" stroke="rgba(212,175,55,0.4)" stroke-width="1"/>
-  <circle cx="210" cy="280" r="5" fill="rgba(212,175,55,0.6)"/>
-  <!-- Стебель -->
-  <line x1="210" y1="308" x2="210" y2="325" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
-  <rect x="152" y="336" width="116" height="16" rx="0" fill="#141414"/>
-  <text x="210" y="347" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.5)" text-anchor="middle">Флора · Золото</text>
+  <rect x="376" y="312" width="158" height="140" rx="4" fill="#1A1A1A"/>
+  <rect x="376" y="312" width="158" height="100" rx="4" fill="#181818"/>
+  <!-- dragon/abstract -->
+  <path d="M420 380 Q455 330 490 360 Q470 385 455 370 Q440 390 420 380Z" fill="none" stroke="#555" stroke-width="1.5"/>
+  <path d="M430 365 Q455 345 478 358" fill="none" stroke="#444" stroke-width="1"/>
+  <text x="455" y="426" font-family="system-ui,sans-serif" font-size="9" fill="#666" text-anchor="middle">Реализм · Цвет</text>
+  <text x="455" y="440" font-family="system-ui,sans-serif" font-size="8" fill="#444" text-anchor="middle">Мастер: Иван</text>
 
-  <!-- Работа 3 -->
-  <rect x="280" y="236" width="116" height="116" rx="4" fill="#1a1a1a" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-  <!-- Волк упрощённый -->
-  <path d="M338 258 L348 270 L342 272 L338 268 L334 272 L328 270 Z" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
-  <path d="M328 270 L322 285 L338 295 L354 285 L348 270 L342 272 L338 268 L334 272 Z" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.35)" stroke-width="1"/>
-  <circle cx="331" cy="278" r="2" fill="rgba(255,255,255,0.6)"/>
-  <circle cx="345" cy="278" r="2" fill="rgba(255,255,255,0.6)"/>
-  <path d="M333 285 L338 290 L343 285" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
-  <line x1="338" y1="295" x2="338" y2="322" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
-  <rect x="280" y="336" width="116" height="16" rx="0" fill="#141414"/>
-  <text x="338" y="347" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.5)" text-anchor="middle">Реализм · Blackwork</text>
-
-  <!-- Работа 4 -->
-  <rect x="408" y="236" width="168" height="116" rx="4" fill="url(#accent)" opacity="0.9"/>
-  <text x="492" y="285" font-family="Georgia, serif" font-size="13" font-weight="700" fill="#0a0a0a" text-anchor="middle">Ваша работа</text>
-  <text x="492" y="302" font-family="Arial" font-size="10" fill="#0a0a0a" text-anchor="middle" opacity="0.7">Запишитесь на</text>
-  <text x="492" y="316" font-family="Arial" font-size="10" fill="#0a0a0a" text-anchor="middle" opacity="0.7">консультацию →</text>
-
-  <!-- Декоративная нижняя полоса -->
-  <rect y="390" width="600" height="10" fill="rgba(212,175,55,0.08)"/>
-  <rect y="390" width="600" height="1" fill="rgba(212,175,55,0.2)"/>
-  <text x="300" y="397" font-family="Arial" font-size="7" fill="rgba(255,255,255,0.25)" text-anchor="middle" letter-spacing="2">INK STUDIO · МОСКВА · +7 (999) 123-45-67</text>
+  <rect x="550" y="312" width="222" height="140" rx="4" fill="#111"/>
+  <rect x="550" y="312" width="222" height="100" rx="4" fill="#161616"/>
+  <text x="661" y="355" font-family="Georgia,serif" font-size="24" fill="#333" text-anchor="middle">YOUR</text>
+  <text x="661" y="382" font-family="Georgia,serif" font-size="24" fill="#333" text-anchor="middle">WORK</text>
+  <rect x="600" y="400" width="122" height="28" rx="0" fill="none" stroke="#333" stroke-width="1"/>
+  <text x="661" y="418" font-family="system-ui,sans-serif" font-size="9" fill="#555" text-anchor="middle" letter-spacing="1">Записаться на консультацию →</text>
 </svg>
