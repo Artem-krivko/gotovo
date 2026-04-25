@@ -3,6 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Faq } from "@/components/sections/faq";
 import { GeneratorExamplesFilter } from "@/components/sections/generator-examples-filter";
+import { ParallaxMockup } from "@/components/shared/parallax-mockup";
+import { ScrollGlow } from "@/components/shared/scroll-glow";
 import { homeContent } from "@/content/pages/home";
 import { GENERATOR_CASES } from "@/content/generator-cases";
 
@@ -160,7 +162,7 @@ function Hero() {
             <h1 className="reveal-up delay-1 mt-5 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl">
               Опишите бизнес —<br />
               получите сайт<br />
-              <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-blue-400 bg-clip-text text-transparent">
+              <span className="gradient-reveal">
                 за 30 секунд
               </span>
             </h1>
@@ -186,7 +188,9 @@ function Hero() {
           </div>
 
           <div className="reveal-up delay-2 relative pb-8 pt-4 lg:pb-0">
-            <BrowserMockup />
+            <ParallaxMockup>
+              <BrowserMockup />
+            </ParallaxMockup>
           </div>
         </div>
 
@@ -276,11 +280,11 @@ function HowItWorks() {
     <div className="relative px-6" aria-hidden="true">
       <div className="h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
     </div>
-    <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
-      <div className="pointer-events-none absolute -top-24 -right-24 h-[400px] w-[400px]" aria-hidden="true"
-        style={{ background: "radial-gradient(circle, rgba(124,58,237,0.11), transparent 65%)", filter: "blur(60px)" }} />
-      <div className="pointer-events-none absolute bottom-0 -left-20 h-[300px] w-[300px]" aria-hidden="true"
-        style={{ background: "radial-gradient(circle, rgba(59,130,246,0.08), transparent 65%)", filter: "blur(60px)" }} />
+    <ScrollGlow className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+      <div className="glow-orb -top-24 -right-24 h-[400px] w-[400px]" aria-hidden="true"
+        style={{ background: "radial-gradient(circle, rgba(124,58,237,0.18), transparent 65%)" }} />
+      <div className="glow-orb bottom-0 -left-20 h-[300px] w-[300px]" aria-hidden="true"
+        style={{ background: "radial-gradient(circle, rgba(59,130,246,0.12), transparent 65%)" }} />
       <div className="mx-auto max-w-6xl">
         <div className="reveal-up text-center">
           <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Как это работает</p>
@@ -339,7 +343,7 @@ function HowItWorks() {
           ))}
         </ol>
       </div>
-    </section>
+    </ScrollGlow>
     </>
   );
 }
@@ -441,9 +445,9 @@ function ForWhom() {
     <div className="relative px-6" aria-hidden="true">
       <div className="h-px bg-gradient-to-r from-transparent via-fuchsia-500/15 to-transparent" />
     </div>
-    <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
-      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 h-[350px] w-[700px]" aria-hidden="true"
-        style={{ background: "radial-gradient(ellipse, rgba(217,70,239,0.07), transparent 65%)", filter: "blur(60px)" }} />
+    <ScrollGlow className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+      <div className="glow-orb top-0 left-1/2 -translate-x-1/2 h-[350px] w-[700px]" aria-hidden="true"
+        style={{ background: "radial-gradient(ellipse, rgba(217,70,239,0.1), transparent 65%)" }} />
       <div className="mx-auto max-w-6xl">
         <div className="reveal-up text-center">
           <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Кому подойдёт</p>
@@ -483,12 +487,12 @@ function ForWhom() {
           })}
         </div>
       </div>
-    </section>
+    </ScrollGlow>
     </>
   );
 }
 
-// ─── ПРОЗРАЧНЫЕ ЦЕНЫ ─────────────────────────────────────────────────────────
+// ─── ПРОЗРАЧНЫЕ ЦЕНЫ
 
 function PricingPreview() {
   const plans = [

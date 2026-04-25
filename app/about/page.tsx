@@ -104,7 +104,7 @@ export default function AboutPage() {
 
           <h1 className="reveal-up delay-1 mt-6 text-5xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl lg:text-7xl">
             Делаем сайты которые{" "}
-            <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-blue-400 bg-clip-text text-transparent">
+            <span className="gradient-reveal">
               видите до оплаты
             </span>
           </h1>

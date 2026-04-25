@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ScrollGlow } from "@/components/shared/scroll-glow";
 
 interface CtaProps {
   title: string;
