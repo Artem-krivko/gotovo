@@ -1,16 +1,24 @@
 import type { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google";
+import { Space_Grotesk, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
 
-// Space Grotesk — технологичный, характерный шрифт gotovo
+// Space Grotesk — body, UI, мелкий текст
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin", "latin-ext"],
   variable: "--font-sans",
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+// Bricolage Grotesque — заголовки h1–h3, смело, с характером
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -91,7 +99,7 @@ const organizationSchema = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" suppressHydrationWarning className={spaceGrotesk.variable}>
+    <html lang="ru" suppressHydrationWarning className={`${spaceGrotesk.variable} ${bricolage.variable}`}>
       <head>
         <script
           type="application/ld+json"
