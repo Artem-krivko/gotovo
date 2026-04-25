@@ -16,19 +16,19 @@ function PlayIcon() {
   );
 }
 
-function CasePreviewSkeleton({ accentClass }: { accentClass: string }) {
+function CasePreviewSkeleton({ dotClass }: { dotClass: string }) {
   return (
     <div
       className="flex h-full flex-col items-center justify-center gap-3 p-4"
       aria-label="Превью появится после тестирования генератора"
     >
-      <div className={`h-10 w-10 rounded-full ${accentClass} opacity-20`} aria-hidden="true" />
+      <div className={`h-10 w-10 rounded-full ${dotClass} opacity-20`} aria-hidden="true" />
       <div className="w-full space-y-2 px-4" aria-hidden="true">
-        <div className="mx-auto h-2 w-3/4 rounded bg-zinc-200" />
-        <div className="mx-auto h-2 w-1/2 rounded bg-zinc-200" />
-        <div className="mx-auto h-2 w-2/3 rounded bg-zinc-200" />
+        <div className="mx-auto h-2 w-3/4 rounded bg-white/10" />
+        <div className="mx-auto h-2 w-1/2 rounded bg-white/10" />
+        <div className="mx-auto h-2 w-2/3 rounded bg-white/10" />
       </div>
-      <p className="text-xs text-zinc-400">Скоро появится превью</p>
+      <p className="text-xs text-[#6B6B80]">Скоро появится превью</p>
     </div>
   );
 }
@@ -36,15 +36,15 @@ function CasePreviewSkeleton({ accentClass }: { accentClass: string }) {
 function CaseCard({ c }: { c: GeneratorCase }) {
   return (
     <article
-      className={`group shrink-0 overflow-hidden rounded-[1.75rem] border bg-gradient-to-br p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-xl
-        ${c.colorClasses}
+      className={`group shrink-0 overflow-hidden rounded-2xl border bg-[#13131A] p-5 transition hover:-translate-y-1 hover:shadow-xl
+        ${c.accent.border}
         /* мобилка: фиксированная ширина для snap-scroll */
         w-[80vw] max-w-[320px]
         /* десктоп: авто */
         sm:w-auto sm:max-w-none`}
     >
       {/* Превью */}
-      <div className="relative mb-4 aspect-[4/3] overflow-hidden rounded-[1.25rem] border border-zinc-200 bg-white shadow-inner">
+      <div className="relative mb-4 aspect-[4/3] overflow-hidden rounded-xl border border-white/10 bg-[#0A0A0F]">
         {c.image ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -53,16 +53,16 @@ function CaseCard({ c }: { c: GeneratorCase }) {
             className="h-full w-full object-cover"
           />
         ) : (
-          <CasePreviewSkeleton accentClass={c.accentClass} />
+          <CasePreviewSkeleton dotClass={c.accent.dot} />
         )}
       </div>
 
       <div className="flex items-center justify-between gap-2">
-        <h3 className="text-sm font-semibold text-zinc-800">{c.label}</h3>
-        <span className={`h-2 w-2 rounded-full ${c.accentClass}`} aria-hidden="true" />
+        <h3 className="text-sm font-semibold text-white">{c.label}</h3>
+        <span className={`h-2 w-2 rounded-full ${c.accent.dot}`} aria-hidden="true" />
       </div>
 
-      <p className="mt-1.5 line-clamp-2 text-xs leading-5 text-zinc-500">
+      <p className="mt-1.5 line-clamp-2 text-xs leading-5 text-[#6B6B80]">
         {c.prompt}
       </p>
     </article>
