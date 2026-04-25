@@ -192,12 +192,12 @@ function Hero() {
 
         <div className="reveal-up delay-4 mt-6 grid grid-cols-3 gap-2 border-t border-white/[0.06] py-4 sm:gap-4">
           {[
-            { icon: <BoltIcon />, value: "30 секунд", label: "время генерации дизайна", color: "text-violet-400" },
-            { icon: <CalendarIcon />, value: "7–14 дней", label: "срок разработки", color: "text-blue-400" },
-            { icon: <CheckCircleIcon />, value: "Без предоплаты", label: "оплата после результата", color: "text-emerald-400" },
+            { icon: <BoltIcon />, value: "30 секунд", label: "время генерации дизайна", color: "text-violet-400", border: "border-violet-500/40", glow: "shadow-lg shadow-violet-500/20" },
+            { icon: <CalendarIcon />, value: "7–14 дней", label: "срок разработки", color: "text-blue-400", border: "border-blue-500/40", glow: "shadow-lg shadow-blue-500/20" },
+            { icon: <CheckCircleIcon />, value: "Без предоплаты", label: "оплата после результата", color: "text-emerald-400", border: "border-emerald-500/40", glow: "shadow-lg shadow-emerald-500/20" },
           ].map((m) => (
             <div key={m.label}
-              className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#13131A] px-3 py-4 sm:px-5">
+              className={`flex items-center gap-3 rounded-2xl border ${m.border} bg-[#13131A] px-3 py-4 ${m.glow} sm:px-5`}>
               <span className={`shrink-0 ${m.color}`}>{m.icon}</span>
               <div className="min-w-0">
                 <p className="truncate text-sm font-bold text-white sm:text-base">{m.value}</p>
