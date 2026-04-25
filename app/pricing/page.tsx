@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Faq } from "@/components/sections/faq";
 import { Cta } from "@/components/sections/cta";
+import { ScrollGlow } from "@/components/shared/scroll-glow";
 import { PRICING_PLANS, VALUE_ITEMS, CHOOSE_ITEMS, PRICING_FAQ } from "@/content/pricing";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
@@ -100,9 +101,9 @@ export default function PricingPage() {
       <div className="relative px-6" aria-hidden="true">
         <div className="h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
       </div>
-      <section id="pricing-cards" className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
-        <div className="pointer-events-none absolute -top-20 -left-20 h-[400px] w-[400px]" aria-hidden="true"
-          style={{ background: "radial-gradient(circle, rgba(124,58,237,0.11), transparent 65%)", filter: "blur(60px)" }} />
+      <ScrollGlow className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24" id="pricing-cards">
+        <div className="glow-orb -top-20 -left-20 h-[400px] w-[400px]" aria-hidden="true"
+          style={{ background: "radial-gradient(circle, rgba(124,58,237,0.16), transparent 65%)" }} />
         <div className="mx-auto max-w-6xl">
           <div className="reveal-up text-center">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Пакеты</p>
@@ -192,7 +193,7 @@ export default function PricingPage() {
             })}
           </div>
         </div>
-      </section>
+      </ScrollGlow>
 
       {/* ── Что входит ──────────────────────────────────────────────────────── */}
       <section className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
@@ -223,9 +224,9 @@ export default function PricingPage() {
       <div className="relative px-6" aria-hidden="true">
         <div className="h-px bg-gradient-to-r from-transparent via-blue-500/15 to-transparent" />
       </div>
-      <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
-        <div className="pointer-events-none absolute top-1/2 -right-20 h-[350px] w-[350px]" aria-hidden="true"
-          style={{ background: "radial-gradient(circle, rgba(59,130,246,0.09), transparent 65%)", filter: "blur(60px)" }} />
+      <ScrollGlow className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+        <div className="glow-orb top-1/2 -right-20 h-[350px] w-[350px]" aria-hidden="true"
+          style={{ background: "radial-gradient(circle, rgba(59,130,246,0.13), transparent 65%)" }} />
         <div className="mx-auto max-w-6xl">
           <div className="reveal-up text-center">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Выбор</p>
@@ -262,7 +263,7 @@ export default function PricingPage() {
             ))}
           </ul>
         </div>
-      </section>
+      </ScrollGlow>
 
       <Faq title="Вопросы по стоимости" subtitle="Отвечаем до старта — без обязательств" items={PRICING_FAQ} />
       <Cta title="Не знаете с чего начать?" subtitle="Попробуйте генератор — увидите дизайн до оплаты. Или напишите напрямую." button="Сгенерировать дизайн" />

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Faq } from "@/components/sections/faq";
 import { Cta } from "@/components/sections/cta";
+import { ScrollGlow } from "@/components/shared/scroll-glow";
 import { SERVICE_FORMATS, AUDIENCE_ITEMS, OUTCOME_ITEMS, SERVICES_FAQ } from "@/content/services";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
@@ -134,9 +135,9 @@ export default function ServicesPage() {
       <div className="relative px-6" aria-hidden="true">
         <div className="h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
       </div>
-      <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
-        <div className="pointer-events-none absolute -top-20 -left-20 h-[400px] w-[400px]" aria-hidden="true"
-          style={{ background: "radial-gradient(circle, rgba(124,58,237,0.11), transparent 65%)", filter: "blur(60px)" }} />
+      <ScrollGlow className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+        <div className="glow-orb -top-20 -left-20 h-[400px] w-[400px]" aria-hidden="true"
+          style={{ background: "radial-gradient(circle, rgba(124,58,237,0.16), transparent 65%)" }} />
         <div className="mx-auto max-w-6xl">
           <div className="reveal-up text-center">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Форматы</p>
@@ -221,7 +222,7 @@ export default function ServicesPage() {
             })}
           </div>
         </div>
-      </section>
+      </ScrollGlow>
 
       {/* ── Для кого ────────────────────────────────────────────────────────── */}
       <section className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
@@ -283,9 +284,9 @@ export default function ServicesPage() {
       <div className="relative px-6" aria-hidden="true">
         <div className="h-px bg-gradient-to-r from-transparent via-fuchsia-500/15 to-transparent" />
       </div>
-      <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
-        <div className="pointer-events-none absolute -bottom-10 left-1/2 -translate-x-1/2 h-[300px] w-[600px]" aria-hidden="true"
-          style={{ background: "radial-gradient(ellipse, rgba(217,70,239,0.07), transparent 65%)", filter: "blur(60px)" }} />
+      <ScrollGlow className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
+        <div className="glow-orb -bottom-10 left-1/2 -translate-x-1/2 h-[300px] w-[600px]" aria-hidden="true"
+          style={{ background: "radial-gradient(ellipse, rgba(217,70,239,0.1), transparent 65%)" }} />
         <div className="mx-auto max-w-6xl">
           <div className="reveal-up text-center">
             <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Результат</p>
@@ -315,7 +316,7 @@ export default function ServicesPage() {
             })}
           </ul>
         </div>
-      </section>
+      </ScrollGlow>
 
       {/* ── Сравнение ───────────────────────────────────────────────────────── */}
       <section className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">

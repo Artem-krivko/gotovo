@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 interface ScrollGlowProps {
   children: React.ReactNode;
   className?: string;
+  id?: string;
 }
 
 /**
@@ -12,7 +13,7 @@ interface ScrollGlowProps {
  * Использует IntersectionObserver (нативный, без JS-библиотек).
  * Дочерние .glow-orb элементы получают opacity через CSS transition (globals.css).
  */
-export function ScrollGlow({ children, className = "" }: ScrollGlowProps) {
+export function ScrollGlow({ children, className = "", id }: ScrollGlowProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,7 +36,7 @@ export function ScrollGlow({ children, className = "" }: ScrollGlowProps) {
   }, []);
 
   return (
-    <div ref={ref} data-glow="" className={`relative overflow-hidden ${className}`}>
+    <div ref={ref} id={id} data-glow="" className={`relative overflow-hidden ${className}`}>
       {children}
     </div>
   );
