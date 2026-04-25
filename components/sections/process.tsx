@@ -123,16 +123,16 @@ function MobileStepCard({
   const numStr = String(index + 1).padStart(2, "0");
 
   return (
-    <li className="relative overflow-hidden rounded-xl border border-white/[0.06] bg-[#13131A] p-4">
+    <li className="relative overflow-hidden rounded-xl border border-white/[0.06] bg-[#13131A] p-3.5">
       {/* Декоративный номер */}
       <span
-        className="pointer-events-none absolute right-3 top-2 select-none font-mono text-5xl font-black leading-none text-white/[0.04]"
+        className="pointer-events-none absolute right-3 top-2 select-none font-mono text-4xl font-black leading-none text-white/[0.04]"
         aria-hidden="true"
       >
         {numStr}
       </span>
 
-      <div className="relative flex flex-col gap-2">
+      <div className="relative flex flex-col gap-1.5">
         {/* Заголовок */}
         <div className="flex items-center gap-2">
           <StatusDot isAi={step.isAiStep} />
@@ -142,9 +142,9 @@ function MobileStepCard({
           {step.isAiStep && <AiBadge />}
         </div>
 
-        <h3 className="text-base font-semibold text-white">{step.title}</h3>
-        <p className="text-sm leading-6 text-[#6B6B80]">{step.description}</p>
-        <p className="font-mono text-[11px] text-[#A1A1B5]/40">// {step.hint}</p>
+        <h3 className="text-sm font-semibold text-white">{step.title}</h3>
+        <p className="text-xs leading-5 text-[#6B6B80]">{step.description}</p>
+        <p className="font-mono text-[10px] text-[#A1A1B5]/40">// {step.hint}</p>
       </div>
     </li>
   );

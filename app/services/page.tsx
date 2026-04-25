@@ -79,7 +79,7 @@ export default function ServicesPage() {
     <main>
 
       {/* ── Hero ────────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-[#0A0A0F] px-4 pb-20 pt-16 sm:px-6 sm:pb-28 sm:pt-24">
+      <section className="relative overflow-hidden bg-[#0A0A0F] px-4 pb-16 pt-12 sm:px-6 sm:pb-28 sm:pt-24">
         <div className="pointer-events-none absolute inset-0" aria-hidden="true"
           style={{ background: "radial-gradient(ellipse 70% 50% at 30% -5%, rgba(124,58,237,0.22), transparent 60%)" }} />
         <div className="grid-overlay pointer-events-none absolute inset-0" aria-hidden="true" />
@@ -90,7 +90,7 @@ export default function ServicesPage() {
               Услуги gotovo
             </span>
 
-            <h1 className="reveal-up delay-1 mt-6 text-5xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl lg:text-7xl">
+            <h1 className="reveal-up delay-1 mt-6 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl lg:text-7xl">
               Сайты которые{" "}
               <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-blue-400 bg-clip-text text-transparent">
                 работают на бизнес

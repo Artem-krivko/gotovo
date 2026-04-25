@@ -157,7 +157,7 @@ function Hero() {
               AI-генератор дизайна сайтов
             </div>
 
-            <h1 className="reveal-up delay-1 mt-5 text-5xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl">
+            <h1 className="reveal-up delay-1 mt-5 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl">
               Опишите бизнес —<br />
               получите сайт<br />
               <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-blue-400 bg-clip-text text-transparent">
@@ -165,7 +165,7 @@ function Hero() {
               </span>
             </h1>
 
-            <p className="reveal-up delay-2 mt-5 text-base leading-7 text-[#A1A1B5] sm:text-lg">
+            <p className="reveal-up delay-2 mt-4 text-sm leading-6 text-[#A1A1B5] sm:text-lg">
               Искусственный интеллект создаст дизайн сайта<br className="hidden sm:block" />
               по описанию вашего бизнеса.<br className="hidden sm:block" />
               Нравится — заказывайте разработку.
@@ -190,7 +190,7 @@ function Hero() {
           </div>
         </div>
 
-        <div className="reveal-up delay-4 mt-8 grid grid-cols-3 gap-3 border-t border-white/[0.06] py-6 sm:gap-4">
+        <div className="reveal-up delay-4 mt-6 grid grid-cols-3 gap-2 border-t border-white/[0.06] py-4 sm:gap-4">
           {[
             { icon: <BoltIcon />, value: "30 секунд", label: "время генерации дизайна", color: "text-violet-400" },
             { icon: <CalendarIcon />, value: "7–14 дней", label: "срок разработки", color: "text-blue-400" },
@@ -288,9 +288,28 @@ function HowItWorks() {
             Четыре шага до готового сайта
           </h2>
         </div>
-        <ol className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <ol className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Мобилка: вертикальный список */}
+          <div className="flex flex-col gap-3 sm:hidden col-span-full">
+            {steps.map((step, i) => (
+              <div key={step.num} className="flex items-start gap-4 rounded-2xl border border-white/10 bg-[#13131A] p-4">
+                <div className="mt-0.5 flex flex-col items-center gap-1.5">
+                  <div className={`h-2.5 w-2.5 shrink-0 rounded-full ${
+                    i === 0 ? "bg-violet-500" : i === 1 ? "bg-blue-500" : i === 2 ? "bg-fuchsia-500" : "bg-emerald-500"
+                  }`} aria-hidden="true" />
+                  {i < steps.length - 1 && <div className="w-px flex-1 bg-white/[0.06]" style={{minHeight:"24px"}} aria-hidden="true" />}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[#6B6B80]">{String(i + 1).padStart(2, "0")}</p>
+                  <p className="mt-0.5 text-sm font-semibold text-white">{step.title}</p>
+                  <p className="mt-1 text-xs leading-5 text-[#6B6B80]">{step.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* Десктоп: grid */}
           {steps.map((step, i) => (
-            <li key={step.num} className="relative flex">
+            <li key={step.num} className="relative hidden sm:flex">
               {/* Стрелка между шагами на десктопе */}
               {i < steps.length - 1 && (
                 <div className="pointer-events-none absolute -right-3 top-8 z-10 hidden lg:block" aria-hidden="true">

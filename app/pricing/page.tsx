@@ -48,7 +48,7 @@ export default function PricingPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(pricingSchema) }} />
 
       {/* ── Hero ────────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-[#0A0A0F] px-4 pb-20 pt-16 sm:px-6 sm:pb-28 sm:pt-24">
+      <section className="relative overflow-hidden bg-[#0A0A0F] px-4 pb-16 pt-12 sm:px-6 sm:pb-28 sm:pt-24">
         <div className="pointer-events-none absolute inset-0" aria-hidden="true"
           style={{ background: "radial-gradient(ellipse 60% 50% at 20% -5%, rgba(59,130,246,0.2), transparent 60%)" }} />
         <div className="grid-overlay pointer-events-none absolute inset-0" aria-hidden="true" />
@@ -58,8 +58,8 @@ export default function PricingPage() {
             Прозрачные цены
           </span>
 
-          <h1 className="reveal-up delay-1 mt-6 text-5xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl lg:text-7xl">
-            Фиксированная стоимость —{" "}
+            <h1 className="reveal-up delay-1 mt-6 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl lg:text-7xl">
+              Фиксированная стоимость —{" "}
             <span className="bg-gradient-to-r from-blue-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
               без сюрпризов
             </span>
@@ -111,44 +111,43 @@ export default function PricingPage() {
             </h2>
           </div>
 
-          {/* Мобилка: snap-scroll */}
-          <div className="-mx-4 mt-10 sm:hidden">
-            <div className="niches-scroll overflow-x-auto px-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
-              <div className="flex gap-4">
-              {PRICING_PLANS.map((plan) => (
-                <div key={plan.name} style={{ scrollSnapAlign: "start" }}
-                  className={`flex w-[82vw] max-w-[320px] shrink-0 flex-col rounded-2xl border p-6 ${
-                    plan.featured ? "border-violet-500/40 bg-gradient-to-br from-violet-500/10 to-blue-500/5" : "border-white/10 bg-[#13131A]"
-                  }`}>
-                  <span className={`inline-flex w-fit rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-widest ${plan.featured ? "border border-violet-500/30 bg-violet-500/10 text-violet-400" : "border border-white/10 bg-white/5 text-[#6B6B80]"}`}>
-                    {plan.badge}
-                  </span>
-                  <h2 className="mt-4 text-2xl font-bold text-white">{plan.name}</h2>
-                  <div className="mt-2 flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-white">{plan.price}</span>
-                    <span className="text-sm text-[#6B6B80]">{plan.duration}</span>
+          {/* Мобилка: вертикальные карточки */}
+          <div className="mt-8 flex flex-col gap-4 sm:hidden">
+            {PRICING_PLANS.map((plan) => (
+              <div key={plan.name}
+                className={`flex flex-col rounded-2xl border p-5 ${
+                  plan.featured ? "border-violet-500/40 bg-gradient-to-br from-violet-500/10 to-blue-500/5" : "border-white/10 bg-[#13131A]"
+                }`}>
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <span className={`inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest border ${
+                      plan.featured ? "border-violet-500/30 bg-violet-500/10 text-violet-400" : "border-white/10 bg-white/5 text-[#6B6B80]"
+                    }`}>{plan.badge}</span>
+                    <h2 className="mt-2 text-lg font-bold text-white">{plan.name}</h2>
+                    <div className="mt-1 flex items-baseline gap-1.5">
+                      <span className="text-2xl font-bold text-white">{plan.price}</span>
+                      <span className="text-xs text-[#6B6B80]">{plan.duration}</span>
+                    </div>
                   </div>
-                  <p className="mt-3 flex-1 text-sm text-[#A1A1B5]">{plan.description}</p>
-                  <ul className="mt-5 flex flex-col gap-2.5">
-                    {plan.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2.5 text-sm text-[#A1A1B5]">
-                        <span className={`mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-white ${plan.featured ? "bg-violet-600" : "bg-[#1C1C28]"}`}>
-                          <CheckIcon />
-                        </span>{f}
-                      </li>
-                    ))}
-                  </ul>
-                  <Link href="/generator"
-                    className={`mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition hover:-translate-y-0.5 ${
-                      plan.featured ? "bg-gradient-to-r from-violet-600 to-blue-600 text-white shadow-lg shadow-violet-500/25 hover:opacity-90" : "border border-white/10 bg-white/5 text-white hover:bg-white/10"
-                    }`}>
-                    {plan.cta} <ArrowRight />
-                  </Link>
                 </div>
-              ))}
-              <div className="w-4 shrink-0" aria-hidden="true" />
+                <p className="mt-2 text-xs leading-5 text-[#A1A1B5]">{plan.description}</p>
+                <ul className="mt-4 flex flex-col gap-2">
+                  {plan.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-xs text-[#A1A1B5]">
+                      <span className={`mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-white ${
+                        plan.featured ? "bg-violet-600" : "bg-[#1C1C28]"
+                      }`}><CheckIcon /></span>{f}
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/generator"
+                  className={`mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition ${
+                    plan.featured ? "bg-gradient-to-r from-violet-600 to-blue-600 text-white shadow-lg shadow-violet-500/25" : "border border-white/10 bg-white/5 text-white"
+                  }`}>
+                  {plan.cta} <ArrowRight />
+                </Link>
               </div>
-            </div>
+            ))}
           </div>
 
           {/* Десктоп: grid */}
