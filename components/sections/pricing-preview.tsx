@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "motion/react";
 import { PRICING_PLANS } from "@/content/pricing";
 
 function CheckIcon() {
@@ -35,36 +34,26 @@ function PeriodSwitch({ isYearly, onSwitch }: PeriodSwitchProps) {
         <button
           onClick={() => onSwitch(false)}
           aria-pressed={!isYearly}
-          className={`relative z-10 rounded-full px-5 py-2 text-sm font-medium transition-colors cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500 ${
-            !isYearly ? "text-white" : "text-[#6B6B80] hover:text-[#A1A1B5]"
+          className={`relative rounded-full px-5 py-2 text-sm font-medium transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500 ${
+            !isYearly
+              ? "bg-gradient-to-r from-violet-600 to-blue-600 text-white shadow-lg shadow-violet-500/30"
+              : "text-[#6B6B80] hover:text-[#A1A1B5]"
           }`}
         >
-          {!isYearly && (
-            <motion.span
-              layoutId="period-pill"
-              className="absolute inset-0 rounded-full bg-gradient-to-r from-violet-600 to-blue-600 shadow-lg shadow-violet-500/30"
-              transition={{ type: "spring", stiffness: 500, damping: 32 }}
-            />
-          )}
-          <span className="relative">Разово</span>
+          Разово
         </button>
 
         <button
           onClick={() => onSwitch(true)}
           aria-pressed={isYearly}
-          className={`relative z-10 flex items-center gap-2 rounded-full px-5 py-2 text-sm font-medium transition-colors cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500 ${
-            isYearly ? "text-white" : "text-[#6B6B80] hover:text-[#A1A1B5]"
+          className={`relative flex items-center gap-2 rounded-full px-5 py-2 text-sm font-medium transition-all duration-200 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500 ${
+            isYearly
+              ? "bg-gradient-to-r from-violet-600 to-blue-600 text-white shadow-lg shadow-violet-500/30"
+              : "text-[#6B6B80] hover:text-[#A1A1B5]"
           }`}
         >
-          {isYearly && (
-            <motion.span
-              layoutId="period-pill"
-              className="absolute inset-0 rounded-full bg-gradient-to-r from-violet-600 to-blue-600 shadow-lg shadow-violet-500/30"
-              transition={{ type: "spring", stiffness: 500, damping: 32 }}
-            />
-          )}
-          <span className="relative">Со скидкой</span>
-          <span className="relative inline-flex items-center rounded-full bg-emerald-500/20 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
+          Со скидкой
+          <span className="inline-flex items-center rounded-full bg-emerald-500/20 px-2 py-0.5 text-[10px] font-semibold text-emerald-400">
             −15%
           </span>
         </button>
@@ -89,12 +78,11 @@ function PlanCard({ plan, isYearly, index }: PlanCardProps) {
   const discountedPrice = DISCOUNT_PRICES[plan.price] ?? plan.price;
   const displayPrice = isYearly ? discountedPrice : plan.price;
 
+  const delays = ["delay-100", "delay-200", "delay-300"];
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.1, ease: "easeOut" }}
-      className={`relative flex flex-col rounded-2xl border p-7 transition-all duration-300 ${
+    <div
+      className={`reveal-up ${delays[index] ?? ""} relative flex flex-col rounded-2xl border p-7 transition-all duration-300 ${
         plan.featured
           ? "border-violet-500/40 bg-gradient-to-br from-violet-500/10 via-[#13131A] to-blue-500/5 shadow-xl shadow-violet-500/10 sm:-translate-y-3"
           : "border-white/[0.08] bg-[#13131A] hover:border-white/20 hover:bg-[#1C1C28]"
@@ -131,18 +119,12 @@ function PlanCard({ plan, isYearly, index }: PlanCardProps) {
       <div className="relative mt-5">
         <h3 className="text-xl font-bold text-white">{plan.name}</h3>
         <div className="mt-2">
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={displayPrice}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.18, ease: "easeOut" }}
-              className="block text-4xl font-bold tracking-tight text-white"
-            >
-              {displayPrice}
-            </motion.span>
-          </AnimatePresence>
+          <span
+            key={displayPrice}
+            className="block text-4xl font-bold tracking-tight text-white transition-all duration-150"
+          >
+            {displayPrice}
+          </span>
           <p className="mt-0.5 text-xs text-[#6B6B80]">{plan.duration}</p>
         </div>
         <p className="mt-3 text-sm leading-6 text-[#A1A1B5]">{plan.description}</p>
@@ -175,7 +157,7 @@ function PlanCard({ plan, isYearly, index }: PlanCardProps) {
           </li>
         ))}
       </ul>
-    </motion.div>
+    </div>
   );
 }
 
