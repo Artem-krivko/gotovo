@@ -6,6 +6,7 @@ import { GeneratorExamplesFilter } from "@/components/sections/generator-example
 import { ParallaxMockup } from "@/components/shared/parallax-mockup";
 import { ScrollGlow } from "@/components/shared/scroll-glow";
 import { homeContent } from "@/content/pages/home";
+import { PricingPreview } from "@/components/sections/pricing-preview";
 import { GENERATOR_CASES } from "@/content/generator-cases";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
@@ -497,75 +498,7 @@ function ForWhom() {
   );
 }
 
-// ─── ПРОЗРАЧНЫЕ ЦЕНЫ
-
-function PricingPreview() {
-  const plans = [
-    {
-      name: "Лендинг", price: "€500", period: "от",
-      features: ["1 страница", "AI-дизайн", "Адаптивный дизайн", "Базовая SEO-оптимизация", "Форма заявки / контакты"],
-      featured: false,
-    },
-    {
-      name: "Бизнес-сайт", price: "€800", period: "от",
-      features: ["До 5 страниц", "AI-дизайн", "Адаптивный дизайн", "Базовая SEO-оптимизация", "Форма заявки / контакты"],
-      featured: true,
-    },
-  ];
-
-  return (
-    <section className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
-      <div className="mx-auto max-w-6xl">
-        <div className="reveal-up text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Прозрачные цены</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">Фиксированная стоимость</h2>
-          <p className="mt-3 text-[#A1A1B5]">Без скрытых доплат — знаете цену до начала работы</p>
-        </div>
-
-        <div className="mt-10 grid gap-5 sm:mx-auto sm:max-w-2xl sm:grid-cols-2">
-          {plans.map((plan) => (
-            <div key={plan.name}
-              className={`reveal-up rounded-2xl border p-7 ${
-                plan.featured
-                  ? "border-violet-500/40 bg-gradient-to-br from-violet-500/10 to-blue-500/5 delay-2"
-                  : "border-white/10 bg-[#13131A] delay-1"
-              }`}>
-              <p className={`text-xs font-semibold uppercase tracking-widest ${plan.featured ? "text-violet-400" : "text-[#6B6B80]"}`}>
-                {plan.name}
-              </p>
-              <div className="mt-3 flex items-baseline gap-1">
-                <span className="text-xs text-[#6B6B80]">{plan.period}</span>
-                <span className="text-4xl font-bold text-white">{plan.price}</span>
-              </div>
-              <ul className="mt-5 flex flex-col gap-2.5">
-                {plan.features.map((f) => (
-                  <li key={f} className="flex items-center gap-2.5 text-sm text-[#A1A1B5]">
-                    <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${plan.featured ? "bg-violet-400" : "bg-[#6B6B80]"}`} aria-hidden="true" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Link href="/generator"
-                className={`mt-6 inline-flex w-full items-center justify-center rounded-xl py-3 text-sm font-semibold transition hover:-translate-y-0.5 ${
-                  plan.featured
-                    ? "bg-gradient-to-r from-violet-600 to-blue-600 text-white shadow-lg shadow-violet-500/25 hover:opacity-90"
-                    : "border border-white/10 bg-white/5 text-white hover:bg-white/10"
-                }`}>
-                Заказать
-              </Link>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-6 text-center">
-          <Link href="/pricing" className="text-sm text-[#A1A1B5] transition-colors hover:text-white">
-            Смотреть все пакеты →
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
+// PricingPreview импортирован из @/components/sections/pricing-preview
 
 // ─── ФИНАЛЬНЫЙ CTA ────────────────────────────────────────────────────────────
 
