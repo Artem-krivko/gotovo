@@ -1,30 +1,29 @@
 // content/generator-cases.ts
 
 export interface GeneratorCase {
-  id: number;
-  label: string;
-  prompt: string;
-  image: string | null;
-  category: string;
-  /** Уникальный цвет акцента для каждой карточки */
+  id: number
+  label: string
+  prompt: string
+  image: string | null
+  video?: string | null
+  category: string
   accent: {
-    border: string;
-    glow: string;
-    badge: string;
-    dot: string;
-  };
-  /** Цвет фона заглушки если нет изображения */
-  fallbackGradient: string;
-  /** Декоративный тег — "стиль" сайта */
-  styleTag: string;
+    border: string
+    glow: string
+    badge: string
+    dot: string
+  }
+  fallbackGradient: string
+  styleTag: string
+  featured?: boolean
 }
 
 export const GENERATOR_CASES: GeneratorCase[] = [
   {
     id: 1,
     label: "Стоматология",
-    prompt: "Современная клиника — белый, синий, доверие и технологии",
-    image: "/images/generator/dentist-preview.svg",
+    prompt: "Современная клиника — чистый дизайн, доверие и технологии",
+    image: "/images/generator/dentist-preview.png",
     category: "Медицина",
     accent: {
       border: "border-sky-500/30",
@@ -39,7 +38,7 @@ export const GENERATOR_CASES: GeneratorCase[] = [
     id: 2,
     label: "Тату-салон",
     prompt: "Авторский тату — тёмная эстетика, портфолио мастеров, характер",
-    image: "/images/generator/tattoo-preview.svg",
+    image: "/images/generator/tattoo-preview.png",
     category: "Красота",
     accent: {
       border: "border-zinc-500/30",
@@ -53,8 +52,8 @@ export const GENERATOR_CASES: GeneratorCase[] = [
   {
     id: 3,
     label: "Фитнес-клуб",
-    prompt: "Премиум спортзал — энергия, мощь, оранжевый акцент на чёрном",
-    image: "/images/generator/gym-preview.svg",
+    prompt: "Премиум спортзал — энергия, мощь, яркий акцент на чёрном",
+    image: "/images/generator/gym-preview.png",
     category: "Спорт",
     accent: {
       border: "border-orange-500/30",
@@ -69,7 +68,7 @@ export const GENERATOR_CASES: GeneratorCase[] = [
     id: 4,
     label: "Кофейня",
     prompt: "Specialty кофе — тёплая атмосфера, авторские десерты, уют",
-    image: "/images/generator/coffee-preview.svg",
+    image: "/images/generator/coffee-preview.png",
     category: "Еда",
     accent: {
       border: "border-amber-500/30",
@@ -83,8 +82,8 @@ export const GENERATOR_CASES: GeneratorCase[] = [
   {
     id: 5,
     label: "Юридическая компания",
-    prompt: "Юридические услуги B2B — авторитет, serif, строгость и доверие",
-    image: "/images/generator/legal-preview.svg",
+    prompt: "Юридические услуги B2B — авторитет, строгость и доверие",
+    image: "/images/generator/legal-preview.png",
     category: "B2B",
     accent: {
       border: "border-emerald-500/30",
@@ -95,4 +94,4 @@ export const GENERATOR_CASES: GeneratorCase[] = [
     fallbackGradient: "from-emerald-950 to-slate-950",
     styleTag: "Авторитет · B2B",
   },
-];
+]

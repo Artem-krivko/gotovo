@@ -6,7 +6,6 @@ import { SiteFooter } from "@/components/layout/site-footer";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
 
-// Space Grotesk — body, UI, мелкий текст
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin", "latin-ext"],
   variable: "--font-sans",
@@ -14,7 +13,6 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
-// Bricolage Grotesque — заголовки h1–h3, смело, с характером
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
   variable: "--font-display",
@@ -41,22 +39,15 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "gotovo" }],
   alternates: { canonical: SITE_URL },
-
-  // ─── Фавикон и иконки ─────────────────────────────────────────────────────
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
       { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
       { url: "/favicon.ico", sizes: "48x48" },
     ],
-    apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
-    ],
-    other: [
-      { rel: "manifest", url: "/site.webmanifest" },
-    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    other: [{ rel: "manifest", url: "/site.webmanifest" }],
   },
-
   openGraph: {
     type: "website",
     locale: "ru_RU",
@@ -79,8 +70,6 @@ export const metadata: Metadata = {
   },
 };
 
-// ─── Schema.org ───────────────────────────────────────────────────────────────
-
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
@@ -94,8 +83,6 @@ const organizationSchema = {
   ],
   priceRange: "$$",
 };
-
-// ─── Layout ───────────────────────────────────────────────────────────────────
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
