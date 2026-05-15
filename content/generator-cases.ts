@@ -54,6 +54,7 @@ export const GENERATOR_CASES: GeneratorCase[] = [
     label: "Фитнес-клуб",
     prompt: "Премиум спортзал — энергия, мощь, яркий акцент на чёрном",
     image: "/images/generator/gym-preview.png",
+    video: "/video/preview.mp4",
     category: "Спорт",
     accent: {
       border: "border-orange-500/30",

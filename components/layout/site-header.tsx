@@ -4,14 +4,12 @@ import Link from "next/link";
 import { useState, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
 
-// ─── Навигация ────────────────────────────────────────────────────────────────
-
 const NAV_LINKS = [
-  { href: "/services", label: "Услуги" },
-  { href: "/process", label: "Процесс" },
-  { href: "/pricing", label: "Цены" },
-  { href: "/about", label: "О нас" },
-  { href: "/contacts", label: "Контакты" },
+  { href: "/services",  label: "Услуги"   },
+  { href: "/process",   label: "Процесс"  },
+  { href: "/pricing",   label: "Цены"     },
+  { href: "/about",     label: "О нас"    },
+  { href: "/contacts",  label: "Контакты" },
 ] as const;
 
 // ─── Логотип ──────────────────────────────────────────────────────────────────
@@ -19,29 +17,26 @@ const NAV_LINKS = [
 function Logo() {
   return (
     <Link href="/" className="group flex items-center gap-2.5">
-      <img
-        src="/favicon.svg"
-        alt="gotovo"
-        width={32}
-        height={32}
-        className="transition group-hover:opacity-80"
-      />
-      <span className="text-base font-bold tracking-tight text-white">gotovo</span>
+      <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-blue-600 shadow-md shadow-violet-500/30 transition group-hover:shadow-violet-500/50">
+        <img
+          src="/favicon.svg"
+          alt="gotovo"
+          width={20}
+          height={20}
+          className="relative z-10 brightness-0 invert transition group-hover:scale-105"
+        />
+      </div>
+      <span className="text-[15px] font-bold tracking-tight text-white">gotovo</span>
     </Link>
   );
 }
 
-// ─── Мобильное меню через Portal ─────────────────────────────────────────────
+// ─── Мобильное меню ───────────────────────────────────────────────────────────
 
-interface MobileMenuProps {
-  open: boolean;
-  visible: boolean;
-  onClose: () => void;
-}
+interface MobileMenuProps { open: boolean; visible: boolean; onClose: () => void }
 
 function MobileMenu({ open, visible, onClose }: MobileMenuProps) {
   if (!visible) return null;
-
   return createPortal(
     <div
       className={`fixed inset-0 z-[9999] flex flex-col overflow-y-auto transition-all duration-300 ease-out md:hidden ${
@@ -52,20 +47,12 @@ function MobileMenu({ open, visible, onClose }: MobileMenuProps) {
       aria-modal="true"
       role="dialog"
     >
-      {/* Амбиентный glow */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 h-48"
         aria-hidden="true"
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,58,237,0.18), transparent 70%)",
-        }}
+        style={{ background: "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,58,237,0.18), transparent 70%)" }}
       />
-
-      <nav
-        className="relative flex flex-col px-5 pt-6"
-        aria-label="Мобильная навигация"
-      >
+      <nav className="relative flex flex-col px-5 pt-6" aria-label="Мобильная навигация">
         {NAV_LINKS.map((link, i) => (
           <Link
             key={link.href}
@@ -82,27 +69,13 @@ function MobileMenu({ open, visible, onClose }: MobileMenuProps) {
             }}
           >
             <span>{link.label}</span>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              aria-hidden="true"
-              className="text-[#6B6B80] transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-violet-400"
-            >
-              <path
-                d="M3 8h10M8 3l5 5-5 5"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"
+              className="text-[#6B6B80] transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-violet-400">
+              <path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </Link>
         ))}
       </nav>
-
-      {/* CTA снизу */}
       <div className="relative mt-auto px-5 pb-10 pt-6">
         <Link
           href="/generator"
@@ -141,52 +114,52 @@ function MobileMenu({ open, visible, onClose }: MobileMenuProps) {
 // ─── Основной компонент ───────────────────────────────────────────────────────
 
 export function SiteHeader() {
-  const [open, setOpen] = useState(false);
+  const [open,    setOpen]    = useState(false);
   const [visible, setVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   const handleToggle = useCallback(() => setOpen((v) => !v), []);
-  const handleClose = useCallback(() => setOpen(false), []);
+  const handleClose  = useCallback(() => setOpen(false), []);
 
-  // Portal доступен только после mount на клиенте
+  useEffect(() => { setMounted(true); }, []);
+
   useEffect(() => {
-    setMounted(true);
+    const onScroll = () => setScrolled(window.scrollY > 16);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Анимация: открытие — сразу mount, закрытие — ждём fade-out
   useEffect(() => {
-    if (open) {
-      setVisible(true);
-    } else {
-      const t = setTimeout(() => setVisible(false), 300);
-      return () => clearTimeout(t);
-    }
+    if (open) { setVisible(true); }
+    else { const t = setTimeout(() => setVisible(false), 300); return () => clearTimeout(t); }
   }, [open]);
 
-  // Блокируем скролл body
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [open]);
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#0A0A0F]/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5 sm:px-6">
+      <header
+        className={`fixed left-0 right-0 top-0 z-50 transition-all duration-500 ${
+          scrolled
+            ? "border-b border-white/[0.06] bg-[#0A0A0F]/80 backdrop-blur-xl"
+            : "border-b border-white/[0.04] bg-transparent backdrop-blur-sm"
+        }`}
+      >
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
           <Logo />
 
           {/* Desktop nav */}
-          <nav
-            className="hidden items-center gap-1 md:flex"
-            aria-label="Основная навигация"
-          >
+          <nav className="hidden items-center gap-0.5 md:flex" aria-label="Основная навигация">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="rounded-lg px-3 py-2 text-sm font-medium text-[#A1A1B5] transition-colors hover:bg-white/5 hover:text-white"
+                className="rounded-lg px-3.5 py-2 text-sm font-medium text-white/60 transition-all duration-200 hover:bg-white/[0.07] hover:text-white"
               >
                 {link.label}
               </Link>
@@ -194,10 +167,10 @@ export function SiteHeader() {
           </nav>
 
           {/* Desktop CTA */}
-          <div className="hidden md:block">
+          <div className="hidden md:flex items-center gap-3">
             <Link
               href="/generator"
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:opacity-90 hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/30 transition hover:opacity-90 hover:-translate-y-0.5"
             >
               <span aria-hidden="true">✦</span>
               Сгенерировать дизайн
@@ -206,47 +179,26 @@ export function SiteHeader() {
 
           {/* Mobile burger */}
           <button
-            className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-[#A1A1B5] transition hover:bg-white/5 hover:text-white md:hidden"
+            className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 text-white/60 transition hover:bg-white/5 hover:text-white md:hidden"
             onClick={handleToggle}
             aria-label={open ? "Закрыть меню" : "Открыть меню"}
             aria-expanded={open}
           >
-            <span
-              className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${
-                open ? "opacity-0 rotate-90 scale-50" : "opacity-100 rotate-0 scale-100"
-              }`}
-            >
+            <span className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${open ? "opacity-0 rotate-90 scale-50" : "opacity-100 rotate-0 scale-100"}`}>
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-                <path
-                  d="M2 5h14M2 9h14M2 13h14"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
+                <path d="M2 5h14M2 9h14M2 13h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
               </svg>
             </span>
-            <span
-              className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${
-                open ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-50"
-              }`}
-            >
+            <span className={`absolute inset-0 flex items-center justify-center transition-all duration-200 ${open ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-50"}`}>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <path
-                  d="M3 3l10 10M13 3L3 13"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
+                <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
               </svg>
             </span>
           </button>
         </div>
       </header>
 
-      {/* Portal — рендерится прямо в body, вне любых stacking contexts */}
-      {mounted && (
-        <MobileMenu open={open} visible={visible} onClose={handleClose} />
-      )}
+      {mounted && <MobileMenu open={open} visible={visible} onClose={handleClose} />}
     </>
   );
 }

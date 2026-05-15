@@ -155,7 +155,36 @@ function CaseCard({ c, priority }: { c: GeneratorCase; priority: boolean }) {
     >
       {/* Превью */}
       <div className="relative aspect-[16/10] overflow-hidden">
-        {c.image ? (
+        {c.video ? (
+          <>
+            {/* Браузерная строка */}
+            <div className="absolute left-0 right-0 top-0 z-10 flex items-center gap-1.5 bg-[#1C1C28]/95 px-3 py-2 backdrop-blur-sm">
+              <div className="flex shrink-0 gap-1" aria-hidden="true">
+                <span className="h-2 w-2 rounded-full bg-red-500/80"/>
+                <span className="h-2 w-2 rounded-full bg-yellow-500/80"/>
+                <span className="h-2 w-2 rounded-full bg-green-500/80"/>
+              </div>
+              <div className="mx-auto flex min-w-0 items-center gap-1 rounded bg-white/[0.06] px-2 py-0.5 text-[9px] text-[#6B6B80]">
+                gotovo.studio / generator
+              </div>
+              <div className="flex shrink-0 items-center gap-1 rounded border border-violet-500/30 bg-violet-500/10 px-1.5 py-0.5 text-[8px] font-semibold text-violet-400">
+                <span className="h-1 w-1 animate-pulse rounded-full bg-violet-400" aria-hidden="true"/>
+                Live
+              </div>
+            </div>
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="h-full w-full object-cover object-top"
+              style={{ paddingTop: "30px" }}
+              aria-label={`AI-генерация дизайна — ${c.label}`}
+            >
+              <source src={c.video} type="video/mp4"/>
+            </video>
+          </>
+        ) : c.image ? (
           <Image
             src={c.image}
             alt={`Пример дизайна — ${c.label}`}
@@ -177,12 +206,23 @@ function CaseCard({ c, priority }: { c: GeneratorCase; priority: boolean }) {
           </div>
         </div>
 
-        {/* Стиль тег */}
-        <div className="absolute right-3 top-3">
-          <span className={`inline-flex items-center rounded-lg border px-2.5 py-1 text-[10px] font-semibold backdrop-blur-sm ${c.accent.badge}`}>
-            {c.styleTag}
-          </span>
-        </div>
+        {/* Стиль тег — скрываем когда видео (браузерная строка уже есть) */}
+        {!c.video && (
+          <div className="absolute right-3 top-3">
+            <span className={`inline-flex items-center rounded-lg border px-2.5 py-1 text-[10px] font-semibold backdrop-blur-sm ${c.accent.badge}`}>
+              {c.styleTag}
+            </span>
+          </div>
+        )}
+
+        {/* 30 сек бейдж для видео */}
+        {c.video && (
+          <div className="absolute right-3 top-8 z-10">
+            <span className="inline-flex items-center gap-1 rounded border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-[9px] font-semibold text-amber-400 backdrop-blur-sm">
+              <IconPlay/> 30 сек
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Контент */}
@@ -208,8 +248,8 @@ export function GeneratorExamplesFilter({ cases, categories }: Props) {
   const [active, setActive] = useState<string>(ALL_LABEL)
   const handleSelect = useCallback((cat: string) => setActive(cat), [])
 
-  const videoCase = useMemo(() => cases.find((c) => !!c.video), [cases])
-  const regularCases = useMemo(() => cases.filter((c) => !c.video), [cases])
+  const videoCase = useMemo(() => cases.find((c) => !!c.featured), [cases])
+  const regularCases = useMemo(() => cases.filter((c) => !c.featured), [cases])
 
   const filteredRegular = useMemo(
     () => (active === ALL_LABEL ? regularCases : regularCases.filter((c) => c.category === active)),

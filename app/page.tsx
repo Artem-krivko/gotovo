@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Faq } from "@/components/sections/faq";
 import { GeneratorExamplesFilter } from "@/components/sections/generator-examples-filter";
@@ -99,6 +100,7 @@ function BrowserMockup() {
             </div>
           </div>
 
+          {/* VIDEO TEMP HIDDEN – restore when needed
           <div className="relative overflow-hidden" style={{ height: "300px" }} aria-label="Превью сайта roomforia.ru">
             <div
               className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-12"
@@ -109,10 +111,77 @@ function BrowserMockup() {
               <source src="/video/preview.mp4" type="video/mp4" />
             </video>
           </div>
+          */}
         </div>
       </div>
     </div>
   );
+}
+
+// ─── FLOATING TEMPLATES ───────────────────────────────────────────────────────
+
+function FloatingTemplates() {
+  type CardPos = { src: string; width: number; rotate: number; opacity: number; top?: string; bottom?: string; left?: string; right?: string }
+  const cards: CardPos[] = [
+    // ─── ЛЕВАЯ КОЛОНКА ────────────────────────────────────────────────────────
+    { src: "/templates/t1.png",  top:  "2%",    left: "-4%",  width: 252, rotate:  -8, opacity: 0.88 },
+    { src: "/templates/t2.png",  top:  "38%",   left: "-6%",  width: 244, rotate:   7, opacity: 0.84 },
+    { src: "/templates/t9.png",  bottom: "-4%", left: "-4%",  width: 250, rotate: -10, opacity: 0.86 },
+    // ─── СРЕДНИЙ РЯД — ближе к центру ────────────────────────────────────────
+    { src: "/templates/t13.png", top:  "23%",   left:  "9%",  width: 215, rotate:  -4, opacity: 0.65 },
+    { src: "/templates/t15.png", top:  "23%",   right:  "9%", width: 212, rotate:   5, opacity: 0.65 },
+    // нижний левый (закрываем пустой угол)
+    { src: "/templates/t17.png", bottom: "2%",  left:  "8%",  width: 200, rotate:   6, opacity: 0.58 },
+    // ─── ВЕРХ ЦЕНТР — над текстом ────────────────────────────────────────────
+    { src: "/templates/t4.png",  top: "-6%",    left: "18%",  width: 232, rotate:   5, opacity: 0.76 },
+    { src: "/templates/t22.png", top: "-6%",    left: "40%",  width: 215, rotate:  -6, opacity: 0.70 },
+    { src: "/templates/t19.png", top: "-6%",    left: "62%",  width: 225, rotate:   4, opacity: 0.76 },
+    // ─── ПРАВАЯ КОЛОНКА (разные от левой) ────────────────────────────────────
+    { src: "/templates/t23.png", top:  "2%",    right: "-4%", width: 256, rotate:   9, opacity: 0.88 },
+    { src: "/templates/t25.png", top:  "37%",   right: "-6%", width: 246, rotate:  -5, opacity: 0.84 },
+    { src: "/templates/t27.png", bottom: "-4%", right: "-4%", width: 252, rotate:  11, opacity: 0.86 },
+  ]
+
+  return (
+    <div className="pointer-events-none absolute inset-0 hidden overflow-hidden sm:block" aria-hidden="true">
+      {cards.map((card, i) => (
+        <div
+          key={i}
+          className="absolute overflow-hidden rounded-xl border border-white/[0.08] shadow-2xl shadow-black/60"
+          style={{
+            top: card.top,
+            left: card.left,
+            right: card.right,
+            bottom: card.bottom,
+            width: card.width,
+            transform: `rotate(${card.rotate}deg)`,
+            opacity: card.opacity,
+          }}
+        >
+          <Image
+              src={card.src}
+              alt=""
+              width={card.width}
+              height={Math.round(card.width * 0.667)}
+              sizes="220px"
+              className="block w-full"
+              loading="lazy"
+            />
+        </div>
+      ))}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: [
+            // тёмный центр под текст, прозрачные края — карточки видны
+            "radial-gradient(ellipse 58% 72% at 50% 44%, rgba(10,10,15,0.92) 0%, rgba(10,10,15,0.65) 40%, rgba(10,10,15,0.15) 72%, transparent 100%)",
+            // затемнение верха и сильное низа (защита метрик)
+            "linear-gradient(to bottom, rgba(10,10,15,0.30) 0%, transparent 16%, transparent 68%, rgba(10,10,15,0.96) 88%, rgba(10,10,15,1.00) 100%)",
+          ].join(", "),
+        }}
+      />
+    </div>
+  )
 }
 
 // ─── HERO ─────────────────────────────────────────────────────────────────────
@@ -124,48 +193,41 @@ function Hero() {
         style={{ background: "radial-gradient(circle, rgba(124,58,237,0.22), transparent 70%)", filter: "blur(60px)" }} />
       <div className="pointer-events-none absolute right-0 top-1/3 h-[400px] w-[400px] translate-x-1/3" aria-hidden="true"
         style={{ background: "radial-gradient(circle, rgba(236,72,153,0.16), transparent 70%)", filter: "blur(70px)" }} />
+      <FloatingTemplates />
       <div className="grid-overlay pointer-events-none absolute inset-0" aria-hidden="true" />
 
       <div className="relative mx-auto max-w-6xl">
-        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          <div className="flex flex-col items-start pt-4">
-            <div className="reveal-up badge-animated inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium text-violet-300">
-              <span className="pulse-glow h-1.5 w-1.5 rounded-full bg-violet-400" aria-hidden="true" />
-              AI-генератор дизайна сайтов
-            </div>
-
-            <h1 className="reveal-up delay-1 mt-5 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl">
-              Опишите бизнес —<br />
-              получите сайт<br />
-              <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-blue-400 bg-clip-text text-transparent">
-                за 30 секунд
-              </span>
-            </h1>
-
-            <p className="reveal-up delay-2 mt-4 text-sm leading-6 text-[#A1A1B5] sm:text-lg">
-              Искусственный интеллект создаст дизайн сайта<br className="hidden sm:block" />
-              по описанию вашего бизнеса.<br className="hidden sm:block" />
-              Нравится — заказывайте разработку.
-            </p>
-
-            <div className="reveal-up delay-3 mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-              <Link href="/generator"
-                className="btn-shimmer inline-flex items-center justify-center gap-2 rounded-xl px-7 py-4 text-sm font-bold text-white shadow-xl shadow-violet-500/40 transition hover:opacity-90 hover:-translate-y-0.5">
-                <span className="text-base" aria-hidden="true">✦</span>
-                Сгенерировать дизайн
-              </Link>
-              <Link href="/process"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-7 py-4 text-sm font-medium text-white backdrop-blur transition hover:bg-white/10 hover:border-white/20">
-                <PlayIcon />
-                Как это работает?
-              </Link>
-            </div>
+        <div className="flex flex-col items-center pt-8 pb-4 text-center">
+          <div className="reveal-up badge-animated inline-flex items-center gap-2 rounded-full border border-violet-500/25 bg-[#0A0A0F]/70 px-4 py-1.5 text-sm font-medium text-violet-300 backdrop-blur-md">
+            <span className="pulse-glow h-1.5 w-1.5 rounded-full bg-violet-400" aria-hidden="true" />
+            AI-генератор дизайна сайтов
           </div>
 
-          <div className="reveal-up delay-2 relative pb-8 pt-4 lg:pb-0">
-            <ParallaxMockup>
-              <BrowserMockup />
-            </ParallaxMockup>
+          <h1 className="reveal-up delay-1 mt-5 text-5xl font-bold leading-[1.08] tracking-tight text-white sm:text-6xl lg:text-7xl">
+            Опишите бизнес —<br />
+            получите сайт<br />
+            <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-blue-400 bg-clip-text text-transparent">
+              за 30 секунд
+            </span>
+          </h1>
+
+          <p className="reveal-up delay-2 mt-5 max-w-lg text-base leading-7 text-[#A1A1B5] sm:text-lg">
+            Искусственный интеллект создаст дизайн сайта
+            по описанию вашего бизнеса.
+            Нравится — заказывайте разработку.
+          </p>
+
+          <div className="reveal-up delay-3 mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:justify-center">
+            <Link href="/generator"
+              className="btn-shimmer inline-flex items-center justify-center gap-2 rounded-xl px-8 py-4 text-sm font-bold text-white shadow-xl shadow-violet-500/40 transition hover:opacity-90 hover:-translate-y-0.5">
+              <span className="text-base" aria-hidden="true">✦</span>
+              Сгенерировать дизайн
+            </Link>
+            <Link href="/process"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-8 py-4 text-sm font-medium text-white backdrop-blur transition hover:bg-white/10 hover:border-white/20">
+              <PlayIcon />
+              Как это работает?
+            </Link>
           </div>
         </div>
 

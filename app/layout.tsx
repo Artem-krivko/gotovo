@@ -99,6 +99,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         suppressHydrationWarning
       >
         <SiteHeader />
+        <div className="h-16" aria-hidden="true" />
         <main>{children}</main>
         <SiteFooter />
       </body>
