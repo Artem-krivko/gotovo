@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next";
 
-// Замени на реальный домен перед деплоем
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://your-domain.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
 
 export default function robots(): MetadataRoute.Robots {
   return {

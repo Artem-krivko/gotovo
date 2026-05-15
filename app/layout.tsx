@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Bricolage_Grotesque } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -13,12 +13,6 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
-const bricolage = Bricolage_Grotesque({
-  subsets: ["latin"],
-  variable: "--font-display",
-  weight: ["400", "500", "600", "700", "800"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -86,7 +80,7 @@ const organizationSchema = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" suppressHydrationWarning className={`${spaceGrotesk.variable} ${bricolage.variable}`}>
+    <html lang="ru" suppressHydrationWarning className={spaceGrotesk.variable}>
       <head>
         <script
           type="application/ld+json"
