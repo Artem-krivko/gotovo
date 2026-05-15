@@ -377,7 +377,7 @@ function HowItWorks() {
 // ─── ПРИМЕРЫ ДИЗАЙНОВ ────────────────────────────────────────────────────────
 
 function GeneratorExamples() {
-  const categories = ["Медицина", "Красота", "Спорт", "Еда", "B2B"];
+  const categories = ["Медицина", "Красота", "Спорт", "Еда", "B2B", "Tech"];
   return (
     <section className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
       <div className="mx-auto max-w-6xl">
