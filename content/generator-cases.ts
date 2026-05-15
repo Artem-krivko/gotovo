@@ -54,7 +54,6 @@ export const GENERATOR_CASES: GeneratorCase[] = [
     label: "Фитнес-клуб",
     prompt: "Премиум спортзал — энергия, мощь, яркий акцент на чёрном",
     image: "/images/generator/gym-preview.png",
-    video: "/video/preview.mp4",
     category: "Спорт",
     accent: {
       border: "border-orange-500/30",
@@ -94,5 +93,21 @@ export const GENERATOR_CASES: GeneratorCase[] = [
     },
     fallbackGradient: "from-emerald-950 to-slate-950",
     styleTag: "Авторитет · B2B",
+  },
+  {
+    id: 6,
+    label: "Ресторан",
+    prompt: "Авторский ресторан — атмосфера, меню, бронирование столиков онлайн",
+    image: null,
+    video: "/video/preview.mp4",
+    category: "Еда",
+    accent: {
+      border: "border-rose-500/30",
+      glow: "hover:shadow-rose-500/15",
+      badge: "bg-rose-500/10 text-rose-400 border-rose-500/20",
+      dot: "bg-rose-400",
+    },
+    fallbackGradient: "from-rose-950 to-zinc-950",
+    styleTag: "Атмосфера · Вкус",
   },
 ]
