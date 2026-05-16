@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -87,6 +88,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />
       </head>
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-MSXLMK8X5K"
+        strategy="afterInteractive"
+      />
+      <Script id="ga-init" strategy="afterInteractive">
+        {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-MSXLMK8X5K');`}
+      </Script>
       <body
         className="bg-[#0A0A0F] text-white antialiased"
         style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}
