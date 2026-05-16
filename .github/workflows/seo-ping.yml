@@ -1,24 +1,47 @@
-name: Ping Google Indexing API
+name: SEO Health Check
 
 on:
   push:
     branches: [main]
 
 jobs:
-  ping-google:
+  check-sitemap:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
       - name: Wait for Vercel deploy
         run: sleep 180
 
-      - name: Ping Google Indexing API
+      - name: Check sitemap and pages
         env:
-          GOOGLE_SERVICE_ACCOUNT_KEY: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}
           SITE_URL: https://www.usegotovo.by
-        run: node scripts/ping-indexing.mjs
+        run: |
+          echo "Checking sitemap..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$SITE_URL/sitemap.xml")
+          if [ "$STATUS" != "200" ]; then
+            echo "✗ sitemap.xml returned $STATUS"
+            exit 1
+          fi
+          echo "✓ sitemap.xml OK"
+
+          echo ""
+          echo "Checking pages from sitemap..."
+          URLS=$(curl -s "$SITE_URL/sitemap.xml" | grep -oP '(?<=<loc>)[^<]+')
+          FAIL=0
+          for URL in $URLS; do
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+            if [ "$CODE" = "200" ]; then
+              echo "✓ $URL"
+            else
+              echo "✗ $URL ($CODE)"
+              FAIL=1
+            fi
+          done
+
+          if [ "$FAIL" = "1" ]; then
+            echo ""
+            echo "Some pages returned errors"
+            exit 1
+          fi
+
+          echo ""
+          echo "All pages OK"
