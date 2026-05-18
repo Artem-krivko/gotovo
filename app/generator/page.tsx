@@ -5,11 +5,7 @@ import { GeneratorForm } from "@/components/generator/generator-form"
 import { GeneratorPreview, GeneratorSkeleton } from "@/components/generator/generator-preview"
 import type { GeneratorParams } from "@/lib/types"
 
-// ─── Типы состояния ───────────────────────────────────────────────────────────
-
 type GeneratorState = "idle" | "loading" | "result"
-
-// ─── Заглушка пустого состояния ───────────────────────────────────────────────
 
 function EmptyPreview() {
   return (
@@ -33,21 +29,24 @@ function EmptyPreview() {
   )
 }
 
-// ─── Основной Client Component ────────────────────────────────────────────────
-
 export default function GeneratorPage() {
   const [generatorState, setGeneratorState] = useState<GeneratorState>("idle")
   const [generatedHtml, setGeneratedHtml] = useState<string>("")
+  const [designId, setDesignId] = useState<string>("")
   const [lastParams, setLastParams] = useState<GeneratorParams | null>(null)
 
-  const handleResult = useCallback((html: string, params: GeneratorParams) => {
+  const handleResult = useCallback((html: string, id: string, params: GeneratorParams) => {
     setGeneratedHtml(html)
+    setDesignId(id)
     setLastParams(params)
     setGeneratorState("result")
   }, [])
 
   const handleLoading = useCallback((loading: boolean) => {
-    setGeneratorState(loading ? "loading" : "idle")
+    setGeneratorState(prev => {
+      if (loading) return "loading"
+      return prev === "result" ? "result" : "idle"
+    })
   }, [])
 
   const handleRegenerate = useCallback(async () => {
@@ -60,12 +59,13 @@ export default function GeneratorPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ params: lastParams }),
       })
-      const data = await res.json() as { html?: string; error?: string }
+      const data = await res.json() as { html?: string; designId?: string; error?: string }
       if (!res.ok || !data.html) throw new Error(data.error)
       setGeneratedHtml(data.html)
+      setDesignId(data.designId ?? "")
       setGeneratorState("result")
     } catch {
-      setGeneratorState("result") // Остаёмся на результате при ошибке
+      setGeneratorState("result")
     }
   }, [lastParams])
 
@@ -77,7 +77,6 @@ export default function GeneratorPage() {
 
       {/* ── Левая панель: форма ────────────────────────────────────────────── */}
       <div className="flex w-full shrink-0 flex-col border-b border-zinc-200 bg-white lg:w-[400px] lg:border-b-0 lg:border-r">
-        {/* Заголовок панели */}
         <div className="border-b border-zinc-100 px-5 py-4">
           <h1 className="text-base font-semibold text-zinc-950">
             AI Design Generator
@@ -87,7 +86,6 @@ export default function GeneratorPage() {
           </p>
         </div>
 
-        {/* Форма со скроллом */}
         <div className="flex-1 overflow-y-auto p-5">
           <GeneratorForm
             onResult={handleResult}
@@ -104,6 +102,7 @@ export default function GeneratorPage() {
         ) : hasResult ? (
           <GeneratorPreview
             html={generatedHtml}
+            designId={designId}
             onRegenerate={handleRegenerate}
             isLoading={isLoading}
           />

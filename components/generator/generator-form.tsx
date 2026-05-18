@@ -74,7 +74,7 @@ function SpinnerIcon() {
 // ─── Типы пропсов ─────────────────────────────────────────────────────────────
 
 interface GeneratorFormProps {
-  onResult: (html: string, params: GeneratorParams) => void
+  onResult: (html: string, designId: string, params: GeneratorParams) => void
   onLoading: (loading: boolean) => void
   isLoading: boolean
 }
@@ -120,13 +120,13 @@ export function GeneratorForm({ onResult, onLoading, isLoading }: GeneratorFormP
           body: JSON.stringify({ params }),
         })
 
-        const data = await res.json() as { html?: string; error?: string }
+        const data = await res.json() as { html?: string; designId?: string; error?: string }
 
         if (!res.ok || !data.html) {
           throw new Error(data.error ?? "Ошибка генерации")
         }
 
-        onResult(data.html, params)
+        onResult(data.html, data.designId ?? "", params)
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Попробуйте ещё раз"
         setError(msg)

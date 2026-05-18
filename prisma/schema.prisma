@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Design {
+  id           String   @id @default(cuid())
+  sessionId    String
+  htmlContent  String
+  prompt       String
+  businessType String
+  style        String
+  language     String
+  createdAt    DateTime @default(now())
+
+  orders Order[]
+}
+
+model Order {
+  id        String   @id @default(cuid())
+  designId  String
+  name      String
+  phone     String
+  email     String
+  comment   String?
+  createdAt DateTime @default(now())
+
+  design Design @relation(fields: [designId], references: [id])
+}

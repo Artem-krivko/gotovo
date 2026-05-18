@@ -1,12 +1,10 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import { ContactForm } from "@/components/sections/contact-form"
-
-// ─── Типы ─────────────────────────────────────────────────────────────────────
 
 interface GeneratorPreviewProps {
   html: string
+  designId: string
   onRegenerate: () => void
   isLoading: boolean
 }
@@ -16,7 +14,6 @@ interface GeneratorPreviewProps {
 export function GeneratorSkeleton() {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-6 p-8 text-center">
-      {/* Анимированные блоки */}
       <div className="w-full max-w-md space-y-3">
         <div className="h-8 w-3/4 animate-pulse rounded-xl bg-zinc-200 mx-auto" />
         <div className="h-4 w-1/2 animate-pulse rounded-lg bg-zinc-200 mx-auto" />
@@ -28,7 +25,6 @@ export function GeneratorSkeleton() {
         </div>
         <div className="h-16 animate-pulse rounded-2xl bg-zinc-200" />
       </div>
-
       <div className="flex flex-col items-center gap-2">
         <div className="flex items-center gap-2">
           <span className="h-2 w-2 animate-bounce rounded-full bg-violet-500 [animation-delay:0ms]" aria-hidden="true" />
@@ -47,10 +43,8 @@ export function GeneratorSkeleton() {
 function RefreshIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-      <path d="M2 8a6 6 0 0111-3M14 8a6 6 0 01-11 3" stroke="currentColor"
-        strokeWidth="1.5" strokeLinecap="round" />
-      <path d="M13 2v3h-3M3 14v-3h3" stroke="currentColor"
-        strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2 8a6 6 0 0111-3M14 8a6 6 0 01-11 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M13 2v3h-3M3 14v-3h3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
@@ -58,32 +52,62 @@ function RefreshIcon() {
 function ExpandIcon() {
   return (
     <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-      <path d="M10 2h4v4M6 14H2v-4M14 2l-5 5M2 14l5-5"
-        stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M10 2h4v4M6 14H2v-4M14 2l-5 5M2 14l5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   )
 }
 
 // ─── Модальное окно заявки ────────────────────────────────────────────────────
 
-function RequestModal({ onClose }: { onClose: () => void }) {
+type OrderState = "form" | "loading" | "success" | "error"
+
+function OrderModal({ designId, onClose }: { designId: string; onClose: () => void }) {
+  const [state, setState] = useState<OrderState>("form")
+  const [name, setName] = useState("")
+  const [phone, setPhone] = useState("")
+  const [email, setEmail] = useState("")
+  const [comment, setComment] = useState("")
+  const [errorMsg, setErrorMsg] = useState("")
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setState("loading")
+    setErrorMsg("")
+
+    try {
+      const res = await fetch("/api/submit-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ designId, name, phone, email, comment }),
+      })
+      const data = await res.json() as { success?: boolean; error?: string }
+      if (!res.ok || !data.success) throw new Error(data.error ?? "Ошибка отправки")
+      setState("success")
+    } catch (err) {
+      setErrorMsg(err instanceof Error ? err.message : "Попробуйте ещё раз")
+      setState("error")
+    }
+  }
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm sm:items-center"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
       role="dialog"
       aria-modal="true"
-      aria-label="Форма заявки на разработку"
     >
       <div className="w-full max-w-lg rounded-t-[2rem] bg-white p-6 shadow-2xl sm:rounded-[2rem] sm:p-8">
+
         {/* Шапка */}
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
             <h2 className="text-xl font-semibold tracking-tight text-zinc-950">
-              Заказать разработку
+              {state === "success" ? "Заявка отправлена!" : "Заказать разработку"}
             </h2>
             <p className="mt-1 text-sm text-zinc-500">
-              Сделаем финальный сайт на основе этого дизайна
+              {state === "success"
+                ? "Мы свяжемся с вами в течение часа"
+                : "Сделаем финальный сайт на основе этого дизайна"}
             </p>
           </div>
           <button
@@ -96,7 +120,96 @@ function RequestModal({ onClose }: { onClose: () => void }) {
           </button>
         </div>
 
-        <ContactForm />
+        {/* Успех */}
+        {state === "success" && (
+          <div className="flex flex-col items-center gap-4 py-6 text-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500 text-3xl text-white font-bold">
+              ✓
+            </div>
+            <p className="text-sm text-zinc-500">
+              Ваш дизайн сохранён и прикреплён к заявке. Мы уже видим его и скоро напишем.
+            </p>
+            <button
+              type="button"
+              onClick={onClose}
+              className="mt-2 rounded-xl bg-zinc-950 px-6 py-3 text-sm font-semibold text-white hover:bg-zinc-800 transition"
+            >
+              Закрыть
+            </button>
+          </div>
+        )}
+
+        {/* Форма */}
+        {(state === "form" || state === "loading" || state === "error") && (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-zinc-700">
+                Имя <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                required
+                value={name}
+                onChange={e => setName(e.target.value)}
+                placeholder="Ваше имя"
+                className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-zinc-700">
+                Телефон <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="tel"
+                required
+                value={phone}
+                onChange={e => setPhone(e.target.value)}
+                placeholder="+375 (29) 000-00-00"
+                className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-zinc-700">
+                Email <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-zinc-700">
+                Комментарий
+              </label>
+              <textarea
+                value={comment}
+                onChange={e => setComment(e.target.value)}
+                placeholder="Пожелания, сроки, бюджет..."
+                rows={3}
+                className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 resize-none"
+              />
+            </div>
+
+            {state === "error" && (
+              <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">{errorMsg}</p>
+            )}
+
+            <button
+              type="submit"
+              disabled={state === "loading"}
+              className="w-full rounded-xl bg-zinc-950 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-zinc-800 disabled:opacity-60"
+            >
+              {state === "loading" ? "Отправляем..." : "Отправить заявку →"}
+            </button>
+            <p className="text-center text-xs text-zinc-400">
+              Нажимая кнопку, вы соглашаетесь на обработку персональных данных
+            </p>
+          </form>
+        )}
       </div>
     </div>
   )
@@ -104,14 +217,13 @@ function RequestModal({ onClose }: { onClose: () => void }) {
 
 // ─── Основной компонент превью ────────────────────────────────────────────────
 
-export function GeneratorPreview({ html, onRegenerate, isLoading }: GeneratorPreviewProps) {
+export function GeneratorPreview({ html, designId, onRegenerate, isLoading }: GeneratorPreviewProps) {
   const [showModal, setShowModal] = useState(false)
 
   const handleOpenInTab = useCallback(() => {
     const blob = new Blob([html], { type: "text/html" })
     const url = URL.createObjectURL(blob)
     window.open(url, "_blank")
-    // Освобождаем память через 60 сек
     setTimeout(() => URL.revokeObjectURL(url), 60_000)
   }, [html])
 
@@ -120,7 +232,6 @@ export function GeneratorPreview({ html, onRegenerate, isLoading }: GeneratorPre
       <div className="flex h-full flex-col">
         {/* Тулбар превью */}
         <div className="flex items-center justify-between gap-3 border-b border-zinc-200 bg-zinc-50 px-4 py-3">
-          {/* Браузер-декор */}
           <div className="flex items-center gap-1.5" aria-hidden="true">
             <span className="h-3 w-3 rounded-full bg-red-400" />
             <span className="h-3 w-3 rounded-full bg-amber-400" />
@@ -165,7 +276,6 @@ export function GeneratorPreview({ html, onRegenerate, isLoading }: GeneratorPre
           <iframe
             srcDoc={html}
             title="Превью сгенерированного сайта"
-            sandbox="allow-scripts allow-same-origin"
             className="h-full w-full border-0"
             loading="lazy"
           />
@@ -174,9 +284,7 @@ export function GeneratorPreview({ html, onRegenerate, isLoading }: GeneratorPre
         {/* CTA панель */}
         <div className="flex flex-col items-center gap-3 border-t border-zinc-200 bg-white px-4 py-4 sm:flex-row sm:justify-between">
           <div>
-            <p className="text-sm font-semibold text-zinc-950">
-              Нравится направление?
-            </p>
+            <p className="text-sm font-semibold text-zinc-950">Нравится направление?</p>
             <p className="text-xs text-zinc-400">
               Финальный сайт будет лучше — с вашим контентом и полным функционалом
             </p>
@@ -191,7 +299,9 @@ export function GeneratorPreview({ html, onRegenerate, isLoading }: GeneratorPre
         </div>
       </div>
 
-      {showModal && <RequestModal onClose={() => setShowModal(false)} />}
+      {showModal && (
+        <OrderModal designId={designId} onClose={() => setShowModal(false)} />
+      )}
     </>
   )
 }

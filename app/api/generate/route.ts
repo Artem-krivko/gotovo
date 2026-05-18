@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
 import { GENERATOR_SYSTEM_PROMPT, buildUserPrompt } from "@/lib/prompts"
 import type { GenerateApiRequest, GeneratorParams } from "@/lib/types"
+import { db } from "@/lib/db"
 
-// Vercel hobby — max 30s. Генерация HTML занимает 10-20s.
-export const maxDuration = 30
+// gemini-2.5-flash (thinking model) может работать 30-60s
+export const maxDuration = 60
 
 // ─── Валидация ────────────────────────────────────────────────────────────────
 
@@ -155,38 +156,47 @@ export async function POST(req: NextRequest) {
     }
 
     const { params } = body as GenerateApiRequest
-    const apiKey = process.env.ANTHROPIC_API_KEY
+    const apiKey = process.env.GOOGLE_AI_API_KEY
 
     // Если ключа нет — возвращаем красивую заглушку
     if (!apiKey) {
       const demoHtml = buildDemoHtml(params)
-      return NextResponse.json({ html: demoHtml }, { status: 200 })
+      const sessionId = req.cookies.get("session_id")?.value ?? "anonymous"
+      const design = await db.design.create({
+        data: {
+          sessionId,
+          htmlContent: demoHtml,
+          prompt: params.userDescription,
+          businessType: params.businessType,
+          style: params.style,
+          language: params.language,
+        },
+      })
+      return NextResponse.json({ html: demoHtml, designId: design.id }, { status: 200 })
     }
 
-    // Реальный вызов Claude API
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 8000,
-        system: GENERATOR_SYSTEM_PROMPT,
-        messages: [
-          {
-            role: "user",
-            content: buildUserPrompt(params),
-          },
-        ],
-      }),
+    // Реальный вызов Gemini Flash API (бесплатно: 15 RPM, 1M токенов/день)
+    const geminiBody = JSON.stringify({
+      system_instruction: { parts: [{ text: GENERATOR_SYSTEM_PROMPT }] },
+      contents: [{ role: "user", parts: [{ text: buildUserPrompt(params) }] }],
+      generationConfig: { maxOutputTokens: 8192, temperature: 0.8 },
     })
+
+    // При 503 (перегрузка модели) делаем до 3 попыток с паузой
+    let response!: Response
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
+        { method: "POST", headers: { "Content-Type": "application/json" }, body: geminiBody }
+      )
+      if (response.ok || response.status !== 503) break
+      console.warn(`[POST /api/generate] Gemini 503, attempt ${attempt}/3`)
+      if (attempt < 3) await new Promise((r) => setTimeout(r, attempt * 2000))
+    }
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error("[POST /api/generate] Anthropic error:", errorText)
+      console.error("[POST /api/generate] Gemini error:", errorText)
       return NextResponse.json(
         { error: "Ошибка генерации. Попробуйте ещё раз." },
         { status: 502 }
@@ -194,24 +204,49 @@ export async function POST(req: NextRequest) {
     }
 
     const data = await response.json() as {
-      content: Array<{ type: string; text: string }>
+      candidates: Array<{
+        content: { parts: Array<{ text: string; thought?: boolean }> }
+      }>
     }
 
-    const html = data.content
-      .filter((block) => block.type === "text")
-      .map((block) => block.text)
+    // gemini-2.5-flash — thinking model: filter out thought parts, keep only actual output
+    const rawText = data.candidates?.[0]?.content?.parts
+      ?.filter((p) => !p.thought)
+      .map((p) => p.text)
       .join("")
-      .trim()
+      .trim() ?? ""
 
-    if (!html.includes("<!DOCTYPE") && !html.includes("<html")) {
-      console.error("[POST /api/generate] Invalid HTML received")
+    // Strip any text before <!DOCTYPE or <html (model sometimes adds preamble)
+    const doctypeIdx = rawText.indexOf("<!DOCTYPE")
+    const htmlTagIdx = rawText.indexOf("<html")
+    const startIdx = Math.min(
+      doctypeIdx >= 0 ? doctypeIdx : Infinity,
+      htmlTagIdx >= 0 ? htmlTagIdx : Infinity,
+    )
+    const html = startIdx !== Infinity ? rawText.slice(startIdx) : rawText
+
+    if (!html || (!html.includes("<!DOCTYPE") && !html.includes("<html"))) {
+      console.error("[POST /api/generate] Invalid HTML received from Gemini")
       return NextResponse.json(
         { error: "Получен некорректный результат. Попробуйте ещё раз." },
         { status: 502 }
       )
     }
 
-    return NextResponse.json({ html }, { status: 200 })
+    // Сохраняем дизайн в БД
+    const sessionId = req.cookies.get("session_id")?.value ?? "anonymous"
+    const design = await db.design.create({
+      data: {
+        sessionId,
+        htmlContent: html,
+        prompt: params.userDescription,
+        businessType: params.businessType,
+        style: params.style,
+        language: params.language,
+      },
+    })
+
+    return NextResponse.json({ html, designId: design.id }, { status: 200 })
 
   } catch (error) {
     console.error("[POST /api/generate]", error)

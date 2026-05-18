@@ -20,6 +20,7 @@ export interface GenerateApiRequest {
 
 export interface GenerateApiResponse {
   html: string
+  designId: string
 }
 
 export interface GenerateApiError {
