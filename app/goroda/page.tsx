@@ -96,7 +96,7 @@ export default function GorodaPage() {
               <div className="text-center">
                 <p className="text-5xl font-black text-white">МСК</p>
                 <p className="mt-2 text-sm text-[#6B6B80]">Минск</p>
-                <p className="mt-1 text-xs text-violet-400">от 500 €</p>
+                <p className="mt-1 text-xs text-violet-400">от 500 $</p>
               </div>
             </div>
           </Link>
