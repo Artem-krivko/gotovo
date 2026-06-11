@@ -8,8 +8,8 @@ import { PRICING_PLANS, VALUE_ITEMS, CHOOSE_ITEMS, PRICING_FAQ } from "@/content
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
 
 export const metadata: Metadata = {
-  title: "Стоимость разработки сайта: лендинг от €500 | gotovo",
-  description: "Прозрачные пакеты: лендинг €500–700 за 7 дней, бизнес-сайт €800–1200 за 14 дней. Фиксированный объём, без скрытых доплат. Оплата 50/50.",
+  title: "Стоимость разработки сайта: лендинг до 300 $ | gotovo",
+  description: "Прозрачные пакеты: лендинг до 300 $ за 7 дней, бизнес-сайт до 1000 $ за 14 дней. Фиксированный объём, без скрытых доплат. Оплата 50/50.",
   alternates: { canonical: `${SITE_URL}/pricing` },
   openGraph: { url: `${SITE_URL}/pricing`, images: [{ url: "/og-image.png", width: 1200, height: 630 }] },
 };
@@ -84,7 +84,7 @@ export default function PricingPage() {
           {/* Метрики */}
           <div className="reveal-up delay-4 mt-12 grid max-w-lg mx-auto grid-cols-3 gap-3">
             {[
-              { value: "€500", label: "от — лендинг", border: "border-violet-500/40", glow: "shadow-lg shadow-violet-500/20" },
+              { value: "до 300 $", label: "лендинг", border: "border-violet-500/40", glow: "shadow-lg shadow-violet-500/20" },
               { value: "7–14 дней", label: "типичный срок", border: "border-blue-500/40", glow: "shadow-lg shadow-blue-500/20" },
               { value: "50/50", label: "схема оплаты", border: "border-emerald-500/40", glow: "shadow-lg shadow-emerald-500/20" },
             ].map((m) => (

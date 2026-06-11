@@ -84,7 +84,7 @@ export function SiteFooter() {
             <div className="mt-6 grid grid-cols-2 gap-3">
               {[
                 { value: "30 сек", label: "генерация" },
-                { value: "500$", label: "от" },
+                { value: "300$", label: "до" },
               ].map((m) => (
                 <div key={m.label} className="rounded-xl border border-white/10 bg-[#13131A] p-3 text-center">
                   <p className="text-base font-bold text-white">{m.value}</p>

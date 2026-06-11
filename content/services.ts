@@ -37,7 +37,7 @@ export const SERVICE_FORMATS: ServiceFormat[] = [
     title: "Лендинг",
     description:
       "Одностраничный сайт для услуги, оффера или рекламной кампании. Фокус на одном действии — заявке или звонке.",
-    price: "€500–700",
+    price: "до 300 $",
     duration: "7–10 дней",
     bullets: ["Быстрый запуск", "Фокус на конверсии", "Чёткая структура под оффер"],
     colorClasses: "border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50",
@@ -47,7 +47,7 @@ export const SERVICE_FORMATS: ServiceFormat[] = [
     title: "Бизнес-сайт",
     description:
       "Полноценный сайт с несколькими страницами для компании. Системная подача услуг, навигация, доверие.",
-    price: "€800–1200",
+    price: "до 1000 $",
     duration: "10–14 дней",
     bullets: ["Системная подача услуг", "Удобная навигация", "База для роста"],
     colorClasses: "border-violet-200 bg-gradient-to-br from-violet-50 to-fuchsia-50",

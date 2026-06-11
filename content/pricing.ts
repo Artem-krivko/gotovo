@@ -37,7 +37,7 @@ export const PRICING_PLANS: PricingPlan[] = [
     name: "Лендинг",
     description:
       "Для одной услуги, оффера или рекламной кампании. Быстро, чётко, с фокусом на заявку.",
-    price: "€500–700",
+    price: "до 300 $",
     duration: "7–10 дней",
     features: [
       "1 страница до 7–9 секций",
@@ -55,7 +55,7 @@ export const PRICING_PLANS: PricingPlan[] = [
     name: "Бизнес-сайт",
     description:
       "Для компаний которым нужен полноценный сайт с несколькими страницами и системной подачей.",
-    price: "€800–1200",
+    price: "до 1000 $",
     duration: "10–14 дней",
     features: [
       "5–7 страниц",
