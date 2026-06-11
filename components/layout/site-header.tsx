@@ -76,7 +76,7 @@ function MobileMenu({ open, visible, onClose }: MobileMenuProps) {
           </Link>
         ))}
       </nav>
-      <div className="relative mt-auto px-5 pb-10 pt-6">
+      <div className="relative mt-auto px-5 pb-10 pt-6 flex flex-col gap-3">
         <Link
           href="/generator"
           onClick={onClose}
@@ -93,18 +93,39 @@ function MobileMenu({ open, visible, onClose }: MobileMenuProps) {
           <span aria-hidden="true">✦</span>
           Сгенерировать дизайн
         </Link>
-        <p
-          className="mt-3 text-center text-xs text-[#6B6B80]"
+        <Link
+          href="/contacts"
+          onClick={onClose}
+          className="flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 py-3.5 text-sm font-medium text-[#A1A1B5] transition hover:bg-white/10 hover:text-white"
           style={{
             opacity: open ? 1 : 0,
-            transitionProperty: "opacity",
+            transform: open ? "translateY(0)" : "translateY(12px)",
+            transitionProperty: "opacity, transform",
             transitionDuration: "300ms",
             transitionTimingFunction: "ease",
             transitionDelay: open ? `${NAV_LINKS.length * 40 + 80}ms` : "0ms",
           }}
         >
-          Бесплатно · Без регистрации · 30 секунд
-        </p>
+          Оставить заявку
+        </Link>
+        <div
+          className="flex items-center justify-center gap-4 pt-1"
+          style={{
+            opacity: open ? 1 : 0,
+            transitionProperty: "opacity",
+            transitionDuration: "300ms",
+            transitionTimingFunction: "ease",
+            transitionDelay: open ? `${NAV_LINKS.length * 40 + 120}ms` : "0ms",
+          }}
+        >
+          <a href="tel:+375296333337" className="text-xs text-[#6B6B80] transition hover:text-white">
+            +375 29 633-33-37
+          </a>
+          <span className="text-[#6B6B80]" aria-hidden="true">·</span>
+          <a href="mailto:info@usegotovo.by" className="text-xs text-[#6B6B80] transition hover:text-white">
+            info@usegotovo.by
+          </a>
+        </div>
       </div>
     </div>,
     document.body
@@ -167,7 +188,13 @@ export function SiteHeader() {
           </nav>
 
           {/* Desktop CTA */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2">
+            <Link
+              href="/contacts"
+              className="inline-flex items-center rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/10 hover:text-white"
+            >
+              Связаться
+            </Link>
             <Link
               href="/generator"
               className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/30 transition hover:opacity-90 hover:-translate-y-0.5"

@@ -1,0 +1,677 @@
+// lib/templates/index.ts — HTML-скелеты дизайна. AI заполняет только контент (JSON).
+
+export interface DesignContent {
+  businessName: string
+  headline: string
+  subheadline: string
+  tagline: string
+  accentColor: string
+  services: Array<{ icon: string; name: string; description: string; price?: string }>
+  features: Array<{ icon: string; title: string; description: string }>
+  stats: Array<{ value: string; label: string }>
+  testimonial: { text: string; author: string; role: string }
+  ctaHeadline: string
+  ctaSubtext: string
+  phone: string
+  email: string
+  footerTagline: string
+}
+
+// ─── Shared head snippet ──────────────────────────────────────────────────────
+
+function head(title: string, accent: string, extraCss = "") {
+  return `<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${title}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+:root{--a:${accent}}
+a{text-decoration:none;color:inherit}
+${extraCss}
+</style>`
+}
+
+// ─── MODERN (тёмный, акцентный градиент) ─────────────────────────────────────
+
+export function buildModern(d: DesignContent): string {
+  const svcs = d.services.slice(0, 3)
+  const feats = d.features.slice(0, 3)
+  const stats = d.stats.slice(0, 3)
+
+  const css = `
+body{background:#09090b;color:#fff}
+.hdr{position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(9,9,11,.85);backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.07)}
+.hdr-inner{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-size:17px;font-weight:700}
+nav a{color:rgba(255,255,255,.55);font-size:14px;font-weight:500;margin-left:28px;transition:color .2s}
+nav a:hover{color:#fff}
+.btn{display:inline-flex;align-items:center;border-radius:12px;font-weight:600;font-size:14px;padding:12px 24px;transition:all .2s;cursor:pointer}
+.btn-p{background:var(--a);color:#fff;box-shadow:0 4px 24px color-mix(in srgb,var(--a) 40%,transparent)}
+.btn-p:hover{opacity:.88;transform:translateY(-1px)}
+.btn-s{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#fff}
+.btn-s:hover{background:rgba(255,255,255,.1)}
+.hero{padding:140px 24px 80px;text-align:center;position:relative;overflow:hidden}
+.hero-glow{position:absolute;top:-10%;left:50%;transform:translateX(-50%);width:900px;height:700px;background:radial-gradient(ellipse,color-mix(in srgb,var(--a) 18%,transparent),transparent 68%);pointer-events:none}
+.badge{display:inline-flex;align-items:center;gap:8px;border:1px solid color-mix(in srgb,var(--a) 35%,transparent);background:color-mix(in srgb,var(--a) 10%,transparent);border-radius:999px;padding:6px 16px;font-size:13px;font-weight:500;color:color-mix(in srgb,var(--a) 80%,#fff);margin-bottom:28px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--a)}
+h1{font-size:clamp(40px,6vw,68px);font-weight:900;line-height:1.04;letter-spacing:-2.5px;margin-bottom:24px;background:linear-gradient(135deg,#fff 0%,var(--a) 55%,#c4b5fd 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{font-size:18px;color:rgba(255,255,255,.5);max-width:540px;margin:0 auto 40px;line-height:1.75}
+.ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:600px;margin:60px auto 0}
+.stat{background:#18181b;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:22px 16px;text-align:center}
+.stat-val{font-size:28px;font-weight:800}
+.stat-lbl{font-size:11px;color:rgba(255,255,255,.4);margin-top:4px;line-height:1.4}
+.sec{padding:80px 24px}
+.inner{max-width:1180px;margin:0 auto}
+.sec-head{text-align:center;margin-bottom:52px}
+.sec-tag{font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:color-mix(in srgb,var(--a) 80%,#fff);margin-bottom:12px}
+h2{font-size:clamp(28px,3.5vw,40px);font-weight:800;letter-spacing:-1px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.card{background:#18181b;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:28px;transition:all .2s}
+.card:hover{border-color:rgba(255,255,255,.15);background:#1c1c1f;transform:translateY(-2px)}
+.ibox{width:46px;height:46px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:22px;background:color-mix(in srgb,var(--a) 14%,transparent);border:1px solid color-mix(in srgb,var(--a) 28%,transparent);margin-bottom:18px}
+.card h3{font-size:16px;font-weight:700;margin-bottom:8px}
+.card p{font-size:13.5px;color:rgba(255,255,255,.48);line-height:1.7}
+.price{font-size:13px;font-weight:600;color:var(--a);margin-top:14px}
+.dark-sec{background:#111113}
+.quote-sec{padding:80px 24px;text-align:center}
+.qmark{font-size:80px;line-height:.8;color:color-mix(in srgb,var(--a) 50%,transparent);margin-bottom:20px}
+blockquote{font-size:20px;font-weight:500;line-height:1.65;color:rgba(255,255,255,.82);max-width:720px;margin:0 auto 28px}
+.author{display:inline-flex;align-items:center;gap:12px}
+.avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--a),rgba(255,255,255,.3))}
+.author-info{text-align:left}
+.author-name{font-size:14px;font-weight:700}
+.author-role{font-size:12px;color:rgba(255,255,255,.4);margin-top:2px}
+.cta-sec{padding:80px 24px}
+.cta-box{max-width:860px;margin:0 auto;background:linear-gradient(135deg,color-mix(in srgb,var(--a) 22%,#18181b),#18181b);border:1px solid color-mix(in srgb,var(--a) 28%,transparent);border-radius:24px;padding:64px 48px;text-align:center;position:relative;overflow:hidden}
+.cta-glow{position:absolute;inset:0;background:radial-gradient(ellipse 80% 55% at 50% 0%,color-mix(in srgb,var(--a) 22%,transparent),transparent 70%);pointer-events:none}
+.cta-box h2{font-size:clamp(26px,3vw,38px);font-weight:800;letter-spacing:-1px;margin-bottom:14px}
+.cta-box .sub{font-size:16px;margin-bottom:36px}
+footer{border-top:1px solid rgba(255,255,255,.06);padding:28px 24px}
+.footer-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-inner span{font-size:13px;color:rgba(255,255,255,.32)}
+.footer-logo{font-size:15px;font-weight:700;color:#fff}
+@media(max-width:768px){
+  nav,.btn-hdr{display:none}
+  .grid3{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .cta-box{padding:36px 24px}
+}`
+
+  return `<!DOCTYPE html>
+<html lang="ru">
+<head>${head(d.businessName, d.accentColor, css)}</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-inner">
+    <span class="logo">${d.businessName}</span>
+    <nav>
+      <a href="#services">Услуги</a>
+      <a href="#about">О нас</a>
+      <a href="#contact">Контакты</a>
+    </nav>
+    <a href="tel:${d.phone.replace(/\s/g, "")}" class="btn btn-p btn-hdr" style="padding:10px 18px;font-size:13px">Позвонить</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="badge"><span class="dot"></span>${d.tagline}</div>
+  <h1>${d.headline}</h1>
+  <p class="sub">${d.subheadline}</p>
+  <div class="ctas">
+    <a href="#contact" class="btn btn-p">Получить консультацию</a>
+    <a href="#services" class="btn btn-s">Наши услуги</a>
+  </div>
+  <div class="stats-row">
+    ${stats.map(s => `<div class="stat"><div class="stat-val">${s.value}</div><div class="stat-lbl">${s.label}</div></div>`).join("")}
+  </div>
+</section>
+
+<section class="sec" id="services">
+  <div class="inner">
+    <div class="sec-head">
+      <p class="sec-tag">Что мы предлагаем</p>
+      <h2>Наши услуги</h2>
+    </div>
+    <div class="grid3">
+      ${svcs.map(s => `<div class="card"><div class="ibox">${s.icon}</div><h3>${s.name}</h3><p>${s.description}</p>${s.price ? `<p class="price">${s.price}</p>` : ""}</div>`).join("")}
+    </div>
+  </div>
+</section>
+
+<section class="sec dark-sec" id="about">
+  <div class="inner">
+    <div class="sec-head">
+      <p class="sec-tag">Почему выбирают нас</p>
+      <h2>Наши преимущества</h2>
+    </div>
+    <div class="grid3">
+      ${feats.map(f => `<div class="card" style="background:#131315"><div class="ibox">${f.icon}</div><h3>${f.title}</h3><p>${f.description}</p></div>`).join("")}
+    </div>
+  </div>
+</section>
+
+<section class="quote-sec">
+  <div class="qmark">"</div>
+  <blockquote>${d.testimonial.text}</blockquote>
+  <div class="author">
+    <div class="avatar"></div>
+    <div class="author-info">
+      <div class="author-name">${d.testimonial.author}</div>
+      <div class="author-role">${d.testimonial.role}</div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-sec" id="contact">
+  <div class="cta-box">
+    <div class="cta-glow"></div>
+    <h2>${d.ctaHeadline}</h2>
+    <p class="sub">${d.ctaSubtext}</p>
+    <div class="ctas">
+      <a href="tel:${d.phone.replace(/\s/g, "")}" class="btn btn-p">${d.phone}</a>
+      <a href="mailto:${d.email}" class="btn btn-s">${d.email}</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <span class="footer-logo">${d.businessName}</span>
+    <span>${d.footerTagline}</span>
+    <span>© ${new Date().getFullYear()}</span>
+  </div>
+</footer>
+</body>
+</html>`
+}
+
+// ─── MINIMAL (светлый, воздушный, типографика) ────────────────────────────────
+
+export function buildMinimal(d: DesignContent): string {
+  const svcs = d.services.slice(0, 3)
+  const feats = d.features.slice(0, 3)
+  const stats = d.stats.slice(0, 3)
+
+  const css = `
+body{background:#fff;color:#0a0a0b}
+.hdr{position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid #f0f0f0}
+.hdr-inner{max-width:1140px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-size:17px;font-weight:700;letter-spacing:-.4px}
+nav a{color:#71717a;font-size:14px;font-weight:500;margin-left:28px;transition:color .2s}
+nav a:hover{color:#0a0a0b}
+.btn{display:inline-flex;align-items:center;border-radius:10px;font-weight:600;font-size:14px;padding:12px 22px;transition:all .2s;cursor:pointer}
+.btn-p{background:#0a0a0b;color:#fff}
+.btn-p:hover{background:#27272a}
+.btn-s{border:1.5px solid #e4e4e7;color:#0a0a0b}
+.btn-s:hover{border-color:#a1a1aa}
+.hero{padding:148px 32px 90px;max-width:1140px;margin:0 auto}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--a);margin-bottom:24px}
+.eyebrow-line{width:32px;height:2px;background:var(--a);border-radius:2px}
+h1{font-size:clamp(42px,5.5vw,72px);font-weight:900;line-height:1.02;letter-spacing:-3px;margin-bottom:28px;max-width:820px}
+h1 em{font-style:normal;color:var(--a)}
+.sub{font-size:18px;color:#52525b;max-width:520px;line-height:1.75;margin-bottom:44px}
+.ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:72px}
+.stats-row{display:flex;gap:48px;border-top:1px solid #f0f0f0;padding-top:40px}
+.stat-val{font-size:32px;font-weight:800;letter-spacing:-1px}
+.stat-lbl{font-size:13px;color:#71717a;margin-top:4px}
+.sec{padding:96px 32px;max-width:1140px;margin:0 auto}
+.divider{height:1px;background:#f0f0f0;max-width:1140px;margin:0 auto}
+.sec-tag{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--a);margin-bottom:14px}
+h2{font-size:clamp(26px,3vw,42px);font-weight:800;letter-spacing:-1.2px;margin-bottom:52px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;border:1px solid #f0f0f0;border-radius:16px;overflow:hidden}
+.card{padding:32px;background:#fff;transition:background .2s}
+.card:hover{background:#fafafa}
+.card+.card{border-left:1px solid #f0f0f0}
+.ibox{font-size:26px;margin-bottom:18px}
+.card h3{font-size:16px;font-weight:700;margin-bottom:8px;letter-spacing:-.3px}
+.card p{font-size:14px;color:#71717a;line-height:1.7}
+.price{font-size:14px;font-weight:700;color:var(--a);margin-top:14px}
+.feats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.feat-icon{font-size:28px;margin-bottom:16px}
+.feat h3{font-size:16px;font-weight:700;margin-bottom:8px;letter-spacing:-.3px}
+.feat p{font-size:14px;color:#71717a;line-height:1.7}
+.quote-sec{background:#fafafa;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;padding:96px 32px;text-align:center}
+.qmark{font-size:96px;font-weight:900;line-height:.7;color:var(--a);margin-bottom:24px}
+blockquote{font-size:22px;font-weight:500;color:#18181b;max-width:680px;margin:0 auto 32px;line-height:1.6;letter-spacing:-.3px}
+.author{display:inline-flex;align-items:center;gap:14px}
+.avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--a),#c4b5fd)}
+.author-name{font-size:14px;font-weight:700;text-align:left}
+.author-role{font-size:12px;color:#71717a;text-align:left;margin-top:2px}
+.cta-sec{padding:96px 32px;text-align:center}
+.cta-tag{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--a);margin-bottom:20px}
+.cta-sec h2{font-size:clamp(30px,4vw,52px);font-weight:900;letter-spacing:-2px;max-width:640px;margin:0 auto 16px}
+.cta-sub{font-size:16px;color:#52525b;margin-bottom:40px}
+footer{border-top:1px solid #f0f0f0;padding:28px 32px}
+.footer-inner{max-width:1140px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-inner span{font-size:13px;color:#a1a1aa}
+.footer-logo{font-size:15px;font-weight:700;color:#0a0a0b}
+@media(max-width:768px){
+  nav,.btn-hdr{display:none}
+  .grid3{grid-template-columns:1fr;border-radius:12px}
+  .card+.card{border-left:none;border-top:1px solid #f0f0f0}
+  .feats-grid{grid-template-columns:1fr;gap:28px}
+  .stats-row{flex-direction:column;gap:24px}
+}`
+
+  return `<!DOCTYPE html>
+<html lang="ru">
+<head>${head(d.businessName, d.accentColor, css)}</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-inner">
+    <span class="logo">${d.businessName}</span>
+    <nav>
+      <a href="#services">Услуги</a>
+      <a href="#about">О нас</a>
+      <a href="#contact">Контакты</a>
+    </nav>
+    <a href="tel:${d.phone.replace(/\s/g, "")}" class="btn btn-p btn-hdr" style="padding:10px 18px;font-size:13px">Позвонить</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow"><span class="eyebrow-line"></span>${d.tagline}</div>
+  <h1>${d.headline.split(" ").map((w, i) => i === 0 ? `<em>${w}</em>` : w).join(" ")}</h1>
+  <p class="sub">${d.subheadline}</p>
+  <div class="ctas">
+    <a href="#contact" class="btn btn-p">Связаться с нами</a>
+    <a href="#services" class="btn btn-s">Смотреть услуги</a>
+  </div>
+  <div class="stats-row">
+    ${stats.map(s => `<div><div class="stat-val">${s.value}</div><div class="stat-lbl">${s.label}</div></div>`).join("")}
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="sec" id="services">
+  <p class="sec-tag">Услуги</p>
+  <h2>Что мы делаем</h2>
+  <div class="grid3">
+    ${svcs.map(s => `<div class="card"><div class="ibox">${s.icon}</div><h3>${s.name}</h3><p>${s.description}</p>${s.price ? `<p class="price">${s.price}</p>` : ""}</div>`).join("")}
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="sec" id="about">
+  <p class="sec-tag">Преимущества</p>
+  <h2>Почему выбирают нас</h2>
+  <div class="feats-grid">
+    ${feats.map(f => `<div class="feat"><div class="feat-icon">${f.icon}</div><h3>${f.title}</h3><p>${f.description}</p></div>`).join("")}
+  </div>
+</section>
+
+<section class="quote-sec">
+  <div class="qmark">"</div>
+  <blockquote>${d.testimonial.text}</blockquote>
+  <div class="author">
+    <div class="avatar"></div>
+    <div>
+      <div class="author-name">${d.testimonial.author}</div>
+      <div class="author-role">${d.testimonial.role}</div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-sec" id="contact">
+  <p class="cta-tag">Начать работу</p>
+  <h2>${d.ctaHeadline}</h2>
+  <p class="cta-sub">${d.ctaSubtext}</p>
+  <div class="ctas" style="justify-content:center">
+    <a href="tel:${d.phone.replace(/\s/g, "")}" class="btn btn-p">${d.phone}</a>
+    <a href="mailto:${d.email}" class="btn btn-s">${d.email}</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <span class="footer-logo">${d.businessName}</span>
+    <span>${d.footerTagline}</span>
+    <span>© ${new Date().getFullYear()}</span>
+  </div>
+</footer>
+</body>
+</html>`
+}
+
+// ─── BOLD (тёмный, крупная типографика, высокий контраст) ────────────────────
+
+export function buildBold(d: DesignContent): string {
+  const svcs = d.services.slice(0, 3)
+  const feats = d.features.slice(0, 3)
+  const stats = d.stats.slice(0, 3)
+
+  const css = `
+body{background:#000;color:#fff}
+.hdr{position:fixed;top:0;left:0;right:0;z-index:50;background:#000;border-bottom:1px solid rgba(255,255,255,.1)}
+.hdr-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{font-size:18px;font-weight:900;letter-spacing:-.5px}
+nav a{color:rgba(255,255,255,.5);font-size:14px;font-weight:600;margin-left:28px;transition:color .2s;text-transform:uppercase;letter-spacing:.5px;font-size:12px}
+nav a:hover{color:#fff}
+.btn{display:inline-flex;align-items:center;font-weight:700;font-size:14px;padding:13px 26px;transition:all .2s;cursor:pointer;text-transform:uppercase;letter-spacing:.5px}
+.btn-p{background:var(--a);color:#fff;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%)}
+.btn-p:hover{opacity:.85}
+.btn-s{border:2px solid rgba(255,255,255,.25);color:#fff}
+.btn-s:hover{border-color:#fff}
+.hero{padding:160px 24px 80px;max-width:1200px;margin:0 auto}
+.hero-num{font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.hero-num::before{content:'';width:40px;height:1px;background:var(--a)}
+h1{font-size:clamp(48px,7vw,88px);font-weight:900;line-height:.97;letter-spacing:-4px;text-transform:uppercase;margin-bottom:32px}
+h1 .accent-word{color:var(--a)}
+.sub{font-size:17px;color:rgba(255,255,255,.45);max-width:480px;line-height:1.7;margin-bottom:44px;border-left:3px solid var(--a);padding-left:18px}
+.ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:80px}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.08);border-top:1px solid rgba(255,255,255,.08)}
+.stat{padding:32px 20px;background:#000}
+.stat-val{font-size:40px;font-weight:900;letter-spacing:-2px;color:var(--a)}
+.stat-lbl{font-size:12px;color:rgba(255,255,255,.35);margin-top:6px;text-transform:uppercase;letter-spacing:1px}
+.sec{padding:96px 24px;max-width:1200px;margin:0 auto}
+.sec-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:52px;flex-wrap:wrap;gap:16px}
+.sec-tag{font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--a);margin-bottom:12px}
+h2{font-size:clamp(28px,4vw,48px);font-weight:900;letter-spacing:-2px;text-transform:uppercase;line-height:1}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.08)}
+.card{background:#0a0a0a;padding:36px 28px;transition:background .2s}
+.card:hover{background:#111}
+.card-num{font-size:48px;font-weight:900;color:rgba(255,255,255,.07);letter-spacing:-2px;margin-bottom:-8px;line-height:1}
+.ibox{font-size:28px;margin-bottom:16px}
+.card h3{font-size:17px;font-weight:800;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.card p{font-size:14px;color:rgba(255,255,255,.45);line-height:1.7}
+.price{font-size:15px;font-weight:800;color:var(--a);margin-top:16px}
+.feats-sec{background:#060606;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);padding:96px 24px}
+.quote-sec{padding:96px 24px;text-align:center}
+.qmark{font-size:120px;font-weight:900;line-height:.7;color:var(--a);margin-bottom:20px}
+blockquote{font-size:24px;font-weight:700;color:rgba(255,255,255,.85);max-width:760px;margin:0 auto 32px;line-height:1.5;text-transform:uppercase;letter-spacing:-.5px}
+.author{display:inline-flex;align-items:center;gap:14px}
+.author-line{width:30px;height:2px;background:var(--a)}
+.author-name{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:1px}
+.author-role{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px;text-transform:uppercase;letter-spacing:.5px}
+.cta-sec{background:var(--a);padding:96px 24px;text-align:center}
+.cta-sec h2{font-size:clamp(32px,5vw,64px);font-weight:900;letter-spacing:-3px;text-transform:uppercase;margin-bottom:16px}
+.cta-sec .sub{border-left:none;padding-left:0;color:rgba(255,255,255,.7);max-width:100%;margin-bottom:44px}
+.btn-dark{background:#000;color:#fff;clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%)}
+.btn-dark:hover{background:#111}
+footer{border-top:2px solid rgba(255,255,255,.1);padding:28px 24px}
+.footer-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-inner span{font-size:12px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.5px}
+.footer-logo{font-size:16px;font-weight:900;color:#fff}
+@media(max-width:768px){
+  nav,.btn-hdr{display:none}
+  .grid3{grid-template-columns:1fr}
+  h1{letter-spacing:-2px}
+  .sec-head{flex-direction:column;align-items:flex-start}
+  .stats-row{grid-template-columns:1fr}
+}`
+
+  const words = d.headline.split(" ")
+  const accentIdx = Math.floor(words.length / 2)
+  const h1 = words.map((w, i) => i === accentIdx ? `<span class="accent-word">${w}</span>` : w).join(" ")
+
+  return `<!DOCTYPE html>
+<html lang="ru">
+<head>${head(d.businessName, d.accentColor, css)}</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-inner">
+    <span class="logo">${d.businessName}</span>
+    <nav>
+      <a href="#services">Услуги</a>
+      <a href="#about">О нас</a>
+      <a href="#contact">Контакты</a>
+    </nav>
+    <a href="tel:${d.phone.replace(/\s/g, "")}" class="btn btn-p btn-hdr" style="padding:10px 18px">Звонок</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-num">${d.tagline}</div>
+  <h1>${h1}</h1>
+  <p class="sub">${d.subheadline}</p>
+  <div class="ctas">
+    <a href="#contact" class="btn btn-p">Начать сейчас</a>
+    <a href="#services" class="btn btn-s">Наши услуги</a>
+  </div>
+</section>
+
+<div class="stats-row">
+  ${stats.map(s => `<div class="stat"><div class="stat-val">${s.value}</div><div class="stat-lbl">${s.label}</div></div>`).join("")}
+</div>
+
+<section class="sec" id="services">
+  <div class="sec-head">
+    <div>
+      <p class="sec-tag">Что мы делаем</p>
+      <h2>Услуги</h2>
+    </div>
+  </div>
+  <div class="grid3">
+    ${svcs.map((s, i) => `<div class="card"><div class="card-num">0${i + 1}</div><div class="ibox">${s.icon}</div><h3>${s.name}</h3><p>${s.description}</p>${s.price ? `<p class="price">${s.price}</p>` : ""}</div>`).join("")}
+  </div>
+</section>
+
+<section class="feats-sec" id="about">
+  <div style="max-width:1200px;margin:0 auto">
+    <div class="sec-head">
+      <div>
+        <p class="sec-tag">Наши принципы</p>
+        <h2>Преимущества</h2>
+      </div>
+    </div>
+    <div class="grid3">
+      ${feats.map(f => `<div class="card" style="background:#060606"><div class="ibox">${f.icon}</div><h3>${f.title}</h3><p>${f.description}</p></div>`).join("")}
+    </div>
+  </div>
+</section>
+
+<section class="quote-sec">
+  <div class="qmark">"</div>
+  <blockquote>${d.testimonial.text}</blockquote>
+  <div class="author">
+    <div class="author-line"></div>
+    <div>
+      <div class="author-name">${d.testimonial.author}</div>
+      <div class="author-role">${d.testimonial.role}</div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-sec" id="contact">
+  <h2>${d.ctaHeadline}</h2>
+  <p class="sub">${d.ctaSubtext}</p>
+  <div class="ctas" style="justify-content:center">
+    <a href="tel:${d.phone.replace(/\s/g, "")}" class="btn btn-dark">${d.phone}</a>
+    <a href="mailto:${d.email}" class="btn" style="border:2px solid rgba(255,255,255,.4);color:#fff">${d.email}</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <span class="footer-logo">${d.businessName}</span>
+    <span>${d.footerTagline}</span>
+    <span>© ${new Date().getFullYear()}</span>
+  </div>
+</footer>
+</body>
+</html>`
+}
+
+// ─── CORPORATE (светлый, синий, профессиональный) ─────────────────────────────
+
+export function buildCorporate(d: DesignContent): string {
+  const svcs = d.services.slice(0, 3)
+  const feats = d.features.slice(0, 3)
+  const stats = d.stats.slice(0, 3)
+
+  const css = `
+body{background:#f8fafc;color:#0f172a}
+.hdr{position:fixed;top:0;left:0;right:0;z-index:50;background:#fff;border-bottom:1px solid #e2e8f0;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.hdr-inner{max-width:1180px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:66px}
+.logo{font-size:17px;font-weight:800;color:var(--a);letter-spacing:-.4px}
+nav a{color:#475569;font-size:14px;font-weight:500;margin-left:28px;transition:color .2s}
+nav a:hover{color:var(--a)}
+.btn{display:inline-flex;align-items:center;border-radius:8px;font-weight:600;font-size:14px;padding:11px 22px;transition:all .2s;cursor:pointer}
+.btn-p{background:var(--a);color:#fff;box-shadow:0 2px 8px color-mix(in srgb,var(--a) 35%,transparent)}
+.btn-p:hover{opacity:.88}
+.btn-s{border:1.5px solid #cbd5e1;background:#fff;color:#334155}
+.btn-s:hover{border-color:var(--a);color:var(--a)}
+.hero{padding:132px 28px 72px;background:#fff;border-bottom:1px solid #e2e8f0}
+.hero-inner{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.hero-left{}
+.tag{display:inline-flex;align-items:center;gap:6px;background:color-mix(in srgb,var(--a) 8%,transparent);color:var(--a);border:1px solid color-mix(in srgb,var(--a) 20%,transparent);border-radius:6px;padding:5px 12px;font-size:12px;font-weight:600;margin-bottom:22px}
+h1{font-size:clamp(34px,4vw,52px);font-weight:800;line-height:1.1;letter-spacing:-1.5px;color:#0f172a;margin-bottom:20px}
+.sub{font-size:16px;color:#64748b;line-height:1.75;margin-bottom:36px;max-width:460px}
+.ctas{display:flex;gap:12px;flex-wrap:wrap}
+.hero-right{background:linear-gradient(135deg,color-mix(in srgb,var(--a) 8%,#fff),color-mix(in srgb,var(--a) 4%,#fff));border:1px solid color-mix(in srgb,var(--a) 15%,transparent);border-radius:16px;padding:36px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.stat{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:22px 18px;text-align:center}
+.stat-val{font-size:28px;font-weight:800;color:var(--a);letter-spacing:-1px}
+.stat-lbl{font-size:11px;color:#94a3b8;margin-top:4px;line-height:1.4}
+.stat-big{grid-column:1/-1}
+.sec{padding:80px 28px;max-width:1180px;margin:0 auto}
+.sec-head{margin-bottom:44px}
+.sec-tag{font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--a);margin-bottom:10px}
+h2{font-size:clamp(24px,3vw,38px);font-weight:800;letter-spacing:-1px;color:#0f172a}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:28px;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.card:hover{border-color:color-mix(in srgb,var(--a) 40%,transparent);box-shadow:0 4px 20px rgba(0,0,0,.08);transform:translateY(-2px)}
+.ibox{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;background:color-mix(in srgb,var(--a) 10%,transparent);margin-bottom:16px}
+.card h3{font-size:15px;font-weight:700;margin-bottom:8px;color:#1e293b}
+.card p{font-size:13.5px;color:#64748b;line-height:1.7}
+.price{font-size:14px;font-weight:700;color:var(--a);margin-top:14px}
+.feats-sec{background:#fff;border-top:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0}
+.quote-sec{padding:80px 28px;background:#fff;border-bottom:1px solid #e2e8f0}
+.quote-inner{max-width:760px;margin:0 auto;text-align:center}
+.qbox{background:color-mix(in srgb,var(--a) 5%,#fff);border:1px solid color-mix(in srgb,var(--a) 15%,transparent);border-radius:18px;padding:48px 40px}
+.qmark{font-size:52px;line-height:.8;color:var(--a);margin-bottom:16px;font-weight:800}
+blockquote{font-size:18px;font-weight:500;color:#334155;line-height:1.7;margin-bottom:28px}
+.author{display:flex;align-items:center;justify-content:center;gap:12px}
+.avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--a),color-mix(in srgb,var(--a) 60%,#fff))}
+.author-name{font-size:14px;font-weight:700;color:#1e293b;text-align:left}
+.author-role{font-size:12px;color:#94a3b8;text-align:left;margin-top:2px}
+.cta-sec{padding:80px 28px;background:linear-gradient(135deg,var(--a),color-mix(in srgb,var(--a) 80%,#1e3a8a));text-align:center}
+.cta-sec h2{font-size:clamp(26px,3.5vw,42px);font-weight:800;letter-spacing:-1px;color:#fff;margin-bottom:14px}
+.cta-sub{font-size:16px;color:rgba(255,255,255,.75);margin-bottom:36px}
+.btn-white{background:#fff;color:var(--a);font-weight:700}
+.btn-white:hover{background:#f8fafc}
+.btn-outline-w{border:2px solid rgba(255,255,255,.35);color:#fff}
+.btn-outline-w:hover{border-color:#fff}
+footer{background:#fff;border-top:1px solid #e2e8f0;padding:24px 28px}
+.footer-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-logo{font-size:15px;font-weight:800;color:var(--a)}
+.footer-inner span{font-size:13px;color:#94a3b8}
+@media(max-width:900px){
+  nav,.btn-hdr{display:none}
+  .hero-inner{grid-template-columns:1fr}
+  .hero-right{display:none}
+  .grid3{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .grid3{grid-template-columns:1fr}
+}`
+
+  return `<!DOCTYPE html>
+<html lang="ru">
+<head>${head(d.businessName, d.accentColor, css)}</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-inner">
+    <span class="logo">${d.businessName}</span>
+    <nav>
+      <a href="#services">Услуги</a>
+      <a href="#about">О нас</a>
+      <a href="#contact">Контакты</a>
+    </nav>
+    <a href="tel:${d.phone.replace(/\s/g, "")}" class="btn btn-p btn-hdr" style="padding:9px 18px;font-size:13px">Позвонить</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="tag">${d.tagline}</div>
+      <h1>${d.headline}</h1>
+      <p class="sub">${d.subheadline}</p>
+      <div class="ctas">
+        <a href="#contact" class="btn btn-p">Получить предложение</a>
+        <a href="#services" class="btn btn-s">Наши услуги</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="stat-grid">
+        ${stats.map((s, i) => `<div class="stat${i === 0 ? " stat-big" : ""}"><div class="stat-val">${s.value}</div><div class="stat-lbl">${s.label}</div></div>`).join("")}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="services">
+  <div class="sec-head">
+    <p class="sec-tag">Услуги</p>
+    <h2>Что мы предлагаем</h2>
+  </div>
+  <div class="grid3">
+    ${svcs.map(s => `<div class="card"><div class="ibox">${s.icon}</div><h3>${s.name}</h3><p>${s.description}</p>${s.price ? `<p class="price">${s.price}</p>` : ""}</div>`).join("")}
+  </div>
+</section>
+
+<section class="feats-sec sec" id="about">
+  <div class="sec-head">
+    <p class="sec-tag">Почему мы</p>
+    <h2>Наши преимущества</h2>
+  </div>
+  <div class="grid3">
+    ${feats.map(f => `<div class="card"><div class="ibox">${f.icon}</div><h3>${f.title}</h3><p>${f.description}</p></div>`).join("")}
+  </div>
+</section>
+
+<section class="quote-sec">
+  <div class="quote-inner">
+    <div class="qbox">
+      <div class="qmark">"</div>
+      <blockquote>${d.testimonial.text}</blockquote>
+      <div class="author">
+        <div class="avatar"></div>
+        <div>
+          <div class="author-name">${d.testimonial.author}</div>
+          <div class="author-role">${d.testimonial.role}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-sec" id="contact">
+  <h2>${d.ctaHeadline}</h2>
+  <p class="cta-sub">${d.ctaSubtext}</p>
+  <div class="ctas" style="justify-content:center">
+    <a href="tel:${d.phone.replace(/\s/g, "")}" class="btn btn-white">${d.phone}</a>
+    <a href="mailto:${d.email}" class="btn btn-outline-w">${d.email}</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <span class="footer-logo">${d.businessName}</span>
+    <span>${d.footerTagline}</span>
+    <span>© ${new Date().getFullYear()}</span>
+  </div>
+</footer>
+</body>
+</html>`
+}
+
+// ─── Router ───────────────────────────────────────────────────────────────────
+
+export function fillTemplate(style: string, content: DesignContent): string {
+  switch (style) {
+    case "minimal":   return buildMinimal(content)
+    case "bold":      return buildBold(content)
+    case "corporate": return buildCorporate(content)
+    default:          return buildModern(content)
+  }
+}

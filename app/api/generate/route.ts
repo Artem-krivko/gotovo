@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
 import { GENERATOR_SYSTEM_PROMPT, buildUserPrompt } from "@/lib/prompts"
+import { fillTemplate, type DesignContent } from "@/lib/templates"
 import type { GenerateApiRequest, GeneratorParams } from "@/lib/types"
 import { db } from "@/lib/db"
 
-// gemini-2.5-flash (thinking model) может работать 30-60s
 export const maxDuration = 60
 
-// ─── Валидация ────────────────────────────────────────────────────────────────
+// ─── Валидация входных данных ─────────────────────────────────────────────────
 
 function validateParams(body: unknown): body is GenerateApiRequest {
   if (!body || typeof body !== "object") return false
@@ -21,125 +21,81 @@ function validateParams(body: unknown): body is GenerateApiRequest {
   )
 }
 
-// ─── Демо-заглушка (пока нет API ключа) ──────────────────────────────────────
+// ─── Извлечение JSON из ответа модели ────────────────────────────────────────
 
-function buildDemoHtml(params: GeneratorParams): string {
-  const names: Record<string, string> = {
-    modern: "Gradient Studio",
-    minimal: "White Space Co",
-    bold: "BoldBrand",
-    corporate: "ProCorp Solutions",
+function extractJson(raw: string): string {
+  const start = raw.indexOf("{")
+  const end = raw.lastIndexOf("}")
+  if (start === -1 || end === -1) throw new Error("No JSON found")
+  return raw.slice(start, end + 1)
+}
+
+function parseDesignContent(raw: string): DesignContent {
+  const jsonStr = extractJson(raw)
+  const data = JSON.parse(jsonStr) as Partial<DesignContent>
+
+  // Гарантируем обязательные поля
+  return {
+    businessName:  String(data.businessName  ?? "Компания"),
+    headline:      String(data.headline      ?? "Профессиональные услуги для вашего бизнеса"),
+    subheadline:   String(data.subheadline   ?? "Мы помогаем бизнесу расти и развиваться"),
+    tagline:       String(data.tagline       ?? "Качество и результат"),
+    accentColor:   /^#[0-9A-Fa-f]{6}$/.test(String(data.accentColor ?? "")) ? String(data.accentColor) : "#6366f1",
+    services:      Array.isArray(data.services)  ? data.services.slice(0, 3)  : [],
+    features:      Array.isArray(data.features)  ? data.features.slice(0, 3)  : [],
+    stats:         Array.isArray(data.stats)      ? data.stats.slice(0, 3)     : [],
+    testimonial:   data.testimonial ?? { text: "", author: "Клиент", role: "" },
+    ctaHeadline:   String(data.ctaHeadline  ?? "Готовы начать?"),
+    ctaSubtext:    String(data.ctaSubtext   ?? "Свяжитесь с нами — ответим в течение часа"),
+    phone:         String(data.phone        ?? "+375 29 000-00-00"),
+    email:         String(data.email        ?? "info@example.by"),
+    footerTagline: String(data.footerTagline ?? "Профессионально. Надёжно. Быстро."),
   }
-  const name = params.businessName || names[params.style] || "Your Business"
+}
 
-  return `<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${name}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body { font-family: 'Inter', sans-serif; }
-    .gradient-text { background: linear-gradient(135deg, #6366f1, #a855f7, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-  </style>
-</head>
-<body class="bg-white text-zinc-900 antialiased">
+// ─── Demo-контент (когда нет API ключа) ──────────────────────────────────────
 
-  <!-- Header -->
-  <header class="sticky top-0 z-50 border-b border-zinc-100 bg-white/90 backdrop-blur">
-    <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-      <span class="text-lg font-bold tracking-tight">${name}</span>
-      <nav class="hidden gap-6 text-sm font-medium text-zinc-600 md:flex">
-        <a href="#" class="hover:text-zinc-900 transition-colors">Услуги</a>
-        <a href="#" class="hover:text-zinc-900 transition-colors">О нас</a>
-        <a href="#" class="hover:text-zinc-900 transition-colors">Контакты</a>
-      </nav>
-      <a href="#" class="hidden rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-700 transition-colors md:block">Связаться</a>
-    </div>
-  </header>
+function buildDemoContent(params: GeneratorParams): DesignContent {
+  const accentByStyle: Record<string, string> = {
+    modern:    "#7C3AED",
+    minimal:   "#0F172A",
+    bold:      "#DC2626",
+    corporate: "#1D4ED8",
+  }
+  const businessName = params.businessName || params.businessType
 
-  <!-- Hero -->
-  <section class="relative overflow-hidden px-6 py-24 text-center md:py-36">
-    <div class="absolute inset-0 -z-10" style="background: radial-gradient(circle at 30% 40%, rgba(99,102,241,0.12), transparent 50%), radial-gradient(circle at 70% 60%, rgba(168,85,247,0.10), transparent 50%);"></div>
-    <div class="mx-auto max-w-4xl">
-      <span class="mb-4 inline-flex items-center rounded-full border border-violet-200 bg-violet-50 px-4 py-1.5 text-sm font-medium text-violet-700">
-        ✦ ${params.businessType}
-      </span>
-      <h1 class="mt-4 text-5xl font-extrabold leading-tight tracking-tight md:text-7xl">
-        <span class="gradient-text">${name}</span>
-      </h1>
-      <p class="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-zinc-500">
-        ${params.userDescription.slice(0, 120)}${params.userDescription.length > 120 ? "..." : ""}
-      </p>
-      <div class="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-        <a href="#" class="w-full rounded-2xl bg-zinc-900 px-8 py-4 text-sm font-bold text-white shadow-xl hover:bg-zinc-700 transition-all hover:-translate-y-0.5 sm:w-auto">
-          Начать сотрудничество →
-        </a>
-        <a href="#" class="w-full rounded-2xl border border-zinc-200 px-8 py-4 text-sm font-semibold text-zinc-700 hover:border-zinc-300 hover:bg-zinc-50 transition-colors sm:w-auto">
-          Узнать больше
-        </a>
-      </div>
-      <p class="mt-6 text-xs text-zinc-400">⭐⭐⭐⭐⭐ Более 50 довольных клиентов</p>
-    </div>
-  </section>
-
-  <!-- Features -->
-  <section class="bg-zinc-50 px-6 py-20">
-    <div class="mx-auto max-w-6xl">
-      <h2 class="mb-12 text-center text-3xl font-bold tracking-tight">Почему выбирают нас</h2>
-      <div class="grid gap-6 md:grid-cols-3">
-        ${["Профессиональная команда", "Быстрые сроки", "Гарантия результата"].map((title, i) => `
-        <div class="rounded-3xl border border-zinc-200 bg-white p-7 shadow-sm hover:shadow-lg transition-shadow">
-          <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-2xl">
-            ${["⚡", "🎯", "✅"][i]}
-          </div>
-          <h3 class="mb-2 text-lg font-bold">${title}</h3>
-          <p class="text-sm leading-6 text-zinc-500">Мы обеспечиваем высокое качество на каждом этапе работы с вашим проектом.</p>
-        </div>`).join("")}
-      </div>
-    </div>
-  </section>
-
-  <!-- Testimonial -->
-  <section class="px-6 py-20">
-    <div class="mx-auto max-w-3xl rounded-3xl bg-gradient-to-br from-violet-50 to-blue-50 p-10 text-center shadow-sm">
-      <p class="text-xl font-medium italic leading-relaxed text-zinc-700">
-        "Отличная работа! Результат превзошёл все ожидания. Рекомендую всем кто ищет надёжного партнёра."
-      </p>
-      <div class="mt-6 flex items-center justify-center gap-3">
-        <div class="h-10 w-10 rounded-full bg-gradient-to-br from-violet-400 to-blue-400"></div>
-        <div class="text-left">
-          <p class="text-sm font-bold">Александр М.</p>
-          <p class="text-xs text-zinc-400">Генеральный директор</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="bg-zinc-900 px-6 py-20 text-white">
-    <div class="mx-auto max-w-3xl text-center">
-      <h2 class="text-4xl font-extrabold tracking-tight">Готовы начать?</h2>
-      <p class="mt-4 text-lg text-zinc-400">Свяжитесь с нами сегодня и получите бесплатную консультацию</p>
-      <a href="tel:+79991234567" class="mt-8 inline-block rounded-2xl bg-white px-10 py-4 text-sm font-bold text-zinc-900 shadow-xl hover:bg-zinc-100 transition-colors hover:-translate-y-0.5">
-        +7 (999) 123-45-67
-      </a>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="border-t border-zinc-100 px-6 py-8">
-    <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 text-sm text-zinc-400 md:flex-row">
-      <span class="font-semibold text-zinc-700">${name}</span>
-      <span>© 2025 Все права защищены</span>
-      <span>info@example.ru</span>
-    </div>
-  </footer>
-
-</body>
-</html>`
+  return {
+    businessName,
+    headline:      `Лучший ${params.businessType} в Минске и Беларуси`,
+    subheadline:   `Мы предоставляем профессиональные услуги уже более 10 лет. Гарантия результата и индивидуальный подход к каждому клиенту.`,
+    tagline:       "Профессионально и надёжно",
+    accentColor:   accentByStyle[params.style] ?? "#6366f1",
+    services: [
+      { icon: "⚡", name: "Основная услуга", description: `Профессиональная помощь в сфере ${params.businessType}. Работаем быстро и качественно.`, price: "от 50 $" },
+      { icon: "🎯", name: "Консультация", description: "Бесплатная первичная консультация и разработка индивидуального решения для вашей ситуации.", price: "Бесплатно" },
+      { icon: "🛡️", name: "Под ключ", description: "Полное сопровождение от начала до результата. Вы занимаетесь бизнесом — мы остальным.", price: "от 150 $" },
+    ],
+    features: [
+      { icon: "✅", title: "Гарантия результата", description: "Мы берёмся только за те проекты, в успехе которых уверены. Результат закреплён в договоре." },
+      { icon: "⏱️", title: "Быстрые сроки", description: "Большинство задач выполняем в течение 1-3 рабочих дней без потери качества." },
+      { icon: "💬", title: "Поддержка 24/7", description: "Наши специалисты на связи в любое время. Ответим в течение часа в рабочие дни." },
+    ],
+    stats: [
+      { value: "500+", label: "довольных клиентов" },
+      { value: "10 лет", label: "на рынке" },
+      { value: "98%", label: "повторных обращений" },
+    ],
+    testimonial: {
+      text: `Обратились в ${businessName} по рекомендации коллег и остались очень довольны. Профессиональный подход, чёткие сроки и результат, который превзошёл ожидания. Однозначно рекомендую!`,
+      author: "Александр Смирнов",
+      role: "Директор, ООО «Прогресс»",
+    },
+    ctaHeadline:   "Готовы обсудить ваш проект?",
+    ctaSubtext:    "Оставьте заявку — перезвоним в течение 30 минут и ответим на все вопросы",
+    phone:         "+375 29 000-00-00",
+    email:         `info@${businessName.toLowerCase().replace(/\s+/g, "")}.by`,
+    footerTagline: "Ваш надёжный партнёр",
+  }
 }
 
 // ─── Handler ──────────────────────────────────────────────────────────────────
@@ -157,32 +113,29 @@ export async function POST(req: NextRequest) {
 
     const { params } = body as GenerateApiRequest
     const apiKey = process.env.GOOGLE_AI_API_KEY
+    const sessionId = req.cookies.get("session_id")?.value ?? "anonymous"
 
-    // Если ключа нет — возвращаем красивую заглушку
+    // ── Без API ключа: демо-контент в шаблон ───────────────────────────────
     if (!apiKey) {
-      const demoHtml = buildDemoHtml(params)
-      const sessionId = req.cookies.get("session_id")?.value ?? "anonymous"
+      const content = buildDemoContent(params)
+      const html = fillTemplate(params.style, content)
       const design = await db.design.create({
-        data: {
-          sessionId,
-          htmlContent: demoHtml,
-          prompt: params.userDescription,
-          businessType: params.businessType,
-          style: params.style,
-          language: params.language,
-        },
+        data: { sessionId, htmlContent: html, prompt: params.userDescription, businessType: params.businessType, style: params.style, language: params.language },
       })
-      return NextResponse.json({ html: demoHtml, designId: design.id }, { status: 200 })
+      return NextResponse.json({ html, designId: design.id }, { status: 200 })
     }
 
-    // Реальный вызов Gemini Flash API (бесплатно: 15 RPM, 1M токенов/день)
+    // ── Вызов Gemini Flash ──────────────────────────────────────────────────
     const geminiBody = JSON.stringify({
       system_instruction: { parts: [{ text: GENERATOR_SYSTEM_PROMPT }] },
       contents: [{ role: "user", parts: [{ text: buildUserPrompt(params) }] }],
-      generationConfig: { maxOutputTokens: 8192, temperature: 0.8 },
+      generationConfig: {
+        maxOutputTokens: 2048,
+        temperature: 0.85,
+        responseMimeType: "application/json",
+      },
     })
 
-    // При 503 (перегрузка модели) делаем до 3 попыток с паузой
     let response!: Response
     for (let attempt = 1; attempt <= 3; attempt++) {
       response = await fetch(
@@ -197,62 +150,39 @@ export async function POST(req: NextRequest) {
     if (!response.ok) {
       const errorText = await response.text()
       console.error("[POST /api/generate] Gemini error:", errorText)
-      return NextResponse.json(
-        { error: "Ошибка генерации. Попробуйте ещё раз." },
-        { status: 502 }
-      )
+      return NextResponse.json({ error: "Ошибка генерации. Попробуйте ещё раз." }, { status: 502 })
     }
 
     const data = await response.json() as {
-      candidates: Array<{
-        content: { parts: Array<{ text: string; thought?: boolean }> }
-      }>
+      candidates: Array<{ content: { parts: Array<{ text: string; thought?: boolean }> } }>
     }
 
-    // gemini-2.5-flash — thinking model: filter out thought parts, keep only actual output
     const rawText = data.candidates?.[0]?.content?.parts
       ?.filter((p) => !p.thought)
       .map((p) => p.text)
       .join("")
       .trim() ?? ""
 
-    // Strip any text before <!DOCTYPE or <html (model sometimes adds preamble)
-    const doctypeIdx = rawText.indexOf("<!DOCTYPE")
-    const htmlTagIdx = rawText.indexOf("<html")
-    const startIdx = Math.min(
-      doctypeIdx >= 0 ? doctypeIdx : Infinity,
-      htmlTagIdx >= 0 ? htmlTagIdx : Infinity,
-    )
-    const html = startIdx !== Infinity ? rawText.slice(startIdx) : rawText
-
-    if (!html || (!html.includes("<!DOCTYPE") && !html.includes("<html"))) {
-      console.error("[POST /api/generate] Invalid HTML received from Gemini")
-      return NextResponse.json(
-        { error: "Получен некорректный результат. Попробуйте ещё раз." },
-        { status: 502 }
-      )
+    // ── Парсим JSON и заполняем шаблон ─────────────────────────────────────
+    let content: DesignContent
+    try {
+      content = parseDesignContent(rawText)
+    } catch (e) {
+      console.error("[POST /api/generate] JSON parse error:", e, "\nRaw:", rawText.slice(0, 500))
+      // Fallback на демо-контент если AI вернул некорректный JSON
+      content = buildDemoContent(params)
     }
 
-    // Сохраняем дизайн в БД
-    const sessionId = req.cookies.get("session_id")?.value ?? "anonymous"
+    const html = fillTemplate(params.style, content)
+
     const design = await db.design.create({
-      data: {
-        sessionId,
-        htmlContent: html,
-        prompt: params.userDescription,
-        businessType: params.businessType,
-        style: params.style,
-        language: params.language,
-      },
+      data: { sessionId, htmlContent: html, prompt: params.userDescription, businessType: params.businessType, style: params.style, language: params.language },
     })
 
     return NextResponse.json({ html, designId: design.id }, { status: 200 })
 
   } catch (error) {
     console.error("[POST /api/generate]", error)
-    return NextResponse.json(
-      { error: "Внутренняя ошибка. Попробуйте ещё раз." },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: "Внутренняя ошибка. Попробуйте ещё раз." }, { status: 500 })
   }
 }
