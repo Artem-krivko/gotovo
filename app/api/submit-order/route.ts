@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${resendKey}` },
         body: JSON.stringify({
-          from: "gotovo <onboarding@resend.dev>",
+          from: "gotovo <noreply@usegotovo.by>",
           to: [notifyEmail],
           subject: `🎯 Новая заявка от ${name} — ${design.businessType}`,
           html: buildEmail({ name, phone, email, comment, design, orderId: order.id }),

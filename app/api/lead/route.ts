@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     const resend = new Resend(apiKey);
 
     await resend.emails.send({
-      from: "AI Web Studio <onboarding@resend.dev>",
+      from: "gotovo <noreply@usegotovo.by>",
       to: toEmail,
       subject: `Новая заявка от ${name}`,
       html: `
