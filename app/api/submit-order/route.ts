@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
+import { sendTelegram } from "@/lib/telegram"
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
 
@@ -111,6 +112,17 @@ export async function POST(req: NextRequest) {
         }),
       })
     }
+
+    await sendTelegram(
+      `🎯 <b>Новая заявка на разработку</b>\n\n` +
+      `👤 <b>Имя:</b> ${name}\n` +
+      `📱 <b>Телефон:</b> ${phone}\n` +
+      `📧 <b>Email:</b> ${email}\n` +
+      `🏢 <b>Бизнес:</b> ${design.businessType}\n` +
+      `🎨 <b>Стиль:</b> ${design.style}\n` +
+      `💬 <b>Описание:</b> ${design.prompt}` +
+      (comment ? `\n📝 <b>Комментарий:</b> ${comment}` : "")
+    )
 
     return NextResponse.json({ success: true, orderId: order.id })
 

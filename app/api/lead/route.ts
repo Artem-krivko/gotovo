@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { sendTelegram } from "@/lib/telegram";
 
 // ─── Типы ────────────────────────────────────────────────────────────────────
 
@@ -79,6 +80,13 @@ export async function POST(req: NextRequest) {
         </div>
       `,
     });
+
+    await sendTelegram(
+      `🔔 <b>Новая заявка с сайта</b>\n\n` +
+      `👤 <b>Имя:</b> ${name}\n` +
+      `📱 <b>Контакт:</b> ${contact}\n` +
+      `💬 <b>Задача:</b> ${message}`
+    )
 
     return NextResponse.json({ success: true }, { status: 200 });
 
