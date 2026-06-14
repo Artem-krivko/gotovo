@@ -38,7 +38,7 @@ const NICHE_SEEDS: Array<[RegExp, string]> = [
   [/фото|видео|съёмк/i,                                     "studio"],
 ]
 
-export function getNicheImage(businessType: string, w = 1440, h = 900): string {
+export function getNicheImage(businessType: string, w = 800, h = 500): string {
   const seed = NICHE_SEEDS.find(([re]) => re.test(businessType))?.[1] ?? "office"
   return `https://picsum.photos/seed/${seed}/${w}/${h}`
 }

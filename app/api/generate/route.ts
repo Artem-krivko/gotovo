@@ -6,6 +6,24 @@ import { db } from "@/lib/db"
 
 export const maxDuration = 60
 
+// ─── Загрузка изображения на сервере → base64 data URL ───────────────────────
+
+async function fetchImageAsDataUrl(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url, {
+      signal: AbortSignal.timeout(5000),
+      headers: { "User-Agent": "gotovo-generator/1.0" },
+    })
+    if (!res.ok) return null
+    const buffer = await res.arrayBuffer()
+    const base64 = Buffer.from(buffer).toString("base64")
+    const ct = res.headers.get("content-type") ?? "image/jpeg"
+    return `data:${ct};base64,${base64}`
+  } catch {
+    return null
+  }
+}
+
 // ─── Валидация входных данных ─────────────────────────────────────────────────
 
 function validateParams(body: unknown): body is GenerateApiRequest {
@@ -115,10 +133,14 @@ export async function POST(req: NextRequest) {
     const apiKey = process.env.GOOGLE_AI_API_KEY
     const sessionId = req.cookies.get("session_id")?.value ?? "anonymous"
 
+    // ── Запускаем загрузку картинки заранее (параллельно с Gemini) ──────────
+    const imageUrl = getNicheImage(params.businessType)
+    const imagePromise = fetchImageAsDataUrl(imageUrl)
+
     // ── Без API ключа: демо-контент в шаблон ───────────────────────────────
     if (!apiKey) {
       const content = buildDemoContent(params)
-      content.heroImageUrl = getNicheImage(params.businessType)
+      content.heroImageUrl = (await imagePromise) ?? undefined
       const html = fillTemplate(params.style, content)
       const design = await db.design.create({
         data: { sessionId, htmlContent: html, prompt: params.userDescription, businessType: params.businessType, style: params.style, language: params.language },
@@ -126,7 +148,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ html, designId: design.id }, { status: 200 })
     }
 
-    // ── Вызов Gemini Flash ──────────────────────────────────────────────────
+    // ── Вызов Gemini Flash (параллельно грузится картинка) ──────────────────
     const geminiBody = JSON.stringify({
       system_instruction: { parts: [{ text: GENERATOR_SYSTEM_PROMPT }] },
       contents: [{ role: "user", parts: [{ text: buildUserPrompt(params) }] }],
@@ -173,7 +195,8 @@ export async function POST(req: NextRequest) {
       content = buildDemoContent(params)
     }
 
-    content.heroImageUrl = getNicheImage(params.businessType)
+    // Картинка к этому моменту уже загружена (параллельно с Gemini)
+    content.heroImageUrl = (await imagePromise) ?? undefined
     const html = fillTemplate(params.style, content)
 
     const design = await db.design.create({
