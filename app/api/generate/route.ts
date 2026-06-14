@@ -131,7 +131,7 @@ export async function POST(req: NextRequest) {
       system_instruction: { parts: [{ text: GENERATOR_SYSTEM_PROMPT }] },
       contents: [{ role: "user", parts: [{ text: buildUserPrompt(params) }] }],
       generationConfig: {
-        maxOutputTokens: 2048,
+        maxOutputTokens: 8192,
         temperature: 0.85,
         responseMimeType: "application/json",
       },
