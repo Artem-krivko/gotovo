@@ -229,6 +229,12 @@ function Hero() {
               Как это работает?
             </Link>
           </div>
+
+          <div className="reveal-up mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-xs text-[#6B6B80]">
+            <span><span className="text-emerald-400">✓</span> Без предоплаты</span>
+            <span><span className="text-emerald-400">✓</span> Ответим в течение часа</span>
+            <span><span className="text-emerald-400">✓</span> 10+ проектов запущено</span>
+          </div>
         </div>
 
         <div className="reveal-up delay-4 mt-6 grid grid-cols-3 gap-2 border-t border-white/[0.06] py-4 sm:gap-4">

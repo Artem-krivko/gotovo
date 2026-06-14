@@ -76,7 +76,7 @@ export default function GeneratorPage() {
     <div className="flex h-[calc(100vh-64px)] flex-col lg:flex-row">
 
       {/* ── Левая панель: форма ────────────────────────────────────────────── */}
-      <div className="flex w-full shrink-0 flex-col border-b border-zinc-200 bg-white lg:w-[400px] lg:border-b-0 lg:border-r">
+      <div className={`w-full shrink-0 flex-col border-b border-zinc-200 bg-white lg:w-[400px] lg:border-b-0 lg:border-r ${hasResult ? "hidden lg:flex" : "flex"}`}>
         <div className="border-b border-zinc-100 px-5 py-4">
           <h1 className="text-base font-semibold text-zinc-950">
             AI Design Generator

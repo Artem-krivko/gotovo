@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 
 interface GeneratorPreviewProps {
   html: string
@@ -54,6 +54,80 @@ function ExpandIcon() {
     <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
       <path d="M10 2h4v4M6 14H2v-4M14 2l-5 5M2 14l5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
+  )
+}
+
+// ─── Баннер через 10 секунд ───────────────────────────────────────────────────
+
+type BannerState = "form" | "loading" | "done"
+
+function TimedBanner({ designId, onDismiss }: { designId: string; onDismiss: () => void }) {
+  const [phone, setPhone] = useState("")
+  const [state, setState] = useState<BannerState>("form")
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setState("loading")
+    try {
+      const res = await fetch("/api/submit-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ designId, phone }),
+      })
+      const data = await res.json() as { success?: boolean }
+      if (res.ok && data.success) {
+        setState("done")
+        setTimeout(onDismiss, 2500)
+      } else {
+        setState("form")
+      }
+    } catch {
+      setState("form")
+    }
+  }
+
+  return (
+    <div className="absolute bottom-[76px] left-3 right-3 z-20">
+      <div className="rounded-2xl border border-violet-200 bg-white px-4 py-3 shadow-2xl shadow-violet-500/15">
+        {state === "done" ? (
+          <p className="py-1 text-center text-sm font-semibold text-emerald-600">
+            Отлично! Перезвоним в течение часа ✓
+          </p>
+        ) : (
+          <>
+            <div className="mb-2.5 flex items-center justify-between gap-2">
+              <p className="text-sm font-semibold text-zinc-900">Понравился дизайн? Оставьте номер</p>
+              <button
+                type="button"
+                onClick={onDismiss}
+                aria-label="Закрыть"
+                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-600"
+              >
+                ✕
+              </button>
+            </div>
+            <form onSubmit={handleSubmit} className="flex gap-2">
+              <input
+                type="tel"
+                required
+                value={phone}
+                onChange={e => setPhone(e.target.value)}
+                placeholder="+375 (29) 000-00-00"
+                className="min-w-0 flex-1 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
+              />
+              <button
+                type="submit"
+                disabled={state === "loading"}
+                className="shrink-0 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-4 py-2.5 text-sm font-bold text-white shadow-md shadow-violet-500/25 transition hover:opacity-90 disabled:opacity-60"
+              >
+                {state === "loading" ? "..." : "Перезвоним →"}
+              </button>
+            </form>
+            <p className="mt-1.5 text-xs text-[#6B6B80]">Перезвоним в течение часа · Без обязательств</p>
+          </>
+        )}
+      </div>
+    </div>
   )
 }
 
@@ -217,6 +291,21 @@ function OrderModal({ designId, onClose }: { designId: string; onClose: () => vo
 
 export function GeneratorPreview({ html, designId, onRegenerate, isLoading }: GeneratorPreviewProps) {
   const [showModal, setShowModal] = useState(false)
+  const [showTimedBanner, setShowTimedBanner] = useState(false)
+  const bannerFiredRef = useRef(false)
+
+  // Запускаем баннер через 10 секунд после первой генерации
+  useEffect(() => {
+    if (!html || isLoading || bannerFiredRef.current) return
+    bannerFiredRef.current = true
+    const timer = setTimeout(() => setShowTimedBanner(true), 10_000)
+    return () => clearTimeout(timer)
+  }, [html, isLoading])
+
+  // Скрываем баннер когда открывается основной модал
+  useEffect(() => {
+    if (showModal) setShowTimedBanner(false)
+  }, [showModal])
 
   const handleOpenInTab = useCallback(() => {
     const blob = new Blob([html], { type: "text/html" })
@@ -277,6 +366,12 @@ export function GeneratorPreview({ html, designId, onRegenerate, isLoading }: Ge
             className="h-full w-full border-0"
             loading="lazy"
           />
+          {showTimedBanner && !showModal && (
+            <TimedBanner
+              designId={designId}
+              onDismiss={() => setShowTimedBanner(false)}
+            />
+          )}
         </div>
 
         {/* CTA панель */}
