@@ -129,6 +129,23 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:28px 24px}
 .footer-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
 .footer-inner span{font-size:13px;color:rgba(255,255,255,.32)}
 .footer-logo{font-size:15px;font-weight:700;color:#fff}
+@keyframes glow-pulse{0%,100%{opacity:.75}50%{opacity:1}}
+.hero-glow{animation:fi 1.2s ease both .15s,glow-pulse 5s ease-in-out 1.5s infinite}
+.dot{box-shadow:0 0 8px 3px color-mix(in srgb,var(--a) 65%,transparent)}
+.stat{transition:all .25s}
+.stat:hover{border-color:color-mix(in srgb,var(--a) 30%,transparent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.stat-val{background:linear-gradient(135deg,#fff 30%,color-mix(in srgb,var(--a) 90%,#fff) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:30px}
+.card:hover{transform:translateY(-5px);box-shadow:0 24px 64px -12px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.1)}
+.card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--a) 60%,transparent),transparent);opacity:0;transition:opacity .3s;pointer-events:none}
+.card:hover::after{opacity:1}
+.btn-p{position:relative;overflow:hidden}
+.btn-p::after{content:'';position:absolute;top:0;left:-120%;width:80%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);transform:skewX(-15deg);transition:left .55s ease;pointer-events:none}
+.btn-p:hover::after{left:140%}
+.cta-glow{animation:glow-pulse 3.5s ease-in-out infinite}
+.ibox{transition:all .25s}
+.card:hover .ibox{border-color:color-mix(in srgb,var(--a) 50%,transparent);background:color-mix(in srgb,var(--a) 20%,transparent);transform:scale(1.08)}
+.panel-stat{transition:all .3s}
+.panel-stat:hover{border-color:color-mix(in srgb,var(--a) 45%,transparent);box-shadow:0 8px 32px color-mix(in srgb,var(--a) 18%,transparent)}
 @media(max-width:900px){
   .hero-inner{grid-template-columns:1fr}
   .hero-panel{display:none}
@@ -304,6 +321,16 @@ footer{border-top:1px solid #f0f0f0;padding:28px 32px}
 .footer-inner{max-width:1140px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
 .footer-inner span{font-size:13px;color:#a1a1aa}
 .footer-logo{font-size:15px;font-weight:700;color:#0a0a0b}
+@keyframes shine{0%{left:-120%}100%{left:140%}}
+.stat-val{color:var(--a)}
+.stat:hover .stat-val{opacity:.85}
+.card{transition:all .2s}
+.card:hover{background:#f5f3ff;box-shadow:0 8px 32px rgba(0,0,0,.07);transform:translateY(-2px)}
+.card:hover::before{transform:scaleX(1)}
+.btn-p{position:relative;overflow:hidden}
+.btn-p::after{content:'';position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transform:skewX(-15deg);animation:none;pointer-events:none}
+.btn-p:hover::after{animation:shine .55s ease forwards}
+.feat h3::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--a);margin-right:8px;vertical-align:middle}
 @media(max-width:768px){
   nav,.btn-hdr{display:none}
   .grid3{grid-template-columns:1fr;border-radius:12px}
@@ -470,6 +497,17 @@ footer{border-top:2px solid rgba(255,255,255,.1);padding:28px 24px}
 .footer-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
 .footer-inner span{font-size:12px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.5px}
 .footer-logo{font-size:16px;font-weight:900;color:#fff}
+@keyframes bold-pulse{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 28px 4px color-mix(in srgb,var(--a) 40%,transparent)}}
+.stat{transition:all .25s}
+.stat:hover{background:#111;box-shadow:inset 0 1px 0 var(--a)}
+.card{transition:background .2s,transform .25s,box-shadow .25s}
+.card:hover{background:#161616;transform:translateY(-3px);box-shadow:0 20px 48px rgba(0,0,0,.7)}
+.card:hover::after{width:100%;box-shadow:0 0 12px color-mix(in srgb,var(--a) 70%,transparent)}
+.btn-p{position:relative;overflow:hidden;transition:all .2s}
+.btn-p::before{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:rgba(255,255,255,.15);transform:skewX(-15deg);transition:left .4s ease;pointer-events:none}
+.btn-p:hover::before{left:140%}
+.btn-p:hover{opacity:1;transform:translateY(-2px);animation:bold-pulse .6s ease .15s 1}
+.cta-sec::after{content:'';position:absolute;bottom:-50%;left:-20%;width:500px;height:500px;background:rgba(255,255,255,.06);border-radius:50%;pointer-events:none}
 @media(max-width:768px){
   nav,.btn-hdr{display:none}
   .grid3{grid-template-columns:1fr}
@@ -643,6 +681,17 @@ footer{background:#fff;border-top:1px solid #e2e8f0;padding:24px 28px}
 .footer-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
 .footer-logo{font-size:15px;font-weight:800;color:var(--a)}
 .footer-inner span{font-size:13px;color:#94a3b8}
+@keyframes corp-shine{0%{left:-120%}100%{left:140%}}
+.hstat{transition:all .25s}
+.hstat:hover{border-color:color-mix(in srgb,var(--a) 50%,transparent);box-shadow:0 6px 18px color-mix(in srgb,var(--a) 12%,transparent);transform:translateY(-2px)}
+.card:hover{border-color:color-mix(in srgb,var(--a) 45%,transparent);box-shadow:0 8px 28px rgba(0,0,0,.1);transform:translateY(-3px)}
+.card:hover .ibox{background:color-mix(in srgb,var(--a) 18%,transparent);transform:scale(1.1);transition:all .25s}
+.btn-p{position:relative;overflow:hidden}
+.btn-p::after{content:'';position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);transform:skewX(-15deg);pointer-events:none}
+.btn-p:hover::after{animation:corp-shine .5s ease forwards}
+.btn-p:hover{opacity:1;box-shadow:0 6px 20px color-mix(in srgb,var(--a) 40%,transparent);transform:translateY(-2px)}
+.qbox{transition:all .3s}
+.qbox:hover{box-shadow:0 8px 32px color-mix(in srgb,var(--a) 10%,transparent);transform:translateY(-2px)}
 @media(max-width:900px){
   nav,.btn-hdr{display:none}
   .hero-inner{grid-template-columns:1fr}
