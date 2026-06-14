@@ -7,6 +7,7 @@ import { ParallaxMockup } from "@/components/shared/parallax-mockup";
 import { ScrollGlow } from "@/components/shared/scroll-glow";
 import { homeContent } from "@/content/pages/home";
 import { PricingPreview } from "@/components/sections/pricing-preview";
+import { QuickContact } from "@/components/sections/quick-contact";
 import { GENERATOR_CASES } from "@/content/generator-cases";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
@@ -510,6 +511,7 @@ export default function Home() {
   return (
     <main>
       <Hero />
+      <QuickContact />
       <HowItWorks />
       <GeneratorExamples />
       <ForWhom />
