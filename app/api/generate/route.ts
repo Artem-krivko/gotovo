@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { GENERATOR_SYSTEM_PROMPT, buildUserPrompt } from "@/lib/prompts"
-import { fillTemplate, type DesignContent } from "@/lib/templates"
+import { fillTemplate, getNicheImage, type DesignContent } from "@/lib/templates"
 import type { GenerateApiRequest, GeneratorParams } from "@/lib/types"
 import { db } from "@/lib/db"
 
@@ -118,6 +118,7 @@ export async function POST(req: NextRequest) {
     // ── Без API ключа: демо-контент в шаблон ───────────────────────────────
     if (!apiKey) {
       const content = buildDemoContent(params)
+      content.heroImageUrl = getNicheImage(params.businessType)
       const html = fillTemplate(params.style, content)
       const design = await db.design.create({
         data: { sessionId, htmlContent: html, prompt: params.userDescription, businessType: params.businessType, style: params.style, language: params.language },
@@ -169,10 +170,10 @@ export async function POST(req: NextRequest) {
       content = parseDesignContent(rawText)
     } catch (e) {
       console.error("[POST /api/generate] JSON parse error:", e, "\nRaw:", rawText.slice(0, 500))
-      // Fallback на демо-контент если AI вернул некорректный JSON
       content = buildDemoContent(params)
     }
 
+    content.heroImageUrl = getNicheImage(params.businessType)
     const html = fillTemplate(params.style, content)
 
     const design = await db.design.create({

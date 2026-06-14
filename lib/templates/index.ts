@@ -15,6 +15,32 @@ export interface DesignContent {
   phone: string
   email: string
   footerTagline: string
+  heroImageUrl?: string
+}
+
+// ─── Подбор фото по нише бизнеса ─────────────────────────────────────────────
+
+const NICHE_KEYWORDS: Array<[RegExp, string]> = [
+  [/стоматол|зуб|дент/i,                            "dentist,clinic,teeth"],
+  [/ресторан|кафе|суши|пицц|бургер|шашлык|еда|бар/i,"restaurant,food,cafe"],
+  [/салон|красот|барбер|парикмах|маникюр|педикюр/i,  "beauty,salon,hairdresser"],
+  [/фитнес|спорт|тренаж|йога|зал|бокс/i,            "gym,fitness,workout"],
+  [/медицин|клиник|врач|больниц|лечени/i,            "medical,hospital,doctor"],
+  [/юрист|адвокат|право|нотар/i,                     "law,office,justice"],
+  [/строительств|ремонт|отделк|кровл|монтаж/i,       "construction,building,architecture"],
+  [/ит|it|разработк|программ|сайт|приложен/i,        "technology,software,coding"],
+  [/курс|обучен|школ|образован|репетитор/i,          "education,students,learning"],
+  [/бухгалт|налог|аудит|финанс/i,                    "finance,accounting,business"],
+  [/недвижим|риелтор|квартир|аренда/i,               "real estate,apartment,interior"],
+  [/авто|шиномонтаж|сто|кузов|машин/i,               "car,automobile,garage"],
+  [/свадьб|праздник|event|мероприят/i,               "wedding,celebration,event"],
+  [/доставка|логистик|курьер|транспорт/i,            "delivery,logistics,transport"],
+  [/фото|видео|съёмк/i,                              "photography,studio,camera"],
+]
+
+export function getNicheImage(businessType: string, w = 900, h = 580): string {
+  const kw = NICHE_KEYWORDS.find(([re]) => re.test(businessType))?.[1] ?? "business,office,professional"
+  return `https://source.unsplash.com/featured/${w}x${h}/?${encodeURIComponent(kw)}`
 }
 
 // ─── Shared head snippet ──────────────────────────────────────────────────────
@@ -86,6 +112,10 @@ h1{font-size:clamp(38px,5vw,60px);font-weight:900;line-height:1.04;letter-spacin
 .sub{font-size:17px;color:rgba(255,255,255,.5);max-width:480px;margin:0 0 36px;line-height:1.75}
 .ctas{display:flex;gap:14px;flex-wrap:wrap}
 .hero-panel{display:flex;flex-direction:column;gap:10px}
+.panel-img{border-radius:16px;overflow:hidden;height:190px;position:relative;border:1px solid rgba(255,255,255,.08)}
+.panel-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+.panel-img:hover img{transform:scale(1.04)}
+.panel-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.45),transparent 50%);pointer-events:none}
 .panel-card{background:#18181b;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:14px;transition:all .25s;cursor:default}
 .panel-card:hover{border-color:color-mix(in srgb,var(--a) 30%,transparent);transform:translateX(-4px);background:#1c1c1f}
 .panel-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:color-mix(in srgb,var(--a) 12%,transparent);border:1px solid color-mix(in srgb,var(--a) 25%,transparent)}
@@ -188,7 +218,8 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:28px 24px}
       </div>
     </div>
     <div class="hero-panel fu d2">
-      ${svcs.map(s => `<div class="panel-card"><div class="panel-icon">${s.icon}</div><div><div class="panel-name">${s.name}</div>${s.price ? `<div class="panel-price">${s.price}</div>` : ""}</div></div>`).join("")}
+      ${d.heroImageUrl ? `<div class="panel-img"><img src="${d.heroImageUrl}" alt="${d.businessName}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>` : ""}
+      ${svcs.slice(0, 2).map(s => `<div class="panel-card"><div class="panel-icon">${s.icon}</div><div><div class="panel-name">${s.name}</div>${s.price ? `<div class="panel-price">${s.price}</div>` : ""}</div></div>`).join("")}
       ${stats[0] ? `<div class="panel-stat"><div class="panel-stat-val">${stats[0].value}</div><div class="panel-stat-lbl">${stats[0].label}</div></div>` : ""}
     </div>
   </div>
@@ -331,12 +362,16 @@ footer{border-top:1px solid #f0f0f0;padding:28px 32px}
 .btn-p::after{content:'';position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);transform:skewX(-15deg);animation:none;pointer-events:none}
 .btn-p:hover::after{animation:shine .55s ease forwards}
 .feat h3::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--a);margin-right:8px;vertical-align:middle}
+.hero-photo{max-width:1140px;margin:0 auto;padding:0 32px 64px;overflow:hidden}
+.hero-photo img{width:100%;height:420px;object-fit:cover;border-radius:20px;display:block;transition:transform .6s ease}
+.hero-photo img:hover{transform:scale(1.02)}
 @media(max-width:768px){
   nav,.btn-hdr{display:none}
   .grid3{grid-template-columns:1fr;border-radius:12px}
   .card+.card{border-left:none;border-top:1px solid #f0f0f0}
   .feats-grid{grid-template-columns:1fr;gap:28px}
   .stats-row{flex-direction:column;gap:24px}
+  .hero-photo img{height:240px}
 }`
 
   return `<!DOCTYPE html>
@@ -368,6 +403,8 @@ footer{border-top:1px solid #f0f0f0;padding:28px 32px}
     ${stats.map(s => `<div><div class="stat-val">${s.value}</div><div class="stat-lbl">${s.label}</div></div>`).join("")}
   </div>
 </section>
+
+${d.heroImageUrl ? `<div class="hero-photo reveal"><img src="${d.heroImageUrl}" alt="${d.businessName}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>` : ""}
 
 <div class="divider"></div>
 
@@ -508,6 +545,10 @@ footer{border-top:2px solid rgba(255,255,255,.1);padding:28px 24px}
 .btn-p:hover::before{left:140%}
 .btn-p:hover{opacity:1;transform:translateY(-2px);animation:bold-pulse .6s ease .15s 1}
 .cta-sec::after{content:'';position:absolute;bottom:-50%;left:-20%;width:500px;height:500px;background:rgba(255,255,255,.06);border-radius:50%;pointer-events:none}
+.img-banner{overflow:hidden;height:380px;position:relative}
+.img-banner img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(.7)}
+.img-banner::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,rgba(0,0,0,.65) 0%,transparent 55%)}
+.img-banner-label{position:absolute;bottom:32px;left:24px;font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.5)}
 @media(max-width:768px){
   nav,.btn-hdr{display:none}
   .grid3{grid-template-columns:1fr}
@@ -515,6 +556,7 @@ footer{border-top:2px solid rgba(255,255,255,.1);padding:28px 24px}
   .sec-head{flex-direction:column;align-items:flex-start}
   .stats-row{grid-template-columns:1fr}
   .hero-accent{display:none}
+  .img-banner{height:220px}
 }`
 
   const words = d.headline.split(" ")
@@ -552,6 +594,8 @@ footer{border-top:2px solid rgba(255,255,255,.1);padding:28px 24px}
 <div class="stats-row fu d4">
   ${stats.map(s => `<div class="stat reveal"><div class="stat-val">${s.value}</div><div class="stat-lbl">${s.label}</div></div>`).join("")}
 </div>
+
+${d.heroImageUrl ? `<div class="img-banner"><img src="${d.heroImageUrl}" alt="${d.businessName}" loading="lazy" onerror="this.parentElement.style.display='none'"><div class="img-banner-label">${d.tagline}</div></div>` : ""}
 
 <section class="sec" id="services">
   <div class="sec-head reveal">
@@ -639,7 +683,10 @@ nav a:hover{color:var(--a)}
 h1{font-size:clamp(34px,4vw,52px);font-weight:800;line-height:1.1;letter-spacing:-1.5px;color:#0f172a;margin-bottom:20px}
 .sub{font-size:16px;color:#64748b;line-height:1.75;margin-bottom:36px;max-width:460px}
 .ctas{display:flex;gap:12px;flex-wrap:wrap}
-.hero-right{background:linear-gradient(135deg,color-mix(in srgb,var(--a) 8%,#fff),color-mix(in srgb,var(--a) 4%,#fff));border:1px solid color-mix(in srgb,var(--a) 15%,transparent);border-radius:16px;padding:36px}
+.hero-right{background:linear-gradient(135deg,color-mix(in srgb,var(--a) 8%,#fff),color-mix(in srgb,var(--a) 4%,#fff));border:1px solid color-mix(in srgb,var(--a) 15%,transparent);border-radius:16px;padding:36px;overflow:hidden}
+.hr-photo{margin:-36px -36px 28px;height:200px;overflow:hidden}
+.hr-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+.hr-photo img:hover{transform:scale(1.04)}
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .hstat{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:22px 18px;text-align:center;transition:border-color .2s,box-shadow .2s}
 .hstat:hover{border-color:color-mix(in srgb,var(--a) 30%,transparent);box-shadow:0 4px 12px rgba(0,0,0,.06)}
@@ -731,6 +778,7 @@ footer{background:#fff;border-top:1px solid #e2e8f0;padding:24px 28px}
       </div>
     </div>
     <div class="hero-right fu d2">
+      ${d.heroImageUrl ? `<div class="hr-photo"><img src="${d.heroImageUrl}" alt="${d.businessName}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>` : ""}
       <div class="stat-grid">
         ${stats.map((s, i) => `<div class="hstat${i === 0 ? " hstat-big" : ""}"><div class="hstat-val">${s.value}</div><div class="hstat-lbl">${s.label}</div></div>`).join("")}
       </div>
