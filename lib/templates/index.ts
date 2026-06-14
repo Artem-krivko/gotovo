@@ -18,29 +18,29 @@ export interface DesignContent {
   heroImageUrl?: string
 }
 
-// ─── Подбор фото по нише бизнеса ─────────────────────────────────────────────
+// ─── Подбор фото по нише бизнеса (picsum.photos — стабильный, без API ключа) ──
 
-const NICHE_KEYWORDS: Array<[RegExp, string]> = [
-  [/стоматол|зуб|дент/i,                            "dentist,clinic,teeth"],
-  [/ресторан|кафе|суши|пицц|бургер|шашлык|еда|бар/i,"restaurant,food,cafe"],
-  [/салон|красот|барбер|парикмах|маникюр|педикюр/i,  "beauty,salon,hairdresser"],
-  [/фитнес|спорт|тренаж|йога|зал|бокс/i,            "gym,fitness,workout"],
-  [/медицин|клиник|врач|больниц|лечени/i,            "medical,hospital,doctor"],
-  [/юрист|адвокат|право|нотар/i,                     "law,office,justice"],
-  [/строительств|ремонт|отделк|кровл|монтаж/i,       "construction,building,architecture"],
-  [/ит|it|разработк|программ|сайт|приложен/i,        "technology,software,coding"],
-  [/курс|обучен|школ|образован|репетитор/i,          "education,students,learning"],
-  [/бухгалт|налог|аудит|финанс/i,                    "finance,accounting,business"],
-  [/недвижим|риелтор|квартир|аренда/i,               "real estate,apartment,interior"],
-  [/авто|шиномонтаж|сто|кузов|машин/i,               "car,automobile,garage"],
-  [/свадьб|праздник|event|мероприят/i,               "wedding,celebration,event"],
-  [/доставка|логистик|курьер|транспорт/i,            "delivery,logistics,transport"],
-  [/фото|видео|съёмк/i,                              "photography,studio,camera"],
+const NICHE_SEEDS: Array<[RegExp, string]> = [
+  [/стоматол|зуб|дент/i,                                   "dentist"],
+  [/ресторан|кафе|суши|пицц|бургер|шашлык|еда|бар/i,       "restaurant"],
+  [/салон|красот|барбер|парикмах|маникюр|педикюр|макияж|перманент/i, "beauty"],
+  [/фитнес|спорт|тренаж|йога|зал|бокс/i,                   "fitness"],
+  [/медицин|клиник|врач|больниц|лечени/i,                   "medical"],
+  [/юрист|адвокат|право|нотар/i,                            "justice"],
+  [/строительств|ремонт|отделк|кровл|монтаж|экскаватор|землян/i, "construction"],
+  [/ит|it|разработк|программ|сайт|приложен/i,               "technology"],
+  [/курс|обучен|школ|образован|репетитор/i,                 "education"],
+  [/бухгалт|налог|аудит|финанс/i,                           "finance"],
+  [/недвижим|риелтор|квартир|аренда/i,                      "interior"],
+  [/авто|шиномонтаж|сто|кузов|машин/i,                      "automobile"],
+  [/свадьб|праздник|event|мероприят/i,                      "wedding"],
+  [/доставка|логистик|курьер|транспорт/i,                   "logistics"],
+  [/фото|видео|съёмк/i,                                     "studio"],
 ]
 
-export function getNicheImage(businessType: string, w = 900, h = 580): string {
-  const kw = NICHE_KEYWORDS.find(([re]) => re.test(businessType))?.[1] ?? "business,office,professional"
-  return `https://source.unsplash.com/featured/${w}x${h}/?${encodeURIComponent(kw)}`
+export function getNicheImage(businessType: string, w = 1440, h = 900): string {
+  const seed = NICHE_SEEDS.find(([re]) => re.test(businessType))?.[1] ?? "office"
+  return `https://picsum.photos/seed/${seed}/${w}/${h}`
 }
 
 // ─── Shared head snippet ──────────────────────────────────────────────────────
@@ -112,11 +112,15 @@ h1{font-size:clamp(38px,5vw,60px);font-weight:900;line-height:1.04;letter-spacin
 .sub{font-size:17px;color:rgba(255,255,255,.5);max-width:480px;margin:0 0 36px;line-height:1.75}
 .ctas{display:flex;gap:14px;flex-wrap:wrap}
 .hero-panel{display:flex;flex-direction:column;gap:10px}
-.panel-img{border-radius:16px;overflow:hidden;height:190px;position:relative;border:1px solid rgba(255,255,255,.08)}
-.panel-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
-.panel-img:hover img{transform:scale(1.04)}
-.panel-img::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.45),transparent 50%);pointer-events:none}
-.panel-card{background:#18181b;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px 18px;display:flex;align-items:center;gap:14px;transition:all .25s;cursor:default}
+.panel-photo{position:relative;border-radius:20px;overflow:hidden;height:360px;border:1px solid rgba(255,255,255,.1);flex-shrink:0}
+.panel-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s ease}
+.panel-photo:hover img{transform:scale(1.04)}
+.panel-photo-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.88) 0%,rgba(0,0,0,.3) 45%,transparent 100%);pointer-events:none}
+.panel-photo-stats{position:absolute;bottom:20px;left:20px;right:20px;display:flex;gap:10px}
+.pstat{flex:1;background:rgba(255,255,255,.08);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px 10px;text-align:center}
+.pstat-val{font-size:20px;font-weight:800;letter-spacing:-.5px;background:linear-gradient(135deg,#fff,var(--a));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.pstat-lbl{font-size:10px;color:rgba(255,255,255,.5);margin-top:3px;line-height:1.3}
+.panel-card{background:#18181b;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;transition:all .25s;cursor:default}
 .panel-card:hover{border-color:color-mix(in srgb,var(--a) 30%,transparent);transform:translateX(-4px);background:#1c1c1f}
 .panel-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:color-mix(in srgb,var(--a) 12%,transparent);border:1px solid color-mix(in srgb,var(--a) 25%,transparent)}
 .panel-name{font-size:14px;font-weight:600;color:#fff;line-height:1.3}
@@ -218,9 +222,14 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:28px 24px}
       </div>
     </div>
     <div class="hero-panel fu d2">
-      ${d.heroImageUrl ? `<div class="panel-img"><img src="${d.heroImageUrl}" alt="${d.businessName}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>` : ""}
-      ${svcs.slice(0, 2).map(s => `<div class="panel-card"><div class="panel-icon">${s.icon}</div><div><div class="panel-name">${s.name}</div>${s.price ? `<div class="panel-price">${s.price}</div>` : ""}</div></div>`).join("")}
-      ${stats[0] ? `<div class="panel-stat"><div class="panel-stat-val">${stats[0].value}</div><div class="panel-stat-lbl">${stats[0].label}</div></div>` : ""}
+      <div class="panel-photo">
+        ${d.heroImageUrl ? `<img src="${d.heroImageUrl}" alt="${d.businessName}" loading="eager">` : ""}
+        <div class="panel-photo-overlay"></div>
+        <div class="panel-photo-stats">
+          ${stats.slice(0, 3).map(s => `<div class="pstat"><div class="pstat-val">${s.value}</div><div class="pstat-lbl">${s.label}</div></div>`).join("")}
+        </div>
+      </div>
+      ${svcs[0] ? `<div class="panel-card"><div class="panel-icon">${svcs[0].icon}</div><div><div class="panel-name">${svcs[0].name}</div>${svcs[0].price ? `<div class="panel-price">${svcs[0].price}</div>` : ""}</div></div>` : ""}
     </div>
   </div>
   <div class="stats-row fu d4">
@@ -684,9 +693,10 @@ h1{font-size:clamp(34px,4vw,52px);font-weight:800;line-height:1.1;letter-spacing
 .sub{font-size:16px;color:#64748b;line-height:1.75;margin-bottom:36px;max-width:460px}
 .ctas{display:flex;gap:12px;flex-wrap:wrap}
 .hero-right{background:linear-gradient(135deg,color-mix(in srgb,var(--a) 8%,#fff),color-mix(in srgb,var(--a) 4%,#fff));border:1px solid color-mix(in srgb,var(--a) 15%,transparent);border-radius:16px;padding:36px;overflow:hidden}
-.hr-photo{margin:-36px -36px 28px;height:200px;overflow:hidden}
+.hr-photo{margin:-36px -36px 24px;height:260px;overflow:hidden;position:relative}
 .hr-photo img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
-.hr-photo img:hover{transform:scale(1.04)}
+.hr-photo:hover img{transform:scale(1.04)}
+.hr-photo::after{content:'';position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to top,color-mix(in srgb,var(--a) 6%,#fff),transparent);pointer-events:none}
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 .hstat{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:22px 18px;text-align:center;transition:border-color .2s,box-shadow .2s}
 .hstat:hover{border-color:color-mix(in srgb,var(--a) 30%,transparent);box-shadow:0 4px 12px rgba(0,0,0,.06)}
