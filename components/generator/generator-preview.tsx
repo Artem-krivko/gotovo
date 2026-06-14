@@ -379,7 +379,7 @@ export function GeneratorPreview({ html, designId, onRegenerate, isLoading }: Ge
           <div>
             <p className="text-sm font-semibold text-zinc-950">Понравился дизайн?</p>
             <p className="text-xs text-zinc-400">
-              Добавим ваши фото, анимации и SEO — перезвоним в течение часа
+              Это AI-набросок концепции. Реальный сайт делаем вручную — с вашими фото, анимациями и SEO.
             </p>
           </div>
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
