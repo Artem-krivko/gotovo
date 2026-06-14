@@ -102,12 +102,12 @@ function OrderModal({ designId, onClose }: { designId: string; onClose: () => vo
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
             <h2 className="text-xl font-semibold tracking-tight text-zinc-950">
-              {state === "success" ? "Заявка отправлена!" : "Заказать разработку"}
+              {state === "success" ? "Заявка отправлена!" : "Обсудить проект"}
             </h2>
             <p className="mt-1 text-sm text-zinc-500">
               {state === "success"
-                ? "Мы свяжемся с вами в течение часа"
-                : "Сделаем финальный сайт на основе этого дизайна"}
+                ? "Перезвоним в течение часа"
+                : "Оставьте телефон — перезвоним и обсудим детали бесплатно"}
             </p>
           </div>
           <button
@@ -144,19 +144,6 @@ function OrderModal({ designId, onClose }: { designId: string; onClose: () => vo
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="mb-1.5 block text-sm font-medium text-zinc-700">
-                Имя <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                required
-                value={name}
-                onChange={e => setName(e.target.value)}
-                placeholder="Ваше имя"
-                className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
-              />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-zinc-700">
                 Телефон <span className="text-red-500">*</span>
               </label>
               <input
@@ -170,11 +157,22 @@ function OrderModal({ designId, onClose }: { designId: string; onClose: () => vo
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-zinc-700">
-                Email <span className="text-red-500">*</span>
+                Имя <span className="text-zinc-400 font-normal">(необязательно)</span>
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                placeholder="Ваше имя"
+                className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100"
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-zinc-700">
+                Email <span className="text-zinc-400 font-normal">(необязательно)</span>
               </label>
               <input
                 type="email"
-                required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="you@example.com"
@@ -284,17 +282,17 @@ export function GeneratorPreview({ html, designId, onRegenerate, isLoading }: Ge
         {/* CTA панель */}
         <div className="flex flex-col items-center gap-3 border-t border-zinc-200 bg-white px-4 py-4 sm:flex-row sm:justify-between">
           <div>
-            <p className="text-sm font-semibold text-zinc-950">Нравится направление?</p>
+            <p className="text-sm font-semibold text-zinc-950">Понравился дизайн?</p>
             <p className="text-xs text-zinc-400">
-              Финальный сайт будет лучше — с вашим контентом и полным функционалом
+              Добавим ваши фото, анимации и SEO — перезвоним в течение часа
             </p>
           </div>
           <button
             type="button"
             onClick={() => setShowModal(true)}
-            className="w-full shrink-0 rounded-xl bg-zinc-950 px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-zinc-800 hover:shadow-lg sm:w-auto"
+            className="w-full shrink-0 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-violet-500/25 transition hover:-translate-y-0.5 hover:opacity-90 sm:w-auto"
           >
-            Заказать разработку →
+            Обсудить бесплатно →
           </button>
         </div>
       </div>

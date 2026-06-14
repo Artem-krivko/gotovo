@@ -24,9 +24,9 @@ function buildEmail({ name, phone, email, comment, design, orderId }: {
     <div style="padding:28px 32px">
       <h2 style="margin:0 0 16px;font-size:16px;color:#18181b">Контакты клиента</h2>
       <table style="width:100%;border-collapse:collapse">
-        <tr><td style="padding:8px 0;color:#71717a;font-size:14px;width:110px">Имя</td><td style="padding:8px 0;color:#18181b;font-size:14px;font-weight:600">${name}</td></tr>
-        <tr><td style="padding:8px 0;color:#71717a;font-size:14px">Телефон</td><td style="padding:8px 0;color:#18181b;font-size:14px;font-weight:600">${phone}</td></tr>
-        <tr><td style="padding:8px 0;color:#71717a;font-size:14px">Email</td><td style="padding:8px 0;color:#18181b;font-size:14px;font-weight:600">${email}</td></tr>
+        <tr><td style="padding:8px 0;color:#71717a;font-size:14px;width:110px">Телефон</td><td style="padding:8px 0;color:#18181b;font-size:14px;font-weight:600">${phone}</td></tr>
+        ${name ? `<tr><td style="padding:8px 0;color:#71717a;font-size:14px">Имя</td><td style="padding:8px 0;color:#18181b;font-size:14px;font-weight:600">${name}</td></tr>` : ""}
+        ${email ? `<tr><td style="padding:8px 0;color:#71717a;font-size:14px">Email</td><td style="padding:8px 0;color:#18181b;font-size:14px;font-weight:600">${email}</td></tr>` : ""}
         ${comment ? `<tr><td style="padding:8px 0;color:#71717a;font-size:14px;vertical-align:top">Комментарий</td><td style="padding:8px 0;color:#18181b;font-size:14px">${comment}</td></tr>` : ""}
       </table>
 
@@ -53,9 +53,9 @@ function buildEmail({ name, phone, email, comment, design, orderId }: {
 
 interface SubmitOrderRequest {
   designId: string
-  name: string
+  name?: string
   phone: string
-  email: string
+  email?: string
   comment?: string
 }
 
@@ -64,9 +64,7 @@ function validate(body: unknown): body is SubmitOrderRequest {
   const b = body as Record<string, unknown>
   return (
     typeof b.designId === "string" && b.designId.length > 0 &&
-    typeof b.name === "string" && b.name.trim().length > 0 &&
-    typeof b.phone === "string" && b.phone.trim().length > 0 &&
-    typeof b.email === "string" && b.email.includes("@")
+    typeof b.phone === "string" && b.phone.trim().length > 0
   )
 }
 
@@ -82,6 +80,8 @@ export async function POST(req: NextRequest) {
     }
 
     const { designId, name, phone, email, comment } = body as SubmitOrderRequest
+    const safeName = name?.trim() || ""
+    const safeEmail = email?.trim() || ""
 
     // Проверяем что дизайн существует
     const design = await db.design.findUnique({ where: { id: designId } })
@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
 
     // Сохраняем заявку
     const order = await db.order.create({
-      data: { designId, name: name.trim(), phone: phone.trim(), email: email.trim(), comment: comment?.trim() },
+      data: { designId, name: safeName, phone: phone.trim(), email: safeEmail, comment: comment?.trim() },
     })
 
     // Отправляем email если настроен Resend
@@ -107,17 +107,17 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify({
           from: "gotovo <noreply@usegotovo.by>",
           to: [notifyEmail],
-          subject: `🎯 Новая заявка от ${name} — ${design.businessType}`,
-          html: buildEmail({ name, phone, email, comment, design, orderId: order.id }),
+          subject: `🎯 Новая заявка от ${safeName || phone} — ${design.businessType}`,
+          html: buildEmail({ name: safeName, phone, email: safeEmail, comment, design, orderId: order.id }),
         }),
       })
     }
 
     await sendTelegram(
       `🎯 <b>Новая заявка на разработку</b>\n\n` +
-      `👤 <b>Имя:</b> ${name}\n` +
       `📱 <b>Телефон:</b> ${phone}\n` +
-      `📧 <b>Email:</b> ${email}\n` +
+      (safeName ? `👤 <b>Имя:</b> ${safeName}\n` : "") +
+      (safeEmail ? `📧 <b>Email:</b> ${safeEmail}\n` : "") +
       `🏢 <b>Бизнес:</b> ${design.businessType}\n` +
       `🎨 <b>Стиль:</b> ${design.style}\n` +
       `💬 <b>Описание:</b> ${design.prompt}` +
