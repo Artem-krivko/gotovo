@@ -382,13 +382,26 @@ export function GeneratorPreview({ html, designId, onRegenerate, isLoading }: Ge
               Добавим ваши фото, анимации и SEO — перезвоним в течение часа
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => setShowModal(true)}
-            className="w-full shrink-0 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-violet-500/25 transition hover:-translate-y-0.5 hover:opacity-90 sm:w-auto"
-          >
-            Обсудить бесплатно →
-          </button>
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+            <a
+              href="https://t.me/Artem_k_r"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-semibold text-zinc-700 transition hover:-translate-y-0.5 hover:border-[#2AABEE]/40 hover:bg-[#2AABEE]/5 hover:text-[#1a96d4] sm:w-auto"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-[#2AABEE]" aria-hidden="true">
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.14 14.5l-2.95-.924c-.64-.203-.654-.64.136-.954l11.527-4.448c.537-.194 1.006.131.71.074z"/>
+              </svg>
+              Написать в Telegram
+            </a>
+            <button
+              type="button"
+              onClick={() => setShowModal(true)}
+              className="w-full shrink-0 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-violet-500/25 transition hover:-translate-y-0.5 hover:opacity-90 sm:w-auto"
+            >
+              Обсудить бесплатно →
+            </button>
+          </div>
         </div>
       </div>
 
