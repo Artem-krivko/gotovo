@@ -73,19 +73,26 @@ function SpinnerIcon() {
 
 // ─── Типы пропсов ─────────────────────────────────────────────────────────────
 
+interface DefaultValues {
+  businessType?: string
+  style?: GeneratorStyle
+  description?: string
+}
+
 interface GeneratorFormProps {
   onResult: (html: string, designId: string, params: GeneratorParams) => void
   onLoading: (loading: boolean) => void
   isLoading: boolean
+  defaultValues?: DefaultValues
 }
 
 // ─── Компонент ────────────────────────────────────────────────────────────────
 
-export function GeneratorForm({ onResult, onLoading, isLoading }: GeneratorFormProps) {
-  const [businessType, setBusinessType] = useState("")
+export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }: GeneratorFormProps) {
+  const [businessType, setBusinessType] = useState(defaultValues?.businessType ?? "")
   const [businessName, setBusinessName] = useState("")
-  const [userDescription, setUserDescription] = useState("")
-  const [style, setStyle] = useState<GeneratorStyle>("modern")
+  const [userDescription, setUserDescription] = useState(defaultValues?.description ?? "")
+  const [style, setStyle] = useState<GeneratorStyle>(defaultValues?.style ?? "modern")
   const [language, setLanguage] = useState<GeneratorLanguage>("ru")
   const [error, setError] = useState("")
 

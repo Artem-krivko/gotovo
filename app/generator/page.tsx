@@ -2,10 +2,9 @@
 
 import { useState, useCallback } from "react"
 import { GeneratorForm } from "@/components/generator/generator-form"
+import { GeneratorGallery, type GalleryPreset } from "@/components/generator/generator-gallery"
 import { GeneratorPreview, GeneratorSkeleton } from "@/components/generator/generator-preview"
 import type { GeneratorParams } from "@/lib/types"
-
-type GeneratorState = "idle" | "loading" | "result"
 
 function EmptyPreview() {
   return (
@@ -30,29 +29,37 @@ function EmptyPreview() {
 }
 
 export default function GeneratorPage() {
-  const [generatorState, setGeneratorState] = useState<GeneratorState>("idle")
+  const [step, setStep] = useState<"gallery" | "form">("gallery")
+  const [preset, setPreset] = useState<GalleryPreset | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
   const [generatedHtml, setGeneratedHtml] = useState<string>("")
   const [designId, setDesignId] = useState<string>("")
   const [lastParams, setLastParams] = useState<GeneratorParams | null>(null)
+
+  const handleGallerySelect = useCallback((p: GalleryPreset | null) => {
+    setPreset(p)
+    setStep("form")
+    setGeneratedHtml("")
+    setDesignId("")
+  }, [])
 
   const handleResult = useCallback((html: string, id: string, params: GeneratorParams) => {
     setGeneratedHtml(html)
     setDesignId(id)
     setLastParams(params)
-    setGeneratorState("result")
+    setIsLoading(false)
   }, [])
 
   const handleLoading = useCallback((loading: boolean) => {
-    setGeneratorState(prev => {
-      if (loading) return "loading"
-      return prev === "result" ? "result" : "idle"
-    })
-  }, [])
+    setIsLoading(loading)
+    if (!loading && !generatedHtml) {
+      // error: stay on form with empty preview
+    }
+  }, [generatedHtml])
 
   const handleRegenerate = useCallback(async () => {
     if (!lastParams) return
-    setGeneratorState("loading")
-
+    setIsLoading(true)
     try {
       const res = await fetch("/api/generate", {
         method: "POST",
@@ -63,21 +70,37 @@ export default function GeneratorPage() {
       if (!res.ok || !data.html) throw new Error(data.error)
       setGeneratedHtml(data.html)
       setDesignId(data.designId ?? "")
-      setGeneratorState("result")
     } catch {
-      setGeneratorState("result")
+      // keep existing result
+    } finally {
+      setIsLoading(false)
     }
   }, [lastParams])
 
-  const isLoading = generatorState === "loading"
-  const hasResult = generatorState === "result" && generatedHtml
+  const hasResult = !isLoading && !!generatedHtml
 
+  // ── Шаг 1: галерея примеров ─────────────────────────────────────────────────
+  if (step === "gallery") {
+    return <GeneratorGallery onSelect={handleGallerySelect} />
+  }
+
+  // ── Шаг 2+: форма + превью ──────────────────────────────────────────────────
   return (
     <div className="flex h-[calc(100vh-64px)] flex-col lg:flex-row">
 
-      {/* ── Левая панель: форма ────────────────────────────────────────────── */}
+      {/* ── Левая панель: форма ───────────────────────────────────────────── */}
       <div className={`w-full shrink-0 flex-col border-b border-zinc-200 bg-white lg:w-[400px] lg:border-b-0 lg:border-r ${hasResult ? "hidden lg:flex" : "flex"}`}>
         <div className="border-b border-zinc-100 px-5 py-4">
+          <button
+            type="button"
+            onClick={() => setStep("gallery")}
+            className="mb-3 flex items-center gap-1.5 text-xs text-zinc-400 transition hover:text-zinc-700"
+          >
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            К примерам
+          </button>
           <h1 className="text-base font-semibold text-zinc-950">
             AI Design Generator
           </h1>
@@ -88,16 +111,18 @@ export default function GeneratorPage() {
 
         <div className="flex-1 overflow-y-auto p-5">
           <GeneratorForm
+            key={JSON.stringify(preset)}
             onResult={handleResult}
             onLoading={handleLoading}
             isLoading={isLoading}
+            defaultValues={preset ?? undefined}
           />
         </div>
       </div>
 
-      {/* ── Правая панель: превью ──────────────────────────────────────────── */}
+      {/* ── Правая панель: превью ─────────────────────────────────────────── */}
       <div className="flex flex-1 flex-col overflow-hidden bg-zinc-50">
-        {isLoading && !hasResult ? (
+        {isLoading ? (
           <GeneratorSkeleton />
         ) : hasResult ? (
           <GeneratorPreview
