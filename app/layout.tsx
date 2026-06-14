@@ -104,6 +104,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="h-16" aria-hidden="true" />
         <main>{children}</main>
         <SiteFooter />
+        <a
+          href="https://t.me/Artem_k_r"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Написать в Telegram"
+          className="fixed bottom-5 right-5 z-50 flex h-13 w-13 items-center justify-center rounded-full bg-[#2AABEE] shadow-lg shadow-[#2AABEE]/30 transition-all duration-200 hover:scale-110 hover:shadow-[#2AABEE]/50"
+        >
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="white" aria-hidden="true">
+            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.14 14.5l-2.95-.924c-.64-.203-.654-.64.136-.954l11.527-4.448c.537-.194 1.006.131.71.074z"/>
+          </svg>
+        </a>
       </body>
     </html>
   );
