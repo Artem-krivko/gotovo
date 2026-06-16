@@ -63,7 +63,7 @@ function GalleryCard({ c, onSelect }: GalleryCardProps) {
           <span className={`h-2 w-2 shrink-0 rounded-full ${c.accent.dot}`} />
         </div>
         <div className="mt-3 flex items-center gap-1 text-xs font-medium text-[#A1A1B5] transition-colors group-hover:text-white">
-          Сгенерировать похожий
+          Хочу такой стиль
           <svg width="12" height="12" viewBox="0 0 16 16" fill="none" className="transition-transform group-hover:translate-x-0.5" aria-hidden="true">
             <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
@@ -84,13 +84,13 @@ export function GeneratorGallery({ onSelect }: GeneratorGalleryProps) {
 
         <div className="mb-10 text-center">
           <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-400">
-            ✦ Реальные примеры
+            ✦ Как мы работаем
           </div>
           <h1 className="text-3xl font-bold text-white sm:text-4xl">
-            Посмотрите что умеет ИИ
+            ИИ ускоряет процесс — сайт делаем мы
           </h1>
           <p className="mt-3 text-[#A1A1B5]">
-            Все превью сгенерированы тем же ИИ — нажмите на любой чтобы создать похожий
+            Ниже — примеры стилей и направлений. Опишите свой бизнес — получите черновик за 30 секунд, а финальный сайт дорабатываем вручную: дизайн, анимации, SEO
           </p>
         </div>
 
