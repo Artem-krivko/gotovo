@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { GENERATOR_SYSTEM_PROMPT, buildUserPrompt } from "@/lib/prompts"
-import { fillTemplate, getNicheImage, type DesignContent } from "@/lib/templates"
+import { fillTemplate, getNicheImage, getNicheQuery, type DesignContent } from "@/lib/templates"
 import type { GenerateApiRequest, GeneratorParams } from "@/lib/types"
 import { db } from "@/lib/db"
 
@@ -22,6 +22,44 @@ async function fetchImageAsDataUrl(url: string): Promise<string | null> {
   } catch {
     return null
   }
+}
+
+// ─── Поиск релевантного фото на Pexels (бесплатно, без лимита на стоимость) ──
+
+interface HeroImage {
+  dataUrl: string | null
+  credit: { name: string; url: string } | null
+}
+
+async function searchPexelsPhoto(query: string): Promise<{ url: string; credit: { name: string; url: string } } | null> {
+  const apiKey = process.env.PEXELS_API_KEY
+  if (!apiKey) return null
+  try {
+    const res = await fetch(
+      `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=1&orientation=landscape`,
+      { headers: { Authorization: apiKey }, signal: AbortSignal.timeout(5000) }
+    )
+    if (!res.ok) return null
+    const data = await res.json() as {
+      photos?: Array<{ src: { large: string }; photographer: string; photographer_url: string }>
+    }
+    const photo = data.photos?.[0]
+    if (!photo) return null
+    return { url: photo.src.large, credit: { name: photo.photographer, url: photo.photographer_url } }
+  } catch {
+    return null
+  }
+}
+
+async function fetchHeroImage(businessType: string): Promise<HeroImage> {
+  const pexels = await searchPexelsPhoto(getNicheQuery(businessType))
+  if (pexels) {
+    const dataUrl = await fetchImageAsDataUrl(pexels.url)
+    if (dataUrl) return { dataUrl, credit: pexels.credit }
+  }
+  // Фоллбэк: picsum.photos, если Pexels недоступен (нет ключа, лимит, ошибка сети)
+  const dataUrl = await fetchImageAsDataUrl(getNicheImage(businessType))
+  return { dataUrl, credit: null }
 }
 
 // ─── Валидация входных данных ─────────────────────────────────────────────────
@@ -133,14 +171,15 @@ export async function POST(req: NextRequest) {
     const apiKey = process.env.GOOGLE_AI_API_KEY
     const sessionId = req.cookies.get("session_id")?.value ?? "anonymous"
 
-    // ── Запускаем загрузку картинки заранее (параллельно с Gemini) ──────────
-    const imageUrl = getNicheImage(params.businessType)
-    const imagePromise = fetchImageAsDataUrl(imageUrl)
+    // ── Запускаем поиск фото заранее (параллельно с Gemini) ─────────────────
+    const imagePromise = fetchHeroImage(params.businessType)
 
     // ── Без API ключа: демо-контент в шаблон ───────────────────────────────
     if (!apiKey) {
       const content = buildDemoContent(params)
-      content.heroImageUrl = (await imagePromise) ?? undefined
+      const hero = await imagePromise
+      content.heroImageUrl = hero.dataUrl ?? undefined
+      content.heroImageCredit = hero.credit ?? undefined
       const html = fillTemplate(params.style, content)
       const design = await db.design.create({
         data: { sessionId, htmlContent: html, prompt: params.userDescription, businessType: params.businessType, style: params.style, language: params.language },
@@ -170,33 +209,38 @@ export async function POST(req: NextRequest) {
       if (attempt < 3) await new Promise((r) => setTimeout(r, attempt * 2000))
     }
 
+    // Любой сбой Gemini (квота, недоступность, сеть) → деградируем в демо-контент,
+    // а не показываем посетителю голую ошибку
+    let content: DesignContent
+
     if (!response.ok) {
       const errorText = await response.text()
-      console.error("[POST /api/generate] Gemini error:", errorText)
-      return NextResponse.json({ error: "Ошибка генерации. Попробуйте ещё раз." }, { status: 502 })
-    }
-
-    const data = await response.json() as {
-      candidates: Array<{ content: { parts: Array<{ text: string; thought?: boolean }> } }>
-    }
-
-    const rawText = data.candidates?.[0]?.content?.parts
-      ?.filter((p) => !p.thought)
-      .map((p) => p.text)
-      .join("")
-      .trim() ?? ""
-
-    // ── Парсим JSON и заполняем шаблон ─────────────────────────────────────
-    let content: DesignContent
-    try {
-      content = parseDesignContent(rawText)
-    } catch (e) {
-      console.error("[POST /api/generate] JSON parse error:", e, "\nRaw:", rawText.slice(0, 500))
+      console.error("[POST /api/generate] Gemini error, falling back to demo content:", errorText)
       content = buildDemoContent(params)
+    } else {
+      const data = await response.json() as {
+        candidates: Array<{ content: { parts: Array<{ text: string; thought?: boolean }> } }>
+      }
+
+      const rawText = data.candidates?.[0]?.content?.parts
+        ?.filter((p) => !p.thought)
+        .map((p) => p.text)
+        .join("")
+        .trim() ?? ""
+
+      // ── Парсим JSON и заполняем шаблон ─────────────────────────────────────
+      try {
+        content = parseDesignContent(rawText)
+      } catch (e) {
+        console.error("[POST /api/generate] JSON parse error:", e, "\nRaw:", rawText.slice(0, 500))
+        content = buildDemoContent(params)
+      }
     }
 
     // Картинка к этому моменту уже загружена (параллельно с Gemini)
-    content.heroImageUrl = (await imagePromise) ?? undefined
+    const hero = await imagePromise
+    content.heroImageUrl = hero.dataUrl ?? undefined
+    content.heroImageCredit = hero.credit ?? undefined
     const html = fillTemplate(params.style, content)
 
     const design = await db.design.create({

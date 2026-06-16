@@ -16,31 +16,50 @@ export interface DesignContent {
   email: string
   footerTagline: string
   heroImageUrl?: string
+  heroImageCredit?: { name: string; url: string }
 }
 
-// ─── Подбор фото по нише бизнеса (picsum.photos — стабильный, без API ключа) ──
+// ─── Подбор фото по нише бизнеса ──────────────────────────────────────────────
+// pexelsQuery — поисковый запрос для Pexels API (бесплатно, реальные релевантные фото)
+// picsumSeed — фоллбэк, если Pexels недоступен (нет ключа, лимит, ошибка сети)
 
-const NICHE_SEEDS: Array<[RegExp, string]> = [
-  [/стоматол|зуб|дент/i,                                   "dentist"],
-  [/ресторан|кафе|суши|пицц|бургер|шашлык|еда|бар/i,       "restaurant"],
-  [/салон|красот|барбер|парикмах|маникюр|педикюр|макияж|перманент/i, "beauty"],
-  [/фитнес|спорт|тренаж|йога|зал|бокс/i,                   "fitness"],
-  [/медицин|клиник|врач|больниц|лечени/i,                   "medical"],
-  [/юрист|адвокат|право|нотар/i,                            "justice"],
-  [/строительств|ремонт|отделк|кровл|монтаж|экскаватор|землян/i, "construction"],
-  [/ит|it|разработк|программ|сайт|приложен/i,               "technology"],
-  [/курс|обучен|школ|образован|репетитор/i,                 "education"],
-  [/бухгалт|налог|аудит|финанс/i,                           "finance"],
-  [/недвижим|риелтор|квартир|аренда/i,                      "interior"],
-  [/авто|шиномонтаж|сто|кузов|машин/i,                      "automobile"],
-  [/свадьб|праздник|event|мероприят/i,                      "wedding"],
-  [/доставка|логистик|курьер|транспорт/i,                   "logistics"],
-  [/фото|видео|съёмк/i,                                     "studio"],
+const NICHE_SEEDS: Array<[RegExp, string, string]> = [
+  [/стоматол|зуб|дент/i,                                   "dentist",     "dental clinic interior"],
+  [/ресторан|кафе|суши|пицц|бургер|шашлык|еда|бар/i,       "restaurant",  "restaurant interior cozy"],
+  [/салон|красот|барбер|парикмах|маникюр|педикюр|макияж|перманент/i, "beauty", "beauty salon interior"],
+  [/фитнес|спорт|тренаж|йога|зал|бокс/i,                   "fitness",     "gym fitness training"],
+  [/медицин|клиник|врач|больниц|лечени/i,                   "medical",     "medical clinic doctor"],
+  [/юрист|адвокат|право|нотар|юридич/i,                     "justice",     "law office lawyer"],
+  [/строительств|строитель|ремонт|отделк|кровл|монтаж|экскаватор|землян/i, "construction", "construction site building"],
+  [/\bit\b|айти|разработк|программ|сайт|приложен/i,         "technology",  "modern office team technology"],
+  [/курс|обучен|школ|образован|репетитор/i,                 "education",   "classroom education learning"],
+  [/бухгалт|налог|аудит|финанс/i,                           "finance",     "finance office accounting"],
+  [/недвижим|риелтор|квартир|аренда/i,                      "interior",    "modern apartment interior"],
+  [/авто|шиномонтаж|сто|кузов|машин/i,                      "automobile",  "car repair garage mechanic"],
+  [/свадьб|праздник|event|мероприят/i,                      "wedding",     "wedding event photography"],
+  [/доставка|логистик|курьер|транспорт/i,                   "logistics",   "delivery logistics warehouse"],
+  [/фото|видео|съёмк/i,                                     "studio",      "photography studio camera"],
 ]
 
 export function getNicheImage(businessType: string, w = 800, h = 500): string {
   const seed = NICHE_SEEDS.find(([re]) => re.test(businessType))?.[1] ?? "office"
   return `https://picsum.photos/seed/${seed}/${w}/${h}`
+}
+
+export function getNicheQuery(businessType: string): string {
+  return NICHE_SEEDS.find(([re]) => re.test(businessType))?.[2] ?? "modern office business team"
+}
+
+// ─── Атрибуция фото (обязательна по правилам Pexels API) ─────────────────────
+
+function creditBadge(d: DesignContent): string {
+  if (!d.heroImageCredit) return ""
+  return `<a href="${d.heroImageCredit.url}" target="_blank" rel="noopener noreferrer" style="position:absolute;top:10px;right:10px;z-index:3;font-size:10px;font-weight:500;color:rgba(255,255,255,.7);text-decoration:none;background:rgba(0,0,0,.35);padding:3px 7px;border-radius:6px;backdrop-filter:blur(4px)">📷 Pexels</a>`
+}
+
+function creditCaption(d: DesignContent): string {
+  if (!d.heroImageCredit) return ""
+  return `<div style="max-width:1140px;margin:6px auto 0;padding:0 32px;text-align:right"><a href="${d.heroImageCredit.url}" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#9CA3AF;text-decoration:none">Фото: ${d.heroImageCredit.name} / Pexels</a></div>`
 }
 
 // ─── Shared head snippet ──────────────────────────────────────────────────────
@@ -228,6 +247,7 @@ footer{border-top:1px solid rgba(255,255,255,.06);padding:28px 24px}
         <div class="panel-photo-stats">
           ${stats.slice(0, 3).map(s => `<div class="pstat"><div class="pstat-val">${s.value}</div><div class="pstat-lbl">${s.label}</div></div>`).join("")}
         </div>
+        ${creditBadge(d)}
       </div>
       ${svcs[0] ? `<div class="panel-card"><div class="panel-icon">${svcs[0].icon}</div><div><div class="panel-name">${svcs[0].name}</div>${svcs[0].price ? `<div class="panel-price">${svcs[0].price}</div>` : ""}</div></div>` : ""}
     </div>
@@ -413,7 +433,7 @@ footer{border-top:1px solid #f0f0f0;padding:28px 32px}
   </div>
 </section>
 
-${d.heroImageUrl ? `<div class="hero-photo reveal"><img src="${d.heroImageUrl}" alt="${d.businessName}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>` : ""}
+${d.heroImageUrl ? `<div class="hero-photo reveal"><img src="${d.heroImageUrl}" alt="${d.businessName}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>${creditCaption(d)}` : ""}
 
 <div class="divider"></div>
 
@@ -604,7 +624,7 @@ footer{border-top:2px solid rgba(255,255,255,.1);padding:28px 24px}
   ${stats.map(s => `<div class="stat reveal"><div class="stat-val">${s.value}</div><div class="stat-lbl">${s.label}</div></div>`).join("")}
 </div>
 
-${d.heroImageUrl ? `<div class="img-banner"><img src="${d.heroImageUrl}" alt="${d.businessName}" loading="lazy" onerror="this.parentElement.style.display='none'"><div class="img-banner-label">${d.tagline}</div></div>` : ""}
+${d.heroImageUrl ? `<div class="img-banner"><img src="${d.heroImageUrl}" alt="${d.businessName}" loading="lazy" onerror="this.parentElement.style.display='none'"><div class="img-banner-label">${d.tagline}</div>${creditBadge(d)}</div>` : ""}
 
 <section class="sec" id="services">
   <div class="sec-head reveal">
@@ -788,7 +808,7 @@ footer{background:#fff;border-top:1px solid #e2e8f0;padding:24px 28px}
       </div>
     </div>
     <div class="hero-right fu d2">
-      ${d.heroImageUrl ? `<div class="hr-photo"><img src="${d.heroImageUrl}" alt="${d.businessName}" loading="lazy" onerror="this.parentElement.style.display='none'"></div>` : ""}
+      ${d.heroImageUrl ? `<div class="hr-photo"><img src="${d.heroImageUrl}" alt="${d.businessName}" loading="lazy" onerror="this.parentElement.style.display='none'">${creditBadge(d)}</div>` : ""}
       <div class="stat-grid">
         ${stats.map((s, i) => `<div class="hstat${i === 0 ? " hstat-big" : ""}"><div class="hstat-val">${s.value}</div><div class="hstat-lbl">${s.label}</div></div>`).join("")}
       </div>
