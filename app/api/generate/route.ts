@@ -180,7 +180,7 @@ export async function POST(req: NextRequest) {
       const hero = await imagePromise
       content.heroImageUrl = hero.dataUrl ?? undefined
       content.heroImageCredit = hero.credit ?? undefined
-      const html = fillTemplate(params.style, content)
+      const html = fillTemplate(params.style, content, params.businessType)
       const design = await db.design.create({
         data: { sessionId, htmlContent: html, prompt: params.userDescription, businessType: params.businessType, style: params.style, language: params.language },
       })
@@ -241,7 +241,7 @@ export async function POST(req: NextRequest) {
     const hero = await imagePromise
     content.heroImageUrl = hero.dataUrl ?? undefined
     content.heroImageCredit = hero.credit ?? undefined
-    const html = fillTemplate(params.style, content)
+    const html = fillTemplate(params.style, content, params.businessType)
 
     const design = await db.design.create({
       data: { sessionId, htmlContent: html, prompt: params.userDescription, businessType: params.businessType, style: params.style, language: params.language },
