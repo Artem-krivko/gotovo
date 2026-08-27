@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
+import { AnalyticsConsent } from "@/components/shared/analytics-consent";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 
@@ -92,8 +93,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         src="https://www.googletagmanager.com/gtag/js?id=G-MSXLMK8X5K"
         strategy="afterInteractive"
       />
+      {/* Consent Mode: по умолчанию аналитика запрещена и включается только
+          после явного согласия (см. AnalyticsConsent). Раньше GA4 писал
+          события сразу, без какого-либо согласия. */}
       <Script id="ga-init" strategy="afterInteractive">
-        {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-MSXLMK8X5K');`}
+        {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',wait_for_update:500});
+try{if(localStorage.getItem('analytics_consent')==='granted'){gtag('consent','update',{analytics_storage:'granted'});}}catch(e){}
+gtag('js',new Date());gtag('config','G-MSXLMK8X5K',{anonymize_ip:true});`}
       </Script>
       <body
         className="bg-[#0A0A0F] text-white antialiased"
@@ -104,6 +111,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="h-16" aria-hidden="true" />
         <main>{children}</main>
         <SiteFooter />
+        <AnalyticsConsent />
         <a
           href="https://t.me/Artem_k_r"
           target="_blank"

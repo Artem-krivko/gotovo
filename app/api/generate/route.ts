@@ -481,7 +481,13 @@ export async function POST(req: NextRequest) {
     console.error("[generate] persist_failed", { sessionId, error: String(error) })
   }
 
-  const response = NextResponse.json({ html, designId, source, failureReason }, { status: 200 })
+  // content и spec возвращаются клиенту, чтобы кнопки правок («премиальнее»,
+  // «больше воздуха», «другой hero») пересобирали страницу через /api/adjust
+  // без повторного обращения к модели.
+  const response = NextResponse.json(
+    { html, designId, source, failureReason, content, spec },
+    { status: 200 }
+  )
 
   if (isNewSession) {
     response.cookies.set(SESSION_COOKIE, sessionId, {

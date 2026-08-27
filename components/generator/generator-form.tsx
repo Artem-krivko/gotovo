@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useRef } from "react"
 import type {
   ContentSource,
   GenerateApiResponse,
@@ -8,6 +8,7 @@ import type {
   GeneratorStyle,
   GeneratorLanguage,
 } from "@/lib/types"
+import { track } from "@/lib/analytics"
 
 // ─── Статические данные формы ────────────────────────────────────────────────
 
@@ -90,7 +91,9 @@ interface GeneratorFormProps {
     html: string,
     designId: string,
     params: GeneratorParams,
-    source: ContentSource
+    source: ContentSource,
+    content: unknown,
+    spec: unknown
   ) => void
   onLoading: (loading: boolean) => void
   isLoading: boolean
@@ -106,6 +109,16 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
   const [style, setStyle] = useState<GeneratorStyle>(defaultValues?.style ?? "modern")
   const [language, setLanguage] = useState<GeneratorLanguage>("ru")
   const [error, setError] = useState("")
+  // generator_form_started шлём один раз — на первое реальное касание формы,
+  // а не на монтирование: иначе событие срабатывало бы у всех, кто просто
+  // пролистал страницу.
+  const formStartedRef = useRef(false)
+
+  const handleFirstInteraction = useCallback(() => {
+    if (formStartedRef.current) return
+    formStartedRef.current = true
+    track("generator_form_started")
+  }, [])
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
@@ -129,6 +142,12 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
         language,
       }
 
+      track("generator_submitted", {
+        businessType,
+        style,
+        language,
+        descriptionLength: userDescription.trim().length,
+      })
       onLoading(true)
 
       try {
@@ -144,9 +163,10 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
           throw new Error(data.error ?? "Ошибка генерации")
         }
 
-        onResult(data.html, data.designId ?? "", params, data.source ?? "ai")
+        onResult(data.html, data.designId ?? "", params, data.source ?? "ai", data.content, data.spec)
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Попробуйте ещё раз"
+        track("generation_failed", { stage: "submit", reason: msg.slice(0, 80) })
         setError(msg)
       } finally {
         onLoading(false)
@@ -156,7 +176,7 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
   )
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit} noValidate onFocusCapture={handleFirstInteraction} className="flex flex-col gap-6">
 
       {/* Тип бизнеса */}
       <div className="flex flex-col gap-2">

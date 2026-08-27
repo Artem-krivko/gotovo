@@ -1,8 +1,10 @@
 "use client"
 
+import { useEffect } from "react"
 import Image from "next/image"
 import { GENERATOR_CASES, type GeneratorCase } from "@/content/generator-cases"
 import type { GeneratorStyle } from "@/lib/types"
+import { track } from "@/lib/analytics"
 
 export interface GalleryPreset {
   businessType: string
@@ -78,6 +80,12 @@ interface GeneratorGalleryProps {
 }
 
 export function GeneratorGallery({ onSelect }: GeneratorGalleryProps) {
+  // Первый шаг воронки: без этого события невозможно посчитать конверсию
+  // «посмотрел примеры → начал заполнять бриф».
+  useEffect(() => {
+    track("generator_gallery_view")
+  }, [])
+
   return (
     <div className="min-h-[calc(100vh-64px)] bg-[#0A0A0F] px-4 py-12 sm:px-6">
       <div className="mx-auto max-w-5xl">

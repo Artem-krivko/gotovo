@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react"
 import type { ContentSource } from "@/lib/types"
+import { track } from "@/lib/analytics"
 
 interface GeneratorPreviewProps {
   html: string
@@ -14,7 +15,21 @@ interface GeneratorPreviewProps {
    * цифрами и отзывом, и он считал это результатом работы AI.
    */
   source: ContentSource
+  /** Контент и спека для быстрых правок без повторной генерации. */
+  content: unknown
+  spec: unknown
+  onAdjusted: (html: string, spec: unknown) => void
 }
+
+/** Кнопки правок. Меняют DesignSpec, а не запускают генерацию заново. */
+const ADJUSTMENTS = [
+  { id: "premium", label: "Премиальнее" },
+  { id: "airier", label: "Больше воздуха" },
+  { id: "brighter", label: "Ярче" },
+  { id: "stricter", label: "Строже" },
+  { id: "other-hero", label: "Другой hero" },
+  { id: "other-structure", label: "Другая структура" },
+] as const
 
 // ─── Скелетон загрузки ────────────────────────────────────────────────────────
 
@@ -83,6 +98,7 @@ function TimedBanner({ designId, onDismiss }: { designId: string; onDismiss: () 
       })
       const data = await res.json() as { success?: boolean }
       if (res.ok && data.success) {
+        track("lead_submitted", { source: "preview_banner" })
         setState("done")
         setTimeout(onDismiss, 2500)
       } else {
@@ -163,6 +179,7 @@ function OrderModal({ designId, onClose }: { designId: string; onClose: () => vo
       })
       const data = await res.json() as { success?: boolean; error?: string }
       if (!res.ok || !data.success) throw new Error(data.error ?? "Ошибка отправки")
+      track("lead_submitted", { source: "modal" })
       setState("success")
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : "Попробуйте ещё раз")
@@ -296,7 +313,18 @@ function OrderModal({ designId, onClose }: { designId: string; onClose: () => vo
 
 // ─── Основной компонент превью ────────────────────────────────────────────────
 
-export function GeneratorPreview({ html, designId, onRegenerate, isLoading, source }: GeneratorPreviewProps) {
+export function GeneratorPreview({
+  html,
+  designId,
+  onRegenerate,
+  isLoading,
+  source,
+  content,
+  spec,
+  onAdjusted,
+}: GeneratorPreviewProps) {
+  const [adjusting, setAdjusting] = useState<string | null>(null)
+  const [adjustError, setAdjustError] = useState("")
   const [showModal, setShowModal] = useState(false)
   const [engaged, setEngaged] = useState(false)
   const [bannerDismissed, setBannerDismissed] = useState(false)
@@ -315,11 +343,15 @@ export function GeneratorPreview({ html, designId, onRegenerate, isLoading, sour
   useEffect(() => {
     if (!html || isLoading || engaged) return
 
+    const markEngaged = () => {
+      setEngaged(true)
+      track("preview_engaged")
+    }
     const onBlur = () => {
-      if (document.activeElement?.tagName === "IFRAME") setEngaged(true)
+      if (document.activeElement?.tagName === "IFRAME") markEngaged()
     }
     // Клик по тулбару/области превью — тоже осознанное взаимодействие.
-    const onPointerDown = () => setEngaged(true)
+    const onPointerDown = () => markEngaged()
 
     window.addEventListener("blur", onBlur)
     const node = previewRef.current
@@ -333,6 +365,30 @@ export function GeneratorPreview({ html, designId, onRegenerate, isLoading, sour
 
   // Пока открыт основной модал, баннер не нужен — это один и тот же шаг воронки.
   const showTimedBanner = engaged && !bannerDismissed && !showModal && Boolean(designId)
+
+  const handleAdjust = useCallback(
+    async (adjustment: string, label: string) => {
+      setAdjusting(adjustment)
+      setAdjustError("")
+      track("style_adjustment_clicked", { adjustment })
+
+      try {
+        const res = await fetch("/api/adjust", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ adjustment, content, spec }),
+        })
+        const data = (await res.json()) as { html?: string; spec?: unknown; error?: string }
+        if (!res.ok || !data.html) throw new Error(data.error ?? "Не удалось применить")
+        onAdjusted(data.html, data.spec)
+      } catch (err) {
+        setAdjustError(err instanceof Error ? err.message : `Не удалось применить «${label}»`)
+      } finally {
+        setAdjusting(null)
+      }
+    },
+    [content, spec, onAdjusted]
+  )
 
   const handleOpenInTab = useCallback(() => {
     // Предпочитаем серверный маршрут: он отдаёт превью с заголовком
@@ -429,10 +485,32 @@ export function GeneratorPreview({ html, designId, onRegenerate, isLoading, sour
           )}
         </div>
 
+        {/* Быстрые правки: меняют DesignSpec и пересобирают страницу
+            без повторной генерации контента */}
+        <div className="border-t border-zinc-200 bg-zinc-50 px-4 py-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-xs font-semibold text-zinc-500">Поправить:</span>
+            {ADJUSTMENTS.map((a) => (
+              <button
+                key={a.id}
+                type="button"
+                disabled={adjusting !== null || isLoading}
+                onClick={() => handleAdjust(a.id, a.label)}
+                className="rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-xs font-medium text-zinc-700 transition hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700 disabled:opacity-50"
+              >
+                {adjusting === a.id ? "..." : a.label}
+              </button>
+            ))}
+          </div>
+          {adjustError && (
+            <p role="alert" className="mt-2 text-xs text-amber-700">{adjustError}</p>
+          )}
+        </div>
+
         {/* CTA панель */}
         <div className="flex flex-col items-center gap-3 border-t border-zinc-200 bg-white px-4 py-4 sm:flex-row sm:justify-between">
           <div>
-            <p className="text-sm font-semibold text-zinc-950">Понравился дизайн?</p>
+            <p className="text-sm font-semibold text-zinc-950">Доработать этот концепт?</p>
             <p className="text-xs text-zinc-400">
               Это AI-набросок концепции. Реальный сайт делаем вручную — с вашими фото, анимациями и SEO.
             </p>
@@ -442,6 +520,7 @@ export function GeneratorPreview({ html, designId, onRegenerate, isLoading, sour
               href="https://t.me/Artem_k_r"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => track("telegram_clicked", { source: "preview" })}
               className="flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-semibold text-zinc-700 transition hover:-translate-y-0.5 hover:border-[#2AABEE]/40 hover:bg-[#2AABEE]/5 hover:text-[#1a96d4] sm:w-auto"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-[#2AABEE]" aria-hidden="true">
@@ -451,10 +530,13 @@ export function GeneratorPreview({ html, designId, onRegenerate, isLoading, sour
             </a>
             <button
               type="button"
-              onClick={() => setShowModal(true)}
+              onClick={() => {
+                track("lead_modal_opened")
+                setShowModal(true)
+              }}
               className="w-full shrink-0 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-violet-500/25 transition hover:-translate-y-0.5 hover:opacity-90 sm:w-auto"
             >
-              Обсудить бесплатно →
+              Доработать концепт →
             </button>
           </div>
         </div>

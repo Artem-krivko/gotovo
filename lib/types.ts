@@ -60,6 +60,12 @@ export interface GenerateApiResponse {
   designId: string | null
   source: ContentSource
   failureReason: GenerationFailureReason
+  /**
+   * Контент и спека возвращаются, чтобы правки стиля пересобирали страницу
+   * локально через /api/adjust — без затрат на повторную генерацию.
+   */
+  content: unknown
+  spec: unknown
 }
 
 export interface GenerateApiError {

@@ -5,6 +5,7 @@ import { GeneratorForm } from "@/components/generator/generator-form"
 import { GeneratorGallery, type GalleryPreset } from "@/components/generator/generator-gallery"
 import { GeneratorPreview, GeneratorSkeleton } from "@/components/generator/generator-preview"
 import type { ContentSource, GenerateApiResponse, GeneratorParams } from "@/lib/types"
+import { track } from "@/lib/analytics"
 
 function EmptyPreview() {
   return (
@@ -36,8 +37,13 @@ export default function GeneratorPage() {
   const [designId, setDesignId] = useState<string>("")
   const [lastParams, setLastParams] = useState<GeneratorParams | null>(null)
   const [source, setSource] = useState<ContentSource>("ai")
+  // Контент и спека нужны для правок стиля: они пересобирают страницу
+  // локально, без повторной генерации.
+  const [content, setContent] = useState<unknown>(null)
+  const [spec, setSpec] = useState<unknown>(null)
 
   const handleGallerySelect = useCallback((p: GalleryPreset | null) => {
+    track("generator_preset_selected", { preset: p?.businessType ?? "scratch" })
     setPreset(p)
     setStep("form")
     setGeneratedHtml("")
@@ -45,15 +51,34 @@ export default function GeneratorPage() {
   }, [])
 
   const handleResult = useCallback(
-    (html: string, id: string, params: GeneratorParams, contentSource: ContentSource) => {
+    (
+      html: string,
+      id: string,
+      params: GeneratorParams,
+      contentSource: ContentSource,
+      resultContent: unknown,
+      resultSpec: unknown
+    ) => {
+      track("generation_succeeded", {
+        businessType: params.businessType,
+        style: params.style,
+        source: contentSource,
+      })
       setGeneratedHtml(html)
       setDesignId(id)
       setLastParams(params)
       setSource(contentSource)
+      setContent(resultContent)
+      setSpec(resultSpec)
       setIsLoading(false)
     },
     []
   )
+
+  const handleAdjusted = useCallback((nextHtml: string, nextSpec: unknown) => {
+    setGeneratedHtml(nextHtml)
+    setSpec(nextSpec)
+  }, [])
 
   const handleLoading = useCallback((loading: boolean) => {
     setIsLoading(loading)
@@ -64,6 +89,7 @@ export default function GeneratorPage() {
 
   const handleRegenerate = useCallback(async () => {
     if (!lastParams) return
+    track("regenerate_clicked", { businessType: lastParams.businessType })
     setIsLoading(true)
     try {
       const res = await fetch("/api/generate", {
@@ -76,7 +102,10 @@ export default function GeneratorPage() {
       setGeneratedHtml(data.html)
       setDesignId(data.designId ?? "")
       setSource(data.source ?? "ai")
+      setContent(data.content ?? null)
+      setSpec(data.spec ?? null)
     } catch {
+      track("generation_failed", { stage: "regenerate" })
       // keep existing result
     } finally {
       setIsLoading(false)
@@ -137,6 +166,9 @@ export default function GeneratorPage() {
             onRegenerate={handleRegenerate}
             isLoading={isLoading}
             source={source}
+            content={content}
+            spec={spec}
+            onAdjusted={handleAdjusted}
           />
         ) : (
           <EmptyPreview />
