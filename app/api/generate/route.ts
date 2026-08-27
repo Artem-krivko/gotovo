@@ -649,17 +649,23 @@ export async function POST(req: NextRequest) {
   // момент. Теперь запись — побочный эффект: не удалась, значит превью
   // отдаётся без designId, а клиент просто не покажет «открыть в новой вкладке».
   const persistence = Promise.allSettled(
-    concepts.map((concept) => db.design.create({
-      data: {
-        sessionId,
-        htmlContent: concept.html,
-        prompt: params.userDescription,
-        businessType: params.businessType,
-        style: params.style,
-        language: params.language,
-      },
-      select: { id: true },
-    }))
+    concepts.map(async (concept) => {
+      // `db` создаётся лениво через Proxy. Если DATABASE_URL отсутствует,
+      // обращение к db.design может бросить синхронно. Граница async здесь
+      // превращает такой сбой в rejected Promise, который allSettled корректно
+      // изолирует от готового результата генерации.
+      return db.design.create({
+        data: {
+          sessionId,
+          htmlContent: concept.html,
+          prompt: params.userDescription,
+          businessType: params.businessType,
+          style: params.style,
+          language: params.language,
+        },
+        select: { id: true },
+      })
+    })
   )
   const persisted = await settleWithin(persistence, PERSIST_TIMEOUT_MS)
   if (persisted) {
