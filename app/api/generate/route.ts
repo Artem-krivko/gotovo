@@ -28,6 +28,7 @@ export const maxDuration = 60
  * если Google выведет текущую версию из эксплуатации.
  */
 const GEMINI_MODEL = process.env.GOOGLE_AI_MODEL?.trim() || "gemini-3.6-flash"
+const GEMINI_FALLBACK_MODEL = process.env.GOOGLE_AI_FALLBACK_MODEL?.trim() || "gemini-3.5-flash-lite"
 const GROQ_MODEL = process.env.GROQ_MODEL?.trim() || "openai/gpt-oss-120b"
 
 /**
@@ -37,7 +38,9 @@ const GROQ_MODEL = process.env.GROQ_MODEL?.trim() || "openai/gpt-oss-120b"
  */
 const GEMINI_TEMPERATURE = 0.6
 
-const GEMINI_TIMEOUT_MS = 25_000
+// Primary и Flash-Lite запускаются последовательно, поэтому каждая попытка
+// должна оставлять запас внутри 60-секундного лимита serverless-функции.
+const GEMINI_TIMEOUT_MS = 20_000
 const IMAGE_TIMEOUT_MS = 5_000
 
 // Генерация дорогая (внешний вызов + квота), поэтому лимит жёсткий.
@@ -189,30 +192,39 @@ function extractJson(raw: string): unknown {
   return JSON.parse(raw.slice(start, end + 1))
 }
 
-/** Один вызов Gemini с одной контролируемой повторной попыткой на 503. */
+/**
+ * Основная Gemini и более быстрая Flash-Lite используют один API-ключ.
+ * Flash-Lite страхует таймауты/квоту/битый JSON без платного второго провайдера.
+ */
 async function callGemini(
   apiKey: string,
   systemPrompt: string,
   userPrompt: string,
   stage: string
 ): Promise<AiResult> {
-  const body = JSON.stringify({
-    system_instruction: { parts: [{ text: systemPrompt }] },
-    contents: [{ role: "user", parts: [{ text: userPrompt }] }],
-    generationConfig: {
-      maxOutputTokens: 8192,
-      temperature: GEMINI_TEMPERATURE,
-      responseMimeType: "application/json",
-    },
-  })
+  const models = [...new Set([GEMINI_MODEL, GEMINI_FALLBACK_MODEL])]
+  let lastReason: FailureReason = "ai_unavailable"
 
-  // Раньше попыток было три, с паузами 2 и 4 секунды — суммарно это могло
-  // превысить лимит времени функции и превратить сбой модели в таймаут.
-  for (let attempt = 1; attempt <= 2; attempt++) {
+  for (const [index, model] of models.entries()) {
+    const body = JSON.stringify({
+      system_instruction: { parts: [{ text: systemPrompt }] },
+      contents: [{ role: "user", parts: [{ text: userPrompt }] }],
+      generationConfig: {
+        // Для структуры страницы достаточно 4K; 8K увеличивали latency и
+        // расход бесплатной квоты, не улучшая итоговый шаблон.
+        maxOutputTokens: 4096,
+        temperature: GEMINI_TEMPERATURE,
+        responseMimeType: "application/json",
+        // 3.6 Flash по умолчанию использует medium thinking. Для нашего
+        // строго заданного JSON low заметно быстрее и сохраняет качество.
+        thinkingConfig: { thinkingLevel: "low" },
+      },
+    })
+
     let response: Response
     try {
       response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(GEMINI_MODEL)}:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${apiKey}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -222,8 +234,8 @@ async function callGemini(
       )
     } catch (error) {
       const isTimeout = error instanceof Error && error.name === "TimeoutError"
-      console.error("[generate] gemini_fetch_failed", { stage, attempt, isTimeout, error: String(error) })
-      if (attempt === 2) return { data: null, reason: isTimeout ? "ai_timeout" : "ai_unavailable", provider: "gemini" }
+      lastReason = isTimeout ? "ai_timeout" : "ai_unavailable"
+      console.error("[generate] gemini_fetch_failed", { stage, model, isTimeout, error: String(error) })
       continue
     }
 
@@ -231,15 +243,15 @@ async function callGemini(
       const detail = await response.text().catch(() => "")
       console.error("[generate] gemini_http_error", {
         stage,
-        attempt,
+        model,
         status: response.status,
         detail: detail.slice(0, 300),
       })
-      if (response.status === 503 && attempt === 1) {
-        await new Promise((r) => setTimeout(r, 1500))
+      lastReason = response.status === 408 || response.status === 504 ? "ai_timeout" : "ai_unavailable"
+      if (index < models.length - 1) {
         continue
       }
-      return { data: null, reason: "ai_unavailable", provider: "gemini" }
+      return { data: null, reason: lastReason, provider: "gemini" }
     }
 
     const payload = (await response.json()) as {
@@ -258,14 +270,17 @@ async function callGemini(
     } catch (error) {
       console.error("[generate] gemini_json_parse_failed", {
         stage,
+        model,
         error: String(error),
         preview: rawText.slice(0, 300),
       })
-      return { data: null, reason: "ai_invalid_json", provider: "gemini" }
+      lastReason = "ai_invalid_json"
+      if (index < models.length - 1) continue
+      return { data: null, reason: lastReason, provider: "gemini" }
     }
   }
 
-  return { data: null, reason: "ai_unavailable", provider: "gemini" }
+  return { data: null, reason: lastReason, provider: "gemini" }
 }
 
 /**
