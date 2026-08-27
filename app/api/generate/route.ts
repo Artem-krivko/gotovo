@@ -21,11 +21,12 @@ export const maxDuration = 60
 // ─── Конфигурация ─────────────────────────────────────────────────────────────
 
 /**
- * Версия модели зафиксирована. Алиас `gemini-flash-latest` менялся под нами
- * без предупреждения: вместе с ним менялось и качество, и формат ответа,
- * а воспроизвести старый результат было невозможно.
+ * По умолчанию используем конкретную стабильную версию: алиас
+ * `gemini-flash-latest` может менять качество и формат ответа без изменения
+ * нашего кода. Переменная окружения позволяет переключить модель без релиза,
+ * если Google выведет текущую версию из эксплуатации.
  */
-const GEMINI_MODEL = "gemini-2.0-flash-001"
+const GEMINI_MODEL = process.env.GOOGLE_AI_MODEL?.trim() || "gemini-3.6-flash"
 
 /**
  * 0.85 давало слишком много разброса при том, что структура страницы всё равно
@@ -202,7 +203,7 @@ async function callGemini(
     let response: Response
     try {
       response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(GEMINI_MODEL)}:generateContent?key=${apiKey}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

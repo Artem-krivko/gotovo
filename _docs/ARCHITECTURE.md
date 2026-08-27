@@ -9,7 +9,7 @@
 | Фреймворк | Next.js 16 (App Router) | SSR, API routes, файловый роутинг |
 | Язык | TypeScript | Безопасность типов, автодополнение |
 | Стили | Tailwind CSS 4 | Скорость разработки |
-| ИИ | Google Gemini (gemini-2.0-flash-001, версия зафиксирована) | Два этапа: контент и DesignSpec |
+| ИИ | Google Gemini (`gemini-3.6-flash` по умолчанию) | Два этапа: контент и DesignSpec; модель можно заменить через окружение |
 | Email | Resend | Бесплатный tier, простая интеграция |
 | Деплой | Vercel | Бесплатно для Next.js, автодеплой из GitHub |
 | Хранение заявок | PostgreSQL через Prisma 7 | Модели Design и Order |
@@ -26,7 +26,7 @@ POST /api/generate
   ↓
 Сборка промпта из параметров пользователя
   ↓
-Gemini: gemini-2.0-flash-001
+Gemini: `GOOGLE_AI_MODEL` или `gemini-3.6-flash` по умолчанию
   ↓
 Получение HTML/CSS строки
   ↓
@@ -103,6 +103,7 @@ app/api/
 
 ```
 GOOGLE_AI_API_KEY=          # Gemini API ключ
+GOOGLE_AI_MODEL=gemini-3.6-flash # Необязательно: стабильная модель Gemini
 RESEND_API_KEY=             # Email нотификации
 LEAD_EMAIL=                 # Куда слать заявки (твой email)
 NOTION_TOKEN=               # (Фаза 4) для CRM
