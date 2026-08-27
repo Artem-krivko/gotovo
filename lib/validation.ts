@@ -4,7 +4,12 @@
 // всего две. Ключевое отличие от прежней проверки — ограничения ДЛИНЫ:
 // раньше в промпт и в БД могла уехать строка любого размера.
 
-import type { GeneratorLanguage, GeneratorParams, GeneratorStyle } from "@/lib/types"
+import type {
+  GeneratorLanguage,
+  GeneratorParams,
+  GeneratorStyle,
+  VerifiedFactsInput,
+} from "@/lib/types"
 
 // ─── Лимиты входа ─────────────────────────────────────────────────────────────
 
@@ -78,6 +83,9 @@ export function parseGeneratorParams(body: unknown): ValidationResult<GeneratorP
 
   const businessName = sanitizeUserText(p.businessName, INPUT_LIMITS.businessName)
   const colorPreference = sanitizeUserText(p.colorPreference, INPUT_LIMITS.colorPreference)
+  const audience = sanitizeUserText(p.audience, INPUT_LIMITS.freeText)
+  const mainAction = sanitizeUserText(p.mainAction, INPUT_LIMITS.freeText)
+  const geography = sanitizeUserText(p.geography, 80)
 
   return {
     ok: true,
@@ -88,7 +96,71 @@ export function parseGeneratorParams(body: unknown): ValidationResult<GeneratorP
       style,
       language,
       colorPreference: colorPreference || undefined,
+      audience: audience || undefined,
+      mainAction: mainAction || undefined,
+      geography: geography || undefined,
+      facts: parseVerifiedFacts(p.facts, geography),
     },
+  }
+}
+
+// ─── Подтверждённые факты ─────────────────────────────────────────────────────
+
+/** Метрика: цифры, единицы и короткие уточнения — но не предложение текста. */
+const METRIC_RE = /^[\d\s.,+\-–—%/]{1,12}[\p{L}\s.]{0,14}$/u
+
+function parseMetric(value: unknown): string | undefined {
+  const raw = sanitizeUserText(value, 24)
+  if (!raw) return undefined
+  // Метрика попадает на страницу как утверждённый факт, поэтому свободный
+  // текст здесь недопустим: «более 1000 довольных клиентов» — это уже
+  // маркетинговое заявление, а не измеримое значение.
+  return METRIC_RE.test(raw) ? raw : undefined
+}
+
+function parseStringList(value: unknown, maxItems: number, maxLength: number): string[] {
+  if (!Array.isArray(value)) return []
+  return value
+    .map((item) => sanitizeUserText(item, maxLength))
+    .filter((item) => item.length > 0)
+    .slice(0, maxItems)
+}
+
+/**
+ * Факты от пользователя — единственный источник цифр, гарантий и отзывов
+ * на сгенерированной странице. Модель их не производит.
+ */
+export function parseVerifiedFacts(
+  value: unknown,
+  fallbackGeography = ""
+): VerifiedFactsInput {
+  const f = (value && typeof value === "object" && !Array.isArray(value)
+    ? value
+    : {}) as Record<string, unknown>
+
+  const testimonials = (Array.isArray(f.testimonials) ? f.testimonials : [])
+    .filter((t): t is Record<string, unknown> => !!t && typeof t === "object")
+    .map((t) => ({
+      text: sanitizeUserText(t.text, 420),
+      author: sanitizeUserText(t.author, 60),
+      role: sanitizeUserText(t.role, 90),
+    }))
+    // Отзыв без текста и без автора — не отзыв.
+    .filter((t) => t.text.length > 0 && t.author.length > 0)
+    .slice(0, 3)
+
+  const geography = sanitizeUserText(f.geography, 80) || fallbackGeography
+
+  return {
+    yearsInBusiness: parseMetric(f.yearsInBusiness),
+    projectsCompleted: parseMetric(f.projectsCompleted),
+    clientsPerMonth: parseMetric(f.clientsPerMonth),
+    teamSize: parseMetric(f.teamSize),
+    priceFrom: sanitizeUserText(f.priceFrom, 32) || undefined,
+    geography: geography || undefined,
+    guarantees: parseStringList(f.guarantees, 4, 140),
+    certifications: parseStringList(f.certifications, 4, 140),
+    testimonials,
   }
 }
 

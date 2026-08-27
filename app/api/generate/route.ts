@@ -1,7 +1,16 @@
 import { NextRequest, NextResponse } from "next/server"
 import { randomUUID } from "node:crypto"
-import { GENERATOR_SYSTEM_PROMPT, buildUserPrompt } from "@/lib/prompts"
-import { fillTemplate, getNicheQuery, type DesignContent } from "@/lib/templates"
+import {
+  ART_DIRECTOR_SYSTEM_PROMPT,
+  GENERATOR_SYSTEM_PROMPT,
+  buildArtDirectorPrompt,
+  buildUserPrompt,
+} from "@/lib/prompts"
+import { getNicheQuery } from "@/lib/templates"
+import { composePage } from "@/lib/design/compose"
+import { baseSpecFor, parseDesignSpec, type DesignSpec } from "@/lib/design/spec"
+import { buildStats, type PageContent, type VerifiedFacts } from "@/lib/design/content"
+import { checkQuality } from "@/lib/design/quality"
 import type { GeneratorParams } from "@/lib/types"
 import { parseGeneratorParams, parseAiContent } from "@/lib/validation"
 import { clientIp, rateLimit } from "@/lib/rate-limit"
@@ -41,7 +50,12 @@ const SESSION_MAX_AGE = 60 * 60 * 24 * 30
  * Раньше любая ошибка — квота Gemini, битый JSON, недоступная БД — сводилась
  * к одному «Внутренняя ошибка», и понять причину по логам было нельзя.
  */
-type FailureReason = "ai_unavailable" | "ai_invalid_json" | "ai_timeout" | "none"
+type FailureReason =
+  | "ai_unavailable"
+  | "ai_invalid_json"
+  | "ai_timeout"
+  | "quality_rejected"
+  | "none"
 
 /** Откуда взят контент. Возвращается клиенту, чтобы не выдавать заглушку за AI. */
 export type ContentSource = "ai" | "fallback"
@@ -103,13 +117,7 @@ async function fetchHeroImage(businessType: string): Promise<HeroImage> {
  * «Дмитрия Ковалёва, владельца АвтоЛюкс Минск» — всё выдуманное, и всё это
  * показывалось как результат работы AI любому пользователю без API-ключа.
  */
-function buildFallbackContent(params: GeneratorParams): DesignContent {
-  const accentByStyle: Record<string, string> = {
-    modern: "#7C3AED",
-    minimal: "#0F172A",
-    bold: "#DC2626",
-    corporate: "#1D4ED8",
-  }
+function buildFallbackContent(params: GeneratorParams): PageContent {
   const businessName = params.businessName || params.businessType
 
   return {
@@ -118,62 +126,48 @@ function buildFallbackContent(params: GeneratorParams): DesignContent {
     subheadline:
       "Это черновая структура — блоки, порядок и акценты. Тексты и цифры подставим ваши, после короткого разговора.",
     tagline: "Черновик концепта",
-    accentColor: accentByStyle[params.style] ?? "#6366F1",
     services: [
       {
-        icon: "01",
         name: "Основная услуга",
         description: "Здесь будет описание вашей ключевой услуги: что входит, как проходит, какой результат получает клиент.",
       },
       {
-        icon: "02",
         name: "Вторая услуга",
         description: "Блок под второе направление. Наполним по вашему прайсу и реальному составу работ.",
       },
       {
-        icon: "03",
         name: "Третья услуга",
         description: "Ещё одно направление или пакетное предложение — состав согласуем с вами.",
       },
     ],
     features: [
       {
-        icon: "01",
         title: "Ваше первое преимущество",
         description: "Сюда ставим то, чем вы реально отличаетесь от конкурентов — без общих слов.",
       },
       {
-        icon: "02",
         title: "Ваше второе преимущество",
         description: "Например: собственное производство, свой парк техники, узкая специализация.",
       },
       {
-        icon: "03",
         title: "Ваше третье преимущество",
         description: "Условия работы, формат обслуживания или что-то ещё, что важно вашим клиентам.",
       },
     ],
-    // Цифры не выдумываем: показываем, какие метрики здесь будут стоять.
-    stats: [
-      { value: "—", label: "лет на рынке" },
-      { value: "—", label: "выполненных проектов" },
-      { value: "—", label: "клиентов в месяц" },
-    ],
-    // testimonial намеренно не задан → renderer поставит честный placeholder.
-    ctaHeadline: "Обсудим ваш проект?",
+    // Цифр не выдумываем — показываем, какие метрики здесь будут стоять.
+    stats: buildStats({}),
+    testimonial: null,
+    ctaHeadline: "Обсудить проект",
     ctaSubtext: "Расскажите о задаче — предложим структуру и сроки.",
     phone: "+375 29 000-00-00",
     email: "info@example.by",
     footerTagline: "Черновик концепта",
+    gallery: [],
+    guarantees: [],
   }
 }
 
 // ─── Вызов модели ─────────────────────────────────────────────────────────────
-
-interface AiResult {
-  content: DesignContent | null
-  reason: FailureReason
-}
 
 function extractJson(raw: string): unknown {
   const start = raw.indexOf("{")
@@ -182,10 +176,16 @@ function extractJson(raw: string): unknown {
   return JSON.parse(raw.slice(start, end + 1))
 }
 
-async function callGemini(apiKey: string, params: GeneratorParams): Promise<AiResult> {
+/** Один вызов Gemini с одной контролируемой повторной попыткой на 503. */
+async function callGemini(
+  apiKey: string,
+  systemPrompt: string,
+  userPrompt: string,
+  stage: string
+): Promise<{ data: unknown | null; reason: FailureReason }> {
   const body = JSON.stringify({
-    system_instruction: { parts: [{ text: GENERATOR_SYSTEM_PROMPT }] },
-    contents: [{ role: "user", parts: [{ text: buildUserPrompt(params) }] }],
+    system_instruction: { parts: [{ text: systemPrompt }] },
+    contents: [{ role: "user", parts: [{ text: userPrompt }] }],
     generationConfig: {
       maxOutputTokens: 8192,
       temperature: GEMINI_TEMPERATURE,
@@ -193,9 +193,8 @@ async function callGemini(apiKey: string, params: GeneratorParams): Promise<AiRe
     },
   })
 
-  // Одна контролируемая повторная попытка: 503 у Gemini обычно кратковременный.
-  // Раньше попыток было три, по 2 и 4 секунды паузы — суммарно это могло
-  // превысить лимит времени функции и превратить сбой модели в таймаут запроса.
+  // Раньше попыток было три, с паузами 2 и 4 секунды — суммарно это могло
+  // превысить лимит времени функции и превратить сбой модели в таймаут.
   for (let attempt = 1; attempt <= 2; attempt++) {
     let response: Response
     try {
@@ -210,14 +209,15 @@ async function callGemini(apiKey: string, params: GeneratorParams): Promise<AiRe
       )
     } catch (error) {
       const isTimeout = error instanceof Error && error.name === "TimeoutError"
-      console.error("[generate] gemini_fetch_failed", { attempt, isTimeout, error: String(error) })
-      if (attempt === 2) return { content: null, reason: isTimeout ? "ai_timeout" : "ai_unavailable" }
+      console.error("[generate] gemini_fetch_failed", { stage, attempt, isTimeout, error: String(error) })
+      if (attempt === 2) return { data: null, reason: isTimeout ? "ai_timeout" : "ai_unavailable" }
       continue
     }
 
     if (!response.ok) {
       const detail = await response.text().catch(() => "")
       console.error("[generate] gemini_http_error", {
+        stage,
         attempt,
         status: response.status,
         detail: detail.slice(0, 300),
@@ -226,48 +226,109 @@ async function callGemini(apiKey: string, params: GeneratorParams): Promise<AiRe
         await new Promise((r) => setTimeout(r, 1500))
         continue
       }
-      return { content: null, reason: "ai_unavailable" }
+      return { data: null, reason: "ai_unavailable" }
     }
 
-    const data = (await response.json()) as {
+    const payload = (await response.json()) as {
       candidates?: Array<{ content?: { parts?: Array<{ text?: string; thought?: boolean }> } }>
     }
 
     const rawText =
-      data.candidates?.[0]?.content?.parts
+      payload.candidates?.[0]?.content?.parts
         ?.filter((p) => !p.thought)
         .map((p) => p.text ?? "")
         .join("")
         .trim() ?? ""
 
     try {
-      const parsed = parseAiContent(extractJson(rawText))
-      if (!parsed.ok) {
-        console.error("[generate] gemini_schema_invalid", { error: parsed.error })
-        return { content: null, reason: "ai_invalid_json" }
-      }
-
-      return {
-        content: {
-          ...parsed.value,
-          businessName: params.businessName || parsed.value.businessName || params.businessType,
-          // Контакты — реальные данные бизнеса, модель их выдумывать не должна.
-          // До получения настоящих ставим очевидные placeholder'ы.
-          phone: "+375 29 000-00-00",
-          email: "info@example.by",
-        },
-        reason: "none",
-      }
+      return { data: extractJson(rawText), reason: "none" }
     } catch (error) {
       console.error("[generate] gemini_json_parse_failed", {
+        stage,
         error: String(error),
         preview: rawText.slice(0, 300),
       })
-      return { content: null, reason: "ai_invalid_json" }
+      return { data: null, reason: "ai_invalid_json" }
     }
   }
 
-  return { content: null, reason: "ai_unavailable" }
+  return { data: null, reason: "ai_unavailable" }
+}
+
+/**
+ * Этап «стратег»: аудитория, оффер и честный текст.
+ * Возвращает контент в модели PageContent — без отзывов и без выдуманных цифр.
+ */
+async function runStrategist(
+  apiKey: string,
+  params: GeneratorParams,
+  facts: VerifiedFacts
+): Promise<{ content: PageContent | null; reason: FailureReason }> {
+  const { data, reason } = await callGemini(
+    apiKey,
+    GENERATOR_SYSTEM_PROMPT,
+    buildUserPrompt(params),
+    "strategist"
+  )
+  if (!data) return { content: null, reason }
+
+  const parsed = parseAiContent(data)
+  if (!parsed.ok) {
+    console.error("[generate] strategist_schema_invalid", { error: parsed.error })
+    return { content: null, reason: "ai_invalid_json" }
+  }
+  const v = parsed.value
+
+  // stats собираются из ПОДТВЕРЖДЁННЫХ фактов, а не из ответа модели:
+  // цифру, которую владелец не называл, показывать нельзя.
+  return {
+    content: {
+      businessName: params.businessName || v.businessName || params.businessType,
+      headline: v.headline,
+      subheadline: v.subheadline,
+      tagline: v.tagline,
+      services: v.services.map((s) => ({
+        name: s.name,
+        description: s.description,
+        price: facts.priceFrom ? s.price : undefined,
+      })),
+      features: v.features.map((f) => ({ title: f.title, description: f.description })),
+      stats: buildStats(facts),
+      // Отзыв берём только из подтверждённых фактов. Модель его не генерирует.
+      testimonial: facts.testimonials?.[0] ?? null,
+      ctaHeadline: v.ctaHeadline,
+      ctaSubtext: v.ctaSubtext,
+      // Контакты — реальные данные бизнеса; до их получения ставим placeholder.
+      phone: "+375 29 000-00-00",
+      email: "info@example.by",
+      footerTagline: v.footerTagline,
+      geography: facts.geography,
+      gallery: [],
+      guarantees: facts.guarantees ?? [],
+    },
+    reason: "none",
+  }
+}
+
+/**
+ * Этап «арт-директор»: DesignSpec.
+ * Зависит только от брифа, поэтому запускается ПАРАЛЛЕЛЬНО со стратегом
+ * и не добавляет задержки к общему времени генерации.
+ */
+async function runArtDirector(
+  apiKey: string,
+  params: GeneratorParams
+): Promise<DesignSpec> {
+  const fallback = baseSpecFor(params.style)
+  const { data } = await callGemini(
+    apiKey,
+    ART_DIRECTOR_SYSTEM_PROMPT,
+    buildArtDirectorPrompt(params),
+    "art-director"
+  )
+  // Сбой арт-директора не критичен: берём базовую спеку и всё равно
+  // отдаём пользователю рабочую страницу.
+  return parseDesignSpec(data, fallback)
 }
 
 // ─── Handler ──────────────────────────────────────────────────────────────────
@@ -309,32 +370,91 @@ export async function POST(req: NextRequest) {
   const imagePromise = fetchHeroImage(params.businessType)
   const apiKey = process.env.GOOGLE_AI_API_KEY
 
-  let content: DesignContent
+  // Подтверждённые факты приходят из брифа. Пока форма их не собирает,
+  // объект пустой — и это корректно: без фактов stats станут честными
+  // placeholder'ами, а блок отзывов просто не отрисуется.
+  const facts: VerifiedFacts = params.facts ?? {}
+
+  let content: PageContent
+  let spec: DesignSpec
   let source: ContentSource
   let failureReason: FailureReason = "none"
 
   if (!apiKey) {
     console.error("[generate] missing_api_key — отдаём заглушку, помеченную как fallback")
     content = buildFallbackContent(params)
+    spec = baseSpecFor(params.style)
     source = "fallback"
     failureReason = "ai_unavailable"
   } else {
-    const ai = await callGemini(apiKey, params)
-    if (ai.content) {
-      content = ai.content
+    // Стратег и арт-директор зависят только от брифа, поэтому идут параллельно:
+    // два этапа не удваивают время ожидания.
+    const [strategist, artDirected] = await Promise.all([
+      runStrategist(apiKey, params, facts),
+      runArtDirector(apiKey, params),
+    ])
+
+    spec = artDirected
+
+    if (strategist.content) {
+      content = strategist.content
       source = "ai"
     } else {
       content = buildFallbackContent(params)
       source = "fallback"
-      failureReason = ai.reason
+      failureReason = strategist.reason
     }
   }
 
   const hero = await imagePromise
-  content.heroImageUrl = hero.url ?? undefined
-  content.heroImageCredit = hero.credit ?? undefined
+  if (hero.url) {
+    content.heroImage = {
+      url: hero.url,
+      alt: content.businessName,
+      credit: hero.credit ?? undefined,
+    }
+  }
 
-  const html = fillTemplate(params.style, content, params.businessType)
+  // Галерею показываем, только если для неё есть изображения.
+  if (content.gallery.length === 0 && spec.galleryVariant !== "none") {
+    spec = { ...spec, galleryVariant: "none" }
+  }
+
+  let { html, renderedSections } = composePage(content, spec)
+
+  // ── Quality gate ──────────────────────────────────────────────────────────
+  //
+  // Проверяем результат ДО показа. Ретрай ровно один и не обращается к модели
+  // повторно: при найденных ошибках переключаемся на нейтральный фолбэк-контент
+  // с базовой спекой — заведомо корректный вариант. Бесконечных попыток нет
+  // по построению.
+  let quality = checkQuality(html, content, spec, renderedSections)
+
+  if (!quality.ok) {
+    console.warn("[generate] quality_gate_failed", {
+      businessType: params.businessType,
+      issues: quality.issues.filter((i) => i.severity === "error").map((i) => i.code),
+    })
+
+    content = buildFallbackContent(params)
+    spec = baseSpecFor(params.style)
+    source = "fallback"
+    failureReason = "quality_rejected"
+
+    const retry = composePage(content, spec)
+    html = retry.html
+    renderedSections = retry.renderedSections
+    quality = checkQuality(html, content, spec, renderedSections)
+
+    if (!quality.ok) {
+      // Фолбэк-контент статичен и уже покрыт тестами; если и он не прошёл —
+      // это дефект рендерера, а не данных. Логируем громко, но пользователю
+      // всё равно отдаём страницу: она лучше, чем пустой экран.
+      console.error("[generate] quality_gate_failed_on_fallback", {
+        issues: quality.issues.map((i) => `${i.code}: ${i.message}`),
+      })
+    }
+  }
 
   // ── Persistence отделён от генерации ──────────────────────────────────────
   //

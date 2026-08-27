@@ -12,6 +12,28 @@ export interface GeneratorParams {
   style: GeneratorStyle
   language: GeneratorLanguage
   colorPreference?: string
+  /** Аудитория и главное действие — влияют на текст, но не на факты. */
+  audience?: string
+  mainAction?: string
+  geography?: string
+  /**
+   * Факты, которые пользователь подтвердил сам. ТОЛЬКО их можно утверждать
+   * на странице: цифры, гарантии и отзывы отсюда, а не из ответа модели.
+   */
+  facts?: VerifiedFactsInput
+}
+
+/** Подтверждённые факты из брифа. Любое поле может отсутствовать. */
+export interface VerifiedFactsInput {
+  yearsInBusiness?: string
+  projectsCompleted?: string
+  clientsPerMonth?: string
+  teamSize?: string
+  priceFrom?: string
+  geography?: string
+  guarantees?: string[]
+  certifications?: string[]
+  testimonials?: Array<{ text: string; author: string; role: string }>
 }
 
 export interface GenerateApiRequest {
@@ -25,6 +47,8 @@ export type GenerationFailureReason =
   | "ai_unavailable"
   | "ai_invalid_json"
   | "ai_timeout"
+  /** Результат не прошёл автоматические проверки и заменён нейтральным. */
+  | "quality_rejected"
   | "none"
 
 export interface GenerateApiResponse {
