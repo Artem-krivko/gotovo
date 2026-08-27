@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef } from "react"
 import type {
   ContentSource,
+  GeneratedConcept,
   GenerateApiResponse,
   GeneratorParams,
   GeneratorStyle,
@@ -93,7 +94,8 @@ interface GeneratorFormProps {
     params: GeneratorParams,
     source: ContentSource,
     content: unknown,
-    spec: unknown
+    spec: unknown,
+    concepts: GeneratedConcept[]
   ) => void
   onLoading: (loading: boolean) => void
   isLoading: boolean
@@ -193,7 +195,15 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
           throw new Error(data.error ?? "Ошибка генерации")
         }
 
-        onResult(data.html, data.designId ?? "", params, data.source ?? "ai", data.content, data.spec)
+        onResult(
+          data.html,
+          data.designId ?? "",
+          params,
+          data.source ?? "ai",
+          data.content,
+          data.spec,
+          data.concepts ?? []
+        )
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Попробуйте ещё раз"
         track("generation_failed", { stage: "submit", reason: msg.slice(0, 80) })

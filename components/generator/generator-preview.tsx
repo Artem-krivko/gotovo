@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback, useEffect, useRef } from "react"
-import type { ContentSource } from "@/lib/types"
+import type { ContentSource, GeneratedConcept } from "@/lib/types"
 import { track } from "@/lib/analytics"
 
 interface GeneratorPreviewProps {
@@ -18,6 +18,9 @@ interface GeneratorPreviewProps {
   /** Контент и спека для быстрых правок без повторной генерации. */
   content: unknown
   spec: unknown
+  concepts: GeneratedConcept[]
+  activeConceptId: GeneratedConcept["id"]
+  onConceptSelect: (concept: GeneratedConcept) => void
   onAdjusted: (html: string, spec: unknown) => void
 }
 
@@ -321,6 +324,9 @@ export function GeneratorPreview({
   source,
   content,
   spec,
+  concepts,
+  activeConceptId,
+  onConceptSelect,
   onAdjusted,
 }: GeneratorPreviewProps) {
   const [adjusting, setAdjusting] = useState<string | null>(null)
@@ -393,7 +399,9 @@ export function GeneratorPreview({
   const handleOpenInTab = useCallback(() => {
     // Предпочитаем серверный маршрут: он отдаёт превью с заголовком
     // `Content-Security-Policy: sandbox`, то есть в изолированном origin.
-    if (designId) {
+    // В БД сохраняется исходная AI-рекомендация. Альтернативные направления
+    // существуют локально, поэтому для них открываем именно текущий HTML.
+    if (designId && activeConceptId === "recommended") {
       window.open(`/api/design/${encodeURIComponent(designId)}`, "_blank", "noopener,noreferrer")
       return
     }
@@ -406,7 +414,7 @@ export function GeneratorPreview({
     const url = URL.createObjectURL(blob)
     window.open(url, "_blank", "noopener,noreferrer")
     setTimeout(() => URL.revokeObjectURL(url), 60_000)
-  }, [html, designId])
+  }, [html, designId, activeConceptId])
 
   return (
     <>
@@ -459,6 +467,34 @@ export function GeneratorPreview({
             черновик структуры без текстов и цифр — не результат генерации. Попробуйте «Ещё раз»
             через минуту.
           </p>
+        )}
+
+        {concepts.length > 1 && (
+          <div className="border-b border-zinc-200 bg-white px-4 py-3">
+            <div className="flex items-center gap-2 overflow-x-auto pb-0.5">
+              <span className="shrink-0 text-xs font-semibold text-zinc-500">Направление:</span>
+              {concepts.map((concept) => {
+                const active = concept.id === activeConceptId
+                return (
+                  <button
+                    key={concept.id}
+                    type="button"
+                    onClick={() => onConceptSelect(concept)}
+                    title={concept.description}
+                    aria-pressed={active}
+                    className={`shrink-0 rounded-xl border px-3 py-2 text-left transition ${
+                      active
+                        ? "border-violet-400 bg-violet-50 text-violet-900 shadow-sm"
+                        : "border-zinc-200 bg-white text-zinc-600 hover:border-violet-200 hover:bg-zinc-50"
+                    }`}
+                  >
+                    <span className="block text-xs font-semibold">{concept.label}</span>
+                    <span className="hidden text-[10px] text-zinc-400 xl:block">{concept.description}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </div>
         )}
 
         {/* iframe */}

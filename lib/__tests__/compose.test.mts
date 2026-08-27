@@ -19,6 +19,7 @@ import {
 import { accentOn, buildTokens, contrastRatio, fontFor, readableOn } from "../design/tokens.ts"
 import { buildStats, type PageContent } from "../design/content.ts"
 import { getNicheQuery } from "../templates/index.ts"
+import { curateDesignDirections } from "../design/directions.ts"
 
 function content(overrides: Partial<PageContent> = {}): PageContent {
   return {
@@ -68,6 +69,24 @@ function layoutFingerprint(html: string): string {
 // ─── Разнообразие композиции ──────────────────────────────────────────────────
 
 describe("разнообразие композиции", () => {
+  test("один AI-результат даёт три визуально разные кураторские концепции", () => {
+    const directions = curateDesignDirections(baseSpecFor("modern"), "modern", "Фитнес-клуб")
+    const fingerprints = directions.map((direction) =>
+      layoutFingerprint(composePage(content(), direction.spec).html)
+    )
+
+    assert.equal(directions.length, 3)
+    assert.equal(new Set(fingerprints).size, 3, "Направления совпали по композиции")
+    assert.deepEqual(directions.map((direction) => direction.id), ["recommended", "editorial", "focus"])
+  })
+
+  test("сдержанная ниша не получает плакатный шрифт в сфокусированном варианте", () => {
+    const directions = curateDesignDirections(baseSpecFor("corporate"), "corporate", "Медицинская клиника")
+    const focus = directions.find((direction) => direction.id === "focus")!
+    assert.equal(focus.spec.typography.preset, "sans-modern")
+    assert.notEqual(focus.spec.heroVariant, "full-bleed")
+  })
+
   test("четыре базовые спеки дают четыре разные структуры", () => {
     const fingerprints = ["modern", "minimal", "bold", "corporate"].map((style) =>
       layoutFingerprint(composePage(content(), baseSpecFor(style)).html)

@@ -18,6 +18,7 @@ export type FunnelEvent =
   | "generation_failed"
   | "regenerate_clicked"
   | "style_adjustment_clicked"
+  | "design_direction_selected"
   | "preview_engaged"
   | "lead_modal_opened"
   | "lead_submitted"

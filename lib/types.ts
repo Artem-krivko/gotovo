@@ -54,6 +54,14 @@ export type GenerationFailureReason =
 /** Диагностика: какой провайдер реально сформировал каждый этап. */
 export type GenerationProvider = "gemini" | "groq" | "none"
 
+export interface GeneratedConcept {
+  id: "recommended" | "editorial" | "focus"
+  label: string
+  description: string
+  html: string
+  spec: unknown
+}
+
 export interface GenerateApiResponse {
   html: string
   /**
@@ -64,6 +72,8 @@ export interface GenerateApiResponse {
   source: ContentSource
   failureReason: GenerationFailureReason
   providers?: { strategist: GenerationProvider; artDirector: GenerationProvider }
+  /** Три кураторских направления из одного AI-ответа — без дополнительных запросов. */
+  concepts: GeneratedConcept[]
   /**
    * Контент и спека возвращаются, чтобы правки стиля пересобирали страницу
    * локально через /api/adjust — без затрат на повторную генерацию.

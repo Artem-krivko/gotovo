@@ -4,7 +4,7 @@ import { useState, useCallback } from "react"
 import { GeneratorForm } from "@/components/generator/generator-form"
 import { GeneratorGallery, type GalleryPreset } from "@/components/generator/generator-gallery"
 import { GeneratorPreview, GeneratorSkeleton } from "@/components/generator/generator-preview"
-import type { ContentSource, GenerateApiResponse, GeneratorParams } from "@/lib/types"
+import type { ContentSource, GeneratedConcept, GenerateApiResponse, GeneratorParams } from "@/lib/types"
 import { track } from "@/lib/analytics"
 
 function EmptyPreview() {
@@ -41,6 +41,8 @@ export default function GeneratorPage() {
   // локально, без повторной генерации.
   const [content, setContent] = useState<unknown>(null)
   const [spec, setSpec] = useState<unknown>(null)
+  const [concepts, setConcepts] = useState<GeneratedConcept[]>([])
+  const [activeConceptId, setActiveConceptId] = useState<GeneratedConcept["id"]>("recommended")
 
   const handleGallerySelect = useCallback((p: GalleryPreset | null) => {
     track("generator_preset_selected", { preset: p?.businessType ?? "scratch" })
@@ -57,7 +59,8 @@ export default function GeneratorPage() {
       params: GeneratorParams,
       contentSource: ContentSource,
       resultContent: unknown,
-      resultSpec: unknown
+      resultSpec: unknown,
+      resultConcepts: GeneratedConcept[]
     ) => {
       track("generation_succeeded", {
         businessType: params.businessType,
@@ -70,6 +73,8 @@ export default function GeneratorPage() {
       setSource(contentSource)
       setContent(resultContent)
       setSpec(resultSpec)
+      setConcepts(resultConcepts)
+      setActiveConceptId(resultConcepts[0]?.id ?? "recommended")
       setIsLoading(false)
     },
     []
@@ -78,6 +83,16 @@ export default function GeneratorPage() {
   const handleAdjusted = useCallback((nextHtml: string, nextSpec: unknown) => {
     setGeneratedHtml(nextHtml)
     setSpec(nextSpec)
+    setConcepts((current) => current.map((concept) =>
+      concept.id === activeConceptId ? { ...concept, html: nextHtml, spec: nextSpec } : concept
+    ))
+  }, [activeConceptId])
+
+  const handleConceptSelect = useCallback((concept: GeneratedConcept) => {
+    track("design_direction_selected", { direction: concept.id })
+    setActiveConceptId(concept.id)
+    setGeneratedHtml(concept.html)
+    setSpec(concept.spec)
   }, [])
 
   const handleLoading = useCallback((loading: boolean) => {
@@ -104,6 +119,8 @@ export default function GeneratorPage() {
       setSource(data.source ?? "ai")
       setContent(data.content ?? null)
       setSpec(data.spec ?? null)
+      setConcepts(data.concepts ?? [])
+      setActiveConceptId(data.concepts?.[0]?.id ?? "recommended")
     } catch {
       track("generation_failed", { stage: "regenerate" })
       // keep existing result
@@ -172,6 +189,9 @@ export default function GeneratorPage() {
             source={source}
             content={content}
             spec={spec}
+            concepts={concepts}
+            activeConceptId={activeConceptId}
+            onConceptSelect={handleConceptSelect}
             onAdjusted={handleAdjusted}
           />
         ) : (

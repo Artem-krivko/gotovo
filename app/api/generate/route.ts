@@ -11,6 +11,7 @@ import { composePage } from "@/lib/design/compose"
 import { alignSpecToStyle, baseSpecFor, parseDesignSpec, type DesignSpec } from "@/lib/design/spec"
 import { buildStats, type PageContent, type VerifiedFacts } from "@/lib/design/content"
 import { checkQuality } from "@/lib/design/quality"
+import { curateDesignDirections } from "@/lib/design/directions"
 import type { GeneratorParams } from "@/lib/types"
 import { parseGeneratorParams, parseAiContent } from "@/lib/validation"
 import { clientIp, rateLimit } from "@/lib/rate-limit"
@@ -552,6 +553,31 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Один контент и одна AI-спека превращаются в три кураторских направления.
+  // Это даёт пользователю реальный выбор, не умножая расход квоты модели.
+  const concepts = curateDesignDirections(spec, params.style, params.businessType).map((direction) => {
+    const rendered = composePage(content, direction.spec)
+    const report = checkQuality(rendered.html, content, direction.spec, rendered.renderedSections)
+    if (!report.ok) {
+      console.warn("[generate] direction_quality_failed", {
+        direction: direction.id,
+        issues: report.issues.filter((i) => i.severity === "error").map((i) => i.code),
+      })
+    }
+    return {
+      id: direction.id,
+      label: direction.label,
+      description: direction.description,
+      html: report.ok ? rendered.html : html,
+      spec: report.ok ? direction.spec : spec,
+    }
+  })
+
+  // Первый концепт — исходная AI-рекомендация; сохраняем обратную
+  // совместимость полей html/spec для старых клиентов.
+  html = concepts[0].html
+  spec = concepts[0].spec
+
   // ── Persistence отделён от генерации ──────────────────────────────────────
   //
   // Ключевая правка: раньше db.design.create() стоял на пути к ответу, и любой
@@ -581,7 +607,7 @@ export async function POST(req: NextRequest) {
   // «больше воздуха», «другой hero») пересобирали страницу через /api/adjust
   // без повторного обращения к модели.
   const response = NextResponse.json(
-    { html, designId, source, failureReason, providers, content, spec },
+    { html, designId, source, failureReason, providers, concepts, content, spec },
     { status: 200 }
   )
 
