@@ -9,9 +9,16 @@ import { test, describe } from "node:test"
 import assert from "node:assert/strict"
 
 import { composePage } from "../design/compose.ts"
-import { adjustSpec, baseSpecFor, parseDesignSpec, type DesignSpec } from "../design/spec.ts"
-import { accentOn, contrastRatio, readableOn } from "../design/tokens.ts"
+import {
+  adjustSpec,
+  alignSpecToStyle,
+  baseSpecFor,
+  parseDesignSpec,
+  type DesignSpec,
+} from "../design/spec.ts"
+import { accentOn, buildTokens, contrastRatio, fontFor, readableOn } from "../design/tokens.ts"
 import { buildStats, type PageContent } from "../design/content.ts"
+import { getNicheQuery } from "../templates/index.ts"
 
 function content(overrides: Partial<PageContent> = {}): PageContent {
   return {
@@ -210,6 +217,41 @@ describe("parseDesignSpec", () => {
   test("выбрасывает неизвестные секции", () => {
     const spec = parseDesignSpec({ sectionOrder: ["hero", "выдуманная", "faq"] }, fallback)
     assert.ok(!spec.sectionOrder.includes("выдуманная" as never))
+  })
+})
+
+describe("визуальные ограничения", () => {
+  test("корпоративный стиль не превращается в плакатный industrial", () => {
+    const raw: DesignSpec = {
+      ...baseSpecFor("bold"),
+      typography: { preset: "condensed-bold", scale: "dramatic" },
+      backgroundTreatment: "bands",
+      borderRadius: "sharp",
+    }
+    const aligned = alignSpecToStyle(raw, "corporate")
+
+    assert.equal(aligned.typography.preset, "slab-institutional")
+    assert.equal(aligned.typography.scale, "regular")
+    assert.equal(aligned.backgroundTreatment, "grid")
+    assert.equal(aligned.borderRadius, "soft")
+  })
+
+  test("плакатный пресет использует шрифт с кириллицей и ограниченный масштаб", () => {
+    assert.match(fontFor("condensed-bold").display, /Roboto Condensed/)
+    assert.equal(buildTokens(baseSpecFor("bold")).displayScale, "clamp(42px,5.8vw,72px)")
+  })
+
+  test("мини-экскаватор получает точный запрос изображения", () => {
+    assert.equal(
+      getNicheQuery("аренда мини-экскаватора"),
+      "mini excavator earthmoving machinery"
+    )
+  })
+
+  test("заголовки карточек не наследуют глобальный CAPS", () => {
+    const html = composePage(content(), baseSpecFor("bold")).html
+    assert.match(html, /h3\{letter-spacing:-\.35px;line-height:1\.25;text-transform:none\}/)
+    assert.doesNotMatch(html, /clamp\(48px,9vw,120px\)/)
   })
 })
 

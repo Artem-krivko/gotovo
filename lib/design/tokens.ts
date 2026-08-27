@@ -22,29 +22,29 @@ interface FontDefinition {
  */
 const FONTS: Record<FontPreset, FontDefinition> = {
   grotesk: {
-    url: "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap",
-    body: "'Space Grotesk',system-ui,sans-serif",
-    display: "'Space Grotesk',system-ui,sans-serif",
+    url: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap",
+    body: "'Manrope',system-ui,sans-serif",
+    display: "'Manrope',system-ui,sans-serif",
   },
   "sans-modern": {
-    url: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap",
-    body: "'Plus Jakarta Sans',system-ui,sans-serif",
-    display: "'Plus Jakarta Sans',system-ui,sans-serif",
+    url: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+    body: "'Inter',system-ui,sans-serif",
+    display: "'Inter',system-ui,sans-serif",
   },
   "serif-editorial": {
-    url: "https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap",
-    body: "'DM Sans',system-ui,sans-serif",
-    display: "'DM Serif Display',Georgia,serif",
+    url: "https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap",
+    body: "'PT Sans',system-ui,sans-serif",
+    display: "'PT Serif',Georgia,serif",
   },
   "serif-luxury": {
-    url: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap",
-    body: "'Plus Jakarta Sans',system-ui,sans-serif",
+    url: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Manrope:wght@400;500;600&display=swap",
+    body: "'Manrope',system-ui,sans-serif",
     display: "'Cormorant Garamond',Georgia,serif",
   },
   "condensed-bold": {
-    url: "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@400;500&display=swap",
-    body: "'Barlow',system-ui,sans-serif",
-    display: "'Barlow Condensed',Impact,sans-serif",
+    url: "https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@600;700;800;900&family=Roboto:wght@400;500;600&display=swap",
+    body: "'Roboto',system-ui,sans-serif",
+    display: "'Roboto Condensed',Arial Narrow,sans-serif",
     displayUppercase: true,
   },
   "mono-technical": {
@@ -168,9 +168,9 @@ const LAYOUT_WIDTH = {
 } as const
 
 const DISPLAY_SCALE = {
-  tight: "clamp(30px,3.6vw,44px)",
-  regular: "clamp(38px,5vw,64px)",
-  dramatic: "clamp(46px,7vw,88px)",
+  tight: "clamp(30px,3.2vw,40px)",
+  regular: "clamp(36px,4.4vw,56px)",
+  dramatic: "clamp(42px,5.8vw,72px)",
 } as const
 
 export function buildTokens(spec: DesignSpec): Tokens {

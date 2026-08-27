@@ -323,6 +323,44 @@ export function baseSpecFor(style: string): DesignSpec {
   return BASE_SPECS[style] ?? BASE_SPECS.modern
 }
 
+/**
+ * Модель отвечает за разнообразие внутри выбранного направления, но не должна
+ * превращать «корпоративный» запрос в плакатный industrial. Это последний
+ * детерминированный слой согласования с явным выбором пользователя.
+ */
+export function alignSpecToStyle(spec: DesignSpec, style: string): DesignSpec {
+  if (style === "corporate") {
+    return {
+      ...spec,
+      typography: {
+        preset:
+          spec.typography.preset === "condensed-bold" || spec.typography.preset === "serif-luxury"
+            ? "slab-institutional"
+            : spec.typography.preset,
+        scale: spec.typography.scale === "dramatic" ? "regular" : spec.typography.scale,
+      },
+      backgroundTreatment: spec.backgroundTreatment === "bands" ? "grid" : spec.backgroundTreatment,
+      borderRadius: spec.borderRadius === "sharp" ? "soft" : spec.borderRadius,
+    }
+  }
+
+  if (style === "minimal") {
+    return {
+      ...spec,
+      typography: {
+        preset:
+          spec.typography.preset === "condensed-bold" || spec.typography.preset === "mono-technical"
+            ? "serif-editorial"
+            : spec.typography.preset,
+        scale: spec.typography.scale,
+      },
+      backgroundTreatment: spec.backgroundTreatment === "bands" ? "plain" : spec.backgroundTreatment,
+    }
+  }
+
+  return spec
+}
+
 // ─── Быстрые правки спеки ─────────────────────────────────────────────────────
 
 export const SPEC_ADJUSTMENTS = [

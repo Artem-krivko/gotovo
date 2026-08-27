@@ -58,17 +58,18 @@ const LUCIDE_CDN_URL = `${LUCIDE_CDN_ORIGIN}/lucide@0.454.0/dist/umd/lucide.min.
 // ─── Нишевые сиды ─────────────────────────────────────────────────────────────
 
 const NICHE_SEEDS: Array<[RegExp, string, string]> = [
+  [/мини.?экскаватор|экскаватор|землян|котлован|транше/i, "excavator", "mini excavator earthmoving machinery"],
   [/стоматол|зуб|дент/i,                                    "dentist",     "dental clinic interior"],
   [/ресторан|кафе|суши|пицц|бургер|шашлык|еда|бар/i,        "restaurant",  "restaurant interior cozy"],
   [/салон|красот|барбер|парикмах|маникюр|педикюр|макияж|перманент/i, "beauty", "beauty salon interior"],
   [/фитнес|спорт|тренаж|йога|зал|бокс/i,                    "fitness",     "gym fitness training"],
   [/медицин|клиник|врач|больниц|лечени/i,                    "medical",     "medical clinic doctor"],
   [/юрист|адвокат|право|нотар|юридич/i,                      "justice",     "law office lawyer"],
-  [/строительств|строитель|ремонт|отделк|кровл|монтаж|экскаватор|землян/i, "construction", "construction site building"],
+  [/строительств|строитель|ремонт|отделк|кровл|монтаж/i, "construction", "construction site building"],
   [/\bit\b|айти|разработк|программ|сайт|приложен/i,          "technology",  "modern office team technology"],
   [/курс|обучен|школ|образован|репетитор/i,                  "education",   "classroom education learning"],
   [/бухгалт|налог|аудит|финанс/i,                            "finance",     "finance office accounting"],
-  [/недвижим|риелтор|квартир|аренда/i,                       "interior",    "modern apartment interior"],
+  [/недвижим|риелтор|квартир|аренда жилья|аренда квартир/i, "interior",    "modern apartment interior"],
   [/авто|шиномонтаж|сто|кузов|машин/i,                       "automobile",  "car repair garage mechanic"],
   [/свадьб|праздник|event|мероприят/i,                       "wedding",     "wedding event photography"],
   [/доставка|логистик|курьер|транспорт/i,                    "logistics",   "delivery logistics warehouse"],

@@ -83,9 +83,11 @@ const BASE_CSS = `
 body{background:var(--bg);color:var(--text);font-family:var(--font-body);line-height:1.6;-webkit-font-smoothing:antialiased}
 a{text-decoration:none;color:inherit}
 img{display:block;max-width:100%}
-h1,h2,h3{font-family:var(--font-display);letter-spacing:var(--display-tracking);line-height:1.08;text-transform:var(--display-transform)}
-h1{font-size:var(--display);font-weight:700}
-h2{font-size:clamp(26px,3.4vw,42px);font-weight:700}
+h1,h2,h3{font-family:var(--font-display)}
+h1,h2{letter-spacing:var(--display-tracking);text-transform:var(--display-transform);text-wrap:balance}
+h1{font-size:var(--display);font-weight:700;line-height:1.02;overflow-wrap:anywhere;hyphens:auto}
+h2{font-size:clamp(26px,3.2vw,40px);font-weight:700;line-height:1.08}
+h3{letter-spacing:-.35px;line-height:1.25;text-transform:none}
 .wrap{max-width:var(--w);margin:0 auto;padding:0 24px}
 section{padding:var(--pad) 0}
 .s-head{margin-bottom:calc(var(--pad) * .42)}
@@ -106,7 +108,7 @@ section{padding:var(--pad) 0}
 }
 .site-head{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
 .site-head-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;height:62px}
-.site-logo{font-family:var(--font-display);font-weight:700;font-size:17px;text-transform:var(--display-transform)}
+.site-logo{font-family:var(--font-display);font-weight:700;font-size:17px}
 .site-phone{font-size:14px;font-weight:600;color:var(--accent)}
 .site-foot{border-top:1px solid var(--border);padding:26px 0}
 .site-foot-inner{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:13px}`
@@ -156,8 +158,10 @@ body>*:not(.bg-noise){position:relative;z-index:1}`,
       return {
         html: `<div class="bg-bands" aria-hidden="true"></div>`,
         css: `
-.bg-bands{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.06;
-background:repeating-linear-gradient(115deg,var(--accent) 0 2px,transparent 2px 74px)}
+.bg-bands{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.035;
+background:repeating-linear-gradient(115deg,var(--accent) 0 1px,transparent 1px 86px);
+-webkit-mask-image:linear-gradient(#000 0,rgba(0,0,0,.8) 32%,transparent 72%);
+mask-image:linear-gradient(#000 0,rgba(0,0,0,.8) 32%,transparent 72%)}
 body>*:not(.bg-bands){position:relative;z-index:1}`,
       }
   }
@@ -205,9 +209,10 @@ export function heroSection({ content: c, spec }: RenderContext): SectionOutput 
   <div class="hero-media reveal">${heroImageTag(c, "hero-img")}${photoCredit(c)}</div>
 </div></section>`,
         css: `${common}
-.hero-split{display:grid;grid-template-columns:1.05fr .95fr;gap:52px;align-items:center}
+.hero-split{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(320px,.92fr);gap:clamp(32px,4vw,52px);align-items:center}
+.hero-split h1{max-width:15ch}
 .hero-img{width:100%;aspect-ratio:4/3;object-fit:cover;${imageCss(spec)}}
-@media(max-width:860px){.hero-split{grid-template-columns:1fr;gap:32px}.hero-media{order:-1}}`,
+@media(max-width:860px){.hero-split{grid-template-columns:1fr;gap:32px}.hero-split h1{max-width:18ch}}`,
       }
 
     case "centered":
@@ -220,7 +225,8 @@ export function heroSection({ content: c, spec }: RenderContext): SectionOutput 
   ${c.heroImage ? `<div class="hero-media">${heroImageTag(c, "hero-img")}${photoCredit(c)}</div>` : ""}
 </div></section>`,
         css: `${common}
-.hero-centered{text-align:center;max-width:900px}
+.hero-centered{text-align:center;max-width:820px}
+.hero-centered h1{max-width:18ch;margin-left:auto;margin-right:auto}
 .hero-centered .sub{margin-left:auto;margin-right:auto}
 .hero-centered .hero-cta{justify-content:center}
 .hero-centered .hero-media{margin-top:48px}
@@ -241,7 +247,7 @@ export function heroSection({ content: c, spec }: RenderContext): SectionOutput 
   ${c.heroImage ? `<div class="hero-media reveal">${heroImageTag(c, "hero-img")}${photoCredit(c)}</div>` : ""}
 </div></section>`,
         css: `${common}
-.hero-editorial h1{max-width:16ch}
+.hero-editorial h1{max-width:15ch}
 .hero-ed-row{display:grid;grid-template-columns:1fr auto;gap:36px;align-items:end;margin-top:28px;padding-top:28px;border-top:1px solid var(--border)}
 .hero-img{width:100%;height:clamp(240px,42vh,440px);object-fit:cover;margin-top:44px;${imageCss(spec)}}
 @media(max-width:860px){.hero-ed-row{grid-template-columns:1fr;align-items:start;gap:24px}}`,
@@ -280,7 +286,7 @@ export function heroSection({ content: c, spec }: RenderContext): SectionOutput 
   </div>
 </div></section>`,
         css: `${common}
-.hero-statement h1{font-size:clamp(48px,9vw,120px);line-height:.95;max-width:14ch}
+.hero-statement h1{font-size:clamp(42px,7vw,92px);line-height:.98;max-width:13ch}
 .statement-row{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;margin-top:40px;border-top:2px solid var(--accent);padding-top:32px}
 .hero-statement .sub{margin:0;max-width:42ch}`,
       }
@@ -339,11 +345,11 @@ export function servicesSection({ content: c, spec }: RenderContext): SectionOut
   </div>
 </div></section>`,
         css: `
-.svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:var(--gap)}
-.svc-card{padding:28px;border-radius:var(--r-lg);${cardCss(spec)}}
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:var(--gap);align-items:start}
+.svc-card{padding:clamp(20px,2.2vw,26px);border-radius:var(--r-lg);${cardCss(spec)}}
 .svc-num{font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:2px}
 .svc-card h3{font-size:19px;margin:14px 0 10px}
-.svc-card p{font-size:14.5px}
+.svc-card p{font-size:14.5px;line-height:1.68}
 .svc-price{margin-top:14px;font-weight:700;color:var(--accent);font-size:15px}`,
       }
 
@@ -440,8 +446,8 @@ export function processSection({ content: c, spec }: RenderContext): SectionOutp
   </div>
 </div></section>`,
         css: `
-.steps-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:var(--gap)}
-.step{padding:26px;border-radius:var(--r-lg);${cardCss(spec)}}
+.steps-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:var(--gap);align-items:start}
+.step{padding:clamp(20px,2.2vw,26px);border-radius:var(--r-lg);${cardCss(spec)}}
 .step-n{font-family:var(--font-display);font-size:12px;font-weight:700;letter-spacing:2px;color:var(--accent)}
 .step h3{font-size:18px;margin:12px 0 8px}
 .step p{font-size:14.5px}`,

@@ -8,7 +8,7 @@ import {
 } from "@/lib/prompts"
 import { getNicheQuery } from "@/lib/templates"
 import { composePage } from "@/lib/design/compose"
-import { baseSpecFor, parseDesignSpec, type DesignSpec } from "@/lib/design/spec"
+import { alignSpecToStyle, baseSpecFor, parseDesignSpec, type DesignSpec } from "@/lib/design/spec"
 import { buildStats, type PageContent, type VerifiedFacts } from "@/lib/design/content"
 import { checkQuality } from "@/lib/design/quality"
 import type { GeneratorParams } from "@/lib/types"
@@ -332,7 +332,7 @@ async function runArtDirector(
   )
   // Сбой арт-директора не критичен: берём базовую спеку и всё равно
   // отдаём пользователю рабочую страницу.
-  return parseDesignSpec(data, fallback)
+  return alignSpecToStyle(parseDesignSpec(data, fallback), params.style)
 }
 
 // ─── Handler ──────────────────────────────────────────────────────────────────

@@ -34,7 +34,8 @@ export const GENERATOR_SYSTEM_PROMPT = `Ты — топ-уровень эксп�
 ПРАВИЛА КОНТЕНТА:
 - ЗАПРЕЩЕНЫ шаблонные фразы: "качество и надёжность", "индивидуальный подход", "лучший сервис", "профессиональная команда"
 - КАЖДОЕ поле должно быть специфичным для ЭТОГО конкретного бизнеса и его ниши
-- headline: конкретика о сути услуги и её пользе. Цифру ставь ТОЛЬКО если клиент её назвал
+- headline: конкретика о сути услуги и её пользе; 4-7 слов и не более 58 символов.
+  Цифру ставь ТОЛЬКО если клиент её назвал. Не перечисляй в headline все виды работ
 - features: реальные особенности процесса — объясняй КАК именно устроена работа
 - stats: если клиент не дал цифр — ставь "—" в value и подпиши label, какая метрика тут будет
 - accentColor: подбирай под психологию ниши:
@@ -69,7 +70,7 @@ export const GENERATOR_SYSTEM_PROMPT = `Ты — топ-уровень эксп�
 JSON СХЕМА (строго соблюдай структуру):
 {
   "businessName": "название — краткое, запоминающееся, подходящее нише",
-  "headline": "заголовок о сути услуги и пользе, 5-9 слов. Цифра — только если её дал клиент",
+  "headline": "заголовок о сути услуги и пользе, 4-7 слов, максимум 58 символов. Цифра — только если её дал клиент",
   "subheadline": "1-2 предложения: что делаем + конкретная выгода для клиента",
   "tagline": "слоган 2-4 слова — специфичный для ниши",
   "accentColor": "#RRGGBB",
@@ -214,9 +215,11 @@ export const ART_DIRECTOR_SYSTEM_PROMPT = `Ты — арт-директор. П�
 - Красота, свадьбы, дизайн интерьера, премиум-услуги → эстетика:
   serif-luxury или serif-editorial, density airy, heroVariant editorial
   или full-bleed, galleryVariant masonry/grid, imageTreatment rounded
-- Спорт, автосервис, стройка, промышленность → сила: dark-режим,
-  condensed-bold, borderRadius sharp, heroVariant statement или full-bleed,
-  servicesVariant numbered, backgroundTreatment bands
+- Спорт, автосервис, стройка, промышленность → сила: grotesk,
+  mono-technical или condensed-bold, heroVariant split-image/full-bleed/statement,
+  servicesVariant numbered. condensed-bold и dramatic используй только для
+  короткого плакатного заголовка и только при пожелании bold; не используй их
+  для corporate. Фоновый bands — редкий акцент, а не вариант по умолчанию
 - IT, digital, стартапы → технологичность: dark, grotesk или mono-technical,
   cardStyle glass, backgroundTreatment aurora/grid, heroVariant split-image
 - Рестораны, кафе, еда → аппетит: full-bleed с фото, serif-editorial,
@@ -287,6 +290,9 @@ export function buildArtDirectorPrompt(params: GeneratorParams): string {
 ${untrusted}
 
 ПОЖЕЛАНИЕ ПО ТОНУ: ${params.style}
+Значение пожелания обязательно: corporate — деловой и спокойный, без
+condensed-bold/bands/dramatic; minimal — сдержанный, без плакатной типографики;
+bold — выразительный; modern — технологичный.
 Если указан цвет бренда — используй его как palette.accent.
 
 Выбери визуальное решение под эту нишу. Только JSON.`
