@@ -27,8 +27,11 @@ export const maxDuration = 60
  * нашего кода. Переменная окружения позволяет переключить модель без релиза,
  * если Google выведет текущую версию из эксплуатации.
  */
-const GEMINI_MODEL = process.env.GOOGLE_AI_MODEL?.trim() || "gemini-3.6-flash"
-const GEMINI_FALLBACK_MODEL = process.env.GOOGLE_AI_FALLBACK_MODEL?.trim() || "gemini-3.5-flash-lite"
+// На бесплатном API 3.6 Flash регулярно не успевает ответить за время
+// serverless-запроса. Flash-Lite проходит тот же quality gate заметно быстрее;
+// более сильная 3.6 остаётся резервом, если Lite временно недоступна.
+const GEMINI_MODEL = process.env.GOOGLE_AI_MODEL?.trim() || "gemini-3.5-flash-lite"
+const GEMINI_FALLBACK_MODEL = process.env.GOOGLE_AI_FALLBACK_MODEL?.trim() || "gemini-3.6-flash"
 const GROQ_MODEL = process.env.GROQ_MODEL?.trim() || "openai/gpt-oss-120b"
 
 /**
