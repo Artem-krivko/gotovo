@@ -238,7 +238,13 @@ describe("визуальные ограничения", () => {
 
   test("плакатный пресет использует шрифт с кириллицей и ограниченный масштаб", () => {
     assert.match(fontFor("condensed-bold").display, /Roboto Condensed/)
-    assert.equal(buildTokens(baseSpecFor("bold")).displayScale, "clamp(42px,5.8vw,72px)")
+    assert.equal(buildTokens(baseSpecFor("bold")).displayScale, "clamp(40px,5.2vw,64px)")
+  })
+
+  test("заголовок не получает принудительный перенос внутри русского слова", () => {
+    const html = composePage(content({ headline: "Строительная компания для вашего проекта" }), baseSpecFor("bold")).html
+    assert.match(html, /word-break:normal;hyphens:manual/)
+    assert.doesNotMatch(html, /overflow-wrap:anywhere;hyphens:auto/)
   })
 
   test("мини-экскаватор получает точный запрос изображения", () => {

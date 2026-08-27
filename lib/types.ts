@@ -51,6 +51,9 @@ export type GenerationFailureReason =
   | "quality_rejected"
   | "none"
 
+/** Диагностика: какой провайдер реально сформировал каждый этап. */
+export type GenerationProvider = "gemini" | "groq" | "none"
+
 export interface GenerateApiResponse {
   html: string
   /**
@@ -60,6 +63,7 @@ export interface GenerateApiResponse {
   designId: string | null
   source: ContentSource
   failureReason: GenerationFailureReason
+  providers?: { strategist: GenerationProvider; artDirector: GenerationProvider }
   /**
    * Контент и спека возвращаются, чтобы правки стиля пересобирали страницу
    * локально через /api/adjust — без затрат на повторную генерацию.

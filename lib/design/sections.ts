@@ -85,7 +85,7 @@ a{text-decoration:none;color:inherit}
 img{display:block;max-width:100%}
 h1,h2,h3{font-family:var(--font-display)}
 h1,h2{letter-spacing:var(--display-tracking);text-transform:var(--display-transform);text-wrap:balance}
-h1{font-size:var(--display);font-weight:700;line-height:1.02;overflow-wrap:anywhere;hyphens:auto}
+h1{font-size:var(--display);font-weight:700;line-height:1.02;overflow-wrap:normal;word-break:normal;hyphens:manual}
 h2{font-size:clamp(26px,3.2vw,40px);font-weight:700;line-height:1.08}
 h3{letter-spacing:-.35px;line-height:1.25;text-transform:none}
 .wrap{max-width:var(--w);margin:0 auto;padding:0 24px}

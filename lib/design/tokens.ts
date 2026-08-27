@@ -170,7 +170,9 @@ const LAYOUT_WIDTH = {
 const DISPLAY_SCALE = {
   tight: "clamp(30px,3.2vw,40px)",
   regular: "clamp(36px,4.4vw,56px)",
-  dramatic: "clamp(42px,5.8vw,72px)",
+  // Верхняя граница намеренно ниже: превью генератора уже, чем полноценный
+  // лендинг, и 72px превращали обычный русский оффер в плакат из 5–6 строк.
+  dramatic: "clamp(40px,5.2vw,64px)",
 } as const
 
 export function buildTokens(spec: DesignSpec): Tokens {
