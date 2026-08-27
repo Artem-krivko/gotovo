@@ -9,7 +9,8 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "node --test \"lib/**/*.test.mts\"",
-    "check:viewport": "node scripts/check-viewport.mjs"
+    "check:viewport": "node scripts/check-viewport.mjs",
+    "render:references": "node scripts/render-reference-previews.mjs"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",

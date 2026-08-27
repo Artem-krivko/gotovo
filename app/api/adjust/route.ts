@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server"
 import { composePage } from "@/lib/design/compose"
 import { checkQuality } from "@/lib/design/quality"
 import { adjustSpec, baseSpecFor, parseDesignSpec, SPEC_ADJUSTMENTS, type SpecAdjustment } from "@/lib/design/spec"
-import { parsePageContent } from "@/lib/design/parse-content"
+import { parsePageAssets, parsePageContent } from "@/lib/design/parse-content"
 import { clientIp, rateLimit } from "@/lib/rate-limit"
+import { db } from "@/lib/db"
 
 /**
  * Быстрые правки визуального решения без обращения к модели.
@@ -18,6 +19,8 @@ import { clientIp, rateLimit } from "@/lib/rate-limit"
 
 // Правки дешёвые, поэтому лимит мягче, чем у генерации.
 const RATE_LIMIT = { limit: 60, windowMs: 10 * 60 * 1000 }
+const CUID_RE = /^c[a-z0-9]{20,32}$/i
+const SESSION_COOKIE = "session_id"
 
 export async function POST(req: NextRequest) {
   const ip = clientIp(req)
@@ -55,10 +58,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Некорректный контент" }, { status: 400 })
   }
 
+  const assets = parsePageAssets(b.assets)
+  if (!assets) {
+    return NextResponse.json({ error: "Некорректные изображения" }, { status: 400 })
+  }
+
   const spec = parseDesignSpec(b.spec, baseSpecFor("modern"))
   const nextSpec = adjustSpec(spec, adjustment as SpecAdjustment)
 
-  const { html, renderedSections } = composePage(content, nextSpec)
+  const { html, renderedSections } = composePage(content, nextSpec, assets)
   const quality = checkQuality(html, content, nextSpec, renderedSections)
 
   if (!quality.ok) {
@@ -74,5 +82,28 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  return NextResponse.json({ html, spec: nextSpec }, { status: 200 })
+  const parentId = typeof b.designId === "string" && CUID_RE.test(b.designId) ? b.designId : null
+  let designId: string | null = parentId
+  const sessionId = req.cookies.get(SESSION_COOKIE)?.value
+  if (parentId && sessionId) {
+    try {
+      const parent = await db.design.findFirst({
+        where: { id: parentId, sessionId },
+        select: { sessionId: true, prompt: true, businessType: true, style: true, language: true },
+      })
+      if (parent) {
+        const saved = await db.design.create({
+          data: { ...parent, htmlContent: html },
+          select: { id: true },
+        })
+        designId = saved.id
+      }
+    } catch (error) {
+      // Persistence remains a side effect: a valid visual adjustment must not
+      // be lost merely because the database is temporarily unavailable.
+      console.error("[adjust] persist_failed", { parentId, error: String(error) })
+    }
+  }
+
+  return NextResponse.json({ html, spec: nextSpec, assets, designId }, { status: 200 })
 }

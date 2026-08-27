@@ -80,6 +80,14 @@ export const REFERENCE_BRIEFS: ReferenceBrief[] = [
     contrastWith: ["beauty-salon", "wedding-photo"],
   },
   {
+    id: "septic-installation",
+    businessType: "Строительная компания",
+    businessName: "Деколюкс",
+    userDescription: "Монтаж септиков и бурение скважин для частных домов в Могилёвской области.",
+    style: "corporate",
+    contrastWith: ["beauty-salon", "wedding-photo"],
+  },
+  {
     id: "medical-center",
     businessType: "Медицинская клиника",
     userDescription: "Многопрофильный медцентр: терапия, УЗИ, анализы, врачи узких специальностей.",

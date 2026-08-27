@@ -58,6 +58,10 @@ const LUCIDE_CDN_URL = `${LUCIDE_CDN_ORIGIN}/lucide@0.454.0/dist/umd/lucide.min.
 // ─── Нишевые сиды ─────────────────────────────────────────────────────────────
 
 const NICHE_SEEDS: Array<[RegExp, string, string]> = [
+  [/септик|канализац|станци.{0,8}очист|автономн.{0,8}канализац/i, "septic", "septic tank installation private house"],
+  [/скважин|бурени.{0,8}вод|водоснабжен/i, "water-well", "water well drilling equipment"],
+  [/солнечн.{0,8}панел|электростанц/i, "solar", "solar panel installation house"],
+  [/перманентн.{0,8}макияж|бров/i, "permanent-makeup", "permanent makeup eyebrow studio"],
   [/мини.?экскаватор|экскаватор|землян|котлован|транше/i, "excavator", "mini excavator earthmoving machinery"],
   [/стоматол|зуб|дент/i,                                    "dentist",     "dental clinic interior"],
   [/ресторан|кафе|суши|пицц|бургер|шашлык|еда|бар/i,        "restaurant",  "restaurant interior cozy"],
@@ -81,8 +85,9 @@ export function getNicheImage(businessType: string, w = 800, h = 500): string {
   return `https://picsum.photos/seed/${seed}/${w}/${h}`
 }
 
-export function getNicheQuery(businessType: string): string {
-  return NICHE_SEEDS.find(([re]) => re.test(businessType))?.[2] ?? "modern office business team"
+export function getNicheQuery(businessType: string, userDescription = ""): string {
+  const searchable = `${userDescription} ${businessType}`.trim()
+  return NICHE_SEEDS.find(([re]) => re.test(searchable))?.[2] ?? "modern office business team"
 }
 
 // ─── Атрибуция фото ───────────────────────────────────────────────────────────

@@ -47,7 +47,6 @@ function content(overrides: Partial<PageContent> = {}): PageContent {
     phone: "+375 29 000-00-00",
     email: "info@example.by",
     footerTagline: "Слоган в подвале",
-    gallery: [],
     guarantees: [],
     ...overrides,
   }
@@ -77,14 +76,15 @@ describe("разнообразие композиции", () => {
 
     assert.equal(directions.length, 3)
     assert.equal(new Set(fingerprints).size, 3, "Направления совпали по композиции")
-    assert.deepEqual(directions.map((direction) => direction.id), ["recommended", "editorial", "focus"])
+    assert.equal(directions[0].id, "recommended")
   })
 
   test("сдержанная ниша не получает плакатный шрифт в сфокусированном варианте", () => {
     const directions = curateDesignDirections(baseSpecFor("corporate"), "corporate", "Медицинская клиника")
-    const focus = directions.find((direction) => direction.id === "focus")!
-    assert.equal(focus.spec.typography.preset, "sans-modern")
-    assert.notEqual(focus.spec.heroVariant, "full-bleed")
+    for (const direction of directions) {
+      assert.notEqual(direction.spec.typography.preset, "condensed-bold")
+      assert.notEqual(direction.spec.backgroundTreatment, "bands")
+    }
   })
 
   test("четыре базовые спеки дают четыре разные структуры", () => {
@@ -109,7 +109,14 @@ describe("разнообразие композиции", () => {
       sectionOrder: ["hero", "trust", "services", "proof", "contact"] as const,
       proofVariant: "stats-bar" as const,
     }
-    const { html } = composePage(content(), { ...spec, sectionOrder: [...spec.sectionOrder] })
+    const withMetrics = content({
+      stats: [
+        { value: "12", label: "лет на рынке", verified: true },
+        { value: "240", label: "проектов", verified: true },
+        { value: "18", label: "специалистов", verified: true },
+      ],
+    })
+    const { html } = composePage(withMetrics, { ...spec, sectionOrder: [...spec.sectionOrder] })
     assert.equal(
       (html.match(/class="trust"/g) ?? []).length,
       1,
@@ -118,8 +125,14 @@ describe("разнообразие композиции", () => {
   })
 
   test("разные спеки меняют порядок секций, а не только цвета", () => {
-    const modern = composePage(content(), baseSpecFor("modern")).renderedSections
-    const bold = composePage(content(), baseSpecFor("bold")).renderedSections
+    const withMetrics = content({
+      stats: [
+        { value: "12", label: "лет на рынке", verified: true },
+        { value: "240", label: "проектов", verified: true },
+      ],
+    })
+    const modern = composePage(withMetrics, baseSpecFor("modern")).renderedSections
+    const bold = composePage(withMetrics, baseSpecFor("bold")).renderedSections
     assert.notDeepEqual(modern, bold, "Порядок секций совпал у modern и bold")
   })
 
@@ -177,11 +190,34 @@ describe("честность контента", () => {
     assert.ok(html.includes("Реальный отзыв клиента."))
   })
 
-  test("неподтверждённая метрика помечается как пустая, а не как факт", () => {
+  test("полоса метрик скрыта, когда подтверждённых данных недостаточно", () => {
     const { html } = composePage(content(), baseSpecFor("modern"))
-    assert.ok(html.includes("trust-val-empty"), "Нет пометки неподтверждённой метрики")
-    // data-count запускает анимацию счётчика — на «—» её быть не должно
-    assert.ok(!/trust-val-empty[^>]*data-count/.test(html))
+    assert.ok(!html.includes('class="trust"'), "Пустая полоса метрик не должна отображаться")
+    assert.ok(!html.includes("trust-val-empty"), "Placeholder не должен попадать в страницу")
+  })
+})
+
+describe("безопасность визуальных ассетов", () => {
+  test("srcset пропускает только безопасные https-кандидаты", () => {
+    const { html } = composePage(content(), baseSpecFor("modern"), {
+      hero: {
+        url: "https://images.pexels.com/photos/1/large.jpg",
+        alt: "Фото услуги",
+        srcSet: [
+          "https://images.pexels.com/photos/1/medium.jpg 350w",
+          'https://example.com/x.jpg\" onerror=\"alert(1) 940w',
+          "javascript:alert(1) 1200w",
+        ].join(", "),
+        sizes: '(max-width: 860px) 100vw, 55vw\" onload=\"alert(1)',
+      },
+      gallery: [],
+    })
+
+    assert.ok(html.includes("medium.jpg 350w"))
+    assert.ok(!html.includes("javascript:"))
+    assert.ok(!html.includes(' onerror="'))
+    assert.ok(!html.includes(' onload="'))
+    assert.ok(html.includes("&quot; onload=&quot;"), "sizes должен быть экранирован как значение атрибута")
   })
 })
 
@@ -353,13 +389,14 @@ describe("подтверждённые факты владельца", () => {
     const c = content({
       stats: [
         { value: "12", label: "лет на рынке", verified: true },
-        { value: "—", label: "проектов", verified: false },
+        { value: "240", label: "проектов", verified: true },
+        { value: "—", label: "клиентов", verified: false },
       ],
     })
     const { html } = composePage(c, baseSpecFor("modern"))
     assert.ok(html.includes(">12<"), "Подтверждённая цифра не отрисована")
     // Анимация счётчика должна быть только у подтверждённых значений.
     assert.ok(html.includes("data-count"), "У реальной цифры нет data-count")
-    assert.ok(html.includes("trust-val-empty"), "Placeholder не помечен")
+    assert.ok(!html.includes('trust-val-empty">—<'), "Placeholder не должен отображаться")
   })
 })

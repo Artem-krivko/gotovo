@@ -110,11 +110,11 @@ export interface Palette {
  * было бы вектором инъекции. Пресет — это индекс в проверенном списке.
  */
 export const FONT_PRESETS = [
-  "grotesk", // Space Grotesk — нейтральный технологичный
-  "sans-modern", // Plus Jakarta Sans — дружелюбный современный
-  "serif-editorial", // DM Serif Display + DM Sans — редакционный
-  "serif-luxury", // Cormorant Garamond + Plus Jakarta — премиальный
-  "condensed-bold", // Barlow Condensed — плакатный, спортивный
+  "grotesk", // Manrope — нейтральный технологичный
+  "sans-modern", // Inter — дружелюбный современный
+  "serif-editorial", // PT Serif + PT Sans — редакционный
+  "serif-luxury", // Cormorant Garamond + Manrope — премиальный
+  "condensed-bold", // Roboto Condensed + Roboto — плакатный, спортивный
   "mono-technical", // IBM Plex Mono + Sans — инженерный
   "slab-institutional", // IBM Plex Serif + Sans — институциональный
 ] as const

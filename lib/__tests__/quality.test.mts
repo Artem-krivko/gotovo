@@ -43,7 +43,6 @@ function contentFor(brief: (typeof REFERENCE_BRIEFS)[number]): PageContent {
     phone: "+375 29 000-00-00",
     email: "info@example.by",
     footerTagline: brief.businessType,
-    gallery: [],
     guarantees: [],
   }
 }

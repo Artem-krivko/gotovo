@@ -11,7 +11,7 @@ const projectRoot = dirname(fileURLToPath(import.meta.url));
 // CSP основного приложения здесь намеренно не задаётся: inline-скрипты Next
 // требуют nonce-пайплайна через middleware — это отдельная задача.
 // Превью генератора при этом закрыто собственной строгой CSP
-// (см. PREVIEW_CSP в lib/templates и app/api/design/[id]/route.ts).
+// (см. PREVIEW_CSP в lib/design/compose и app/api/design/[id]/route.ts).
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "SAMEORIGIN" },

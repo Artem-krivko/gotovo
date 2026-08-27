@@ -1,7 +1,9 @@
 import type { GeneratorStyle } from "../types.ts"
+import { ARCHETYPES } from "./archetypes.ts"
+import { specDistance } from "./quality.ts"
 import type { DesignSpec } from "./spec.ts"
 
-export type DesignDirectionId = "recommended" | "editorial" | "focus"
+export type DesignDirectionId = "recommended" | string
 
 export interface DesignDirection {
   id: DesignDirectionId
@@ -10,86 +12,74 @@ export interface DesignDirection {
   spec: DesignSpec
 }
 
-const EXPRESSIVE_NICHE = /(фитнес|спорт|кофе|кафе|ресторан|салон|красот|фото|видео|fashion|event)/iu
+function hash(value: string): number {
+  let result = 0
+  for (let index = 0; index < value.length; index += 1) {
+    result = Math.imul(31, result) + value.charCodeAt(index) | 0
+  }
+  return result >>> 0
+}
 
 /**
- * Три направления из одной AI-спеки. Модель создаёт содержание и исходную
- * арт-дирекцию один раз; остальные концепты — кураторские комбинации нашей
- * библиотеки. Поэтому сравнение не расходует ещё два AI-запроса.
+ * The AI recommendation stays first. Two alternatives come from a niche-aware
+ * pool and must be materially different from every direction already chosen.
  */
 export function curateDesignDirections(
   base: DesignSpec,
   style: GeneratorStyle,
-  businessType: string
+  businessType: string,
+  userDescription = ""
 ): DesignDirection[] {
-  const expressive = EXPRESSIVE_NICHE.test(businessType)
+  const context = `${businessType} ${userDescription}`
+  const candidates = ARCHETYPES
+    .map((preset) => ({
+      preset,
+      spec: preset.apply(base, style),
+      score:
+        (preset.fit.test(context) ? 100 : 0) +
+        (preset.styles.includes(style) ? 20 : 0) +
+        (hash(`${context}:${preset.id}`) % 17),
+    }))
+    .sort((a, b) => b.score - a.score)
 
-  const editorial: DesignSpec = {
-    ...base,
-    sectionOrder: ["hero", "services", "proof", "process", "faq", "contact"],
-    heroVariant: "editorial",
-    layoutVariant: style === "corporate" ? "contained" : "asymmetric",
-    palette: { ...base.palette, mode: "light" },
-    typography: {
-      preset: expressive ? "serif-luxury" : "serif-editorial",
-      scale: "dramatic",
-    },
-    density: "airy",
-    borderRadius: "soft",
-    cardStyle: "flat",
-    imageTreatment: "rounded",
-    backgroundTreatment: "plain",
-    ctaVariant: "underline",
-    servicesVariant: "list",
-    processVariant: "timeline",
-    faqVariant: "two-column",
-    contactVariant: "minimal",
+  const selected: DesignDirection[] = [{
+    id: "recommended",
+    label: "AI-рекомендация",
+    description: "Баланс бренда, структуры и конверсии",
+    spec: base,
+  }]
+
+  for (const candidate of candidates) {
+    if (selected.length === 3) break
+    const distinct = selected.every((current) =>
+      current.spec.heroVariant !== candidate.spec.heroVariant &&
+      specDistance(current.spec, candidate.spec) >= 8
+    )
+    if (!distinct) continue
+    selected.push({
+      id: candidate.preset.id,
+      label: candidate.preset.label,
+      description: candidate.preset.description,
+      spec: candidate.spec,
+    })
   }
 
-  const focusTypography =
-    style === "minimal" || style === "corporate" || !expressive
-      ? "sans-modern"
-      : "condensed-bold"
-
-  const focus: DesignSpec = {
-    ...base,
-    sectionOrder: ["hero", "trust", "services", "process", "proof", "faq", "contact"],
-    heroVariant: expressive ? "full-bleed" : "split-image",
-    layoutVariant: "wide",
-    palette: { ...base.palette, mode: expressive ? "dark" : base.palette.mode },
-    typography: { preset: focusTypography, scale: expressive ? "dramatic" : "regular" },
-    density: "regular",
-    borderRadius: expressive ? "sharp" : "round",
-    cardStyle: expressive ? "outlined" : "elevated",
-    imageTreatment: expressive ? "overlay" : "plain",
-    backgroundTreatment: expressive ? "noise" : "grid",
-    ctaVariant: "solid",
-    servicesVariant: expressive ? "numbered" : "cards",
-    processVariant: expressive ? "steps-row" : "accordion",
-    faqVariant: "accordion",
-    contactVariant: expressive ? "banner" : "boxed",
+  // The pool is deliberately redundant, but keep a graceful fallback if a
+  // future style alignment makes several presets converge.
+  if (selected.length < 3) {
+    for (const candidate of candidates) {
+      if (selected.length === 3) break
+      if (selected.some((item) => item.id === candidate.preset.id)) continue
+      if (selected.every((item) => specDistance(item.spec, candidate.spec) >= 8)) {
+        selected.push({
+          id: candidate.preset.id,
+          label: candidate.preset.label,
+          description: candidate.preset.description,
+          spec: candidate.spec,
+        })
+      }
+    }
   }
 
-  return [
-    {
-      id: "recommended",
-      label: "AI-рекомендация",
-      description: "Баланс бренда, структуры и конверсии",
-      spec: base,
-    },
-    {
-      id: "editorial",
-      label: "Редакционный",
-      description: "Воздух, выразительная типографика и спокойный ритм",
-      spec: editorial,
-    },
-    {
-      id: "focus",
-      label: expressive ? "Энергичный" : "Сфокусированный",
-      description: expressive
-        ? "Контрастный первый экран и динамичная подача"
-        : "Чёткая иерархия, доверие и сильный призыв к действию",
-      spec: focus,
-    },
-  ]
+  return selected
 }

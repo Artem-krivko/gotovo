@@ -1,0 +1,64 @@
+// Renders deterministic HTML fixtures for the viewport probe. This deliberately
+// avoids AI and external image APIs: the goal is to exercise every composition
+// with stable copy before a release.
+
+import { mkdir, writeFile } from "node:fs/promises"
+import { resolve } from "node:path"
+
+import { composePage } from "../lib/design/compose.ts"
+import { curateDesignDirections } from "../lib/design/directions.ts"
+import { REFERENCE_BRIEFS } from "../lib/design/reference-briefs.ts"
+import { baseSpecFor } from "../lib/design/spec.ts"
+
+const outputDir = resolve(process.argv[2] ?? ".reference-previews")
+const selectedIds = new Set(
+  process.argv.slice(3).length
+    ? process.argv.slice(3)
+    : ["dental", "septic-installation", "gym", "wedding-photo"]
+)
+
+function contentFor(brief) {
+  return {
+    businessName: brief.businessName ?? brief.businessType,
+    headline: brief.userDescription.split(/[.!?]/)[0].slice(0, 100),
+    subheadline: brief.userDescription,
+    tagline: brief.businessType,
+    services: [
+      { name: "Основная услуга", description: "Понятный состав работ и ожидаемый результат для клиента." },
+      { name: "Второе направление", description: "Дополнительная услуга, которая дополняет основное предложение." },
+      { name: "Консультация", description: "Уточняем задачу и предлагаем подходящий формат работы." },
+    ],
+    features: [
+      { title: "Уточняем задачу", description: "Собираем вводные и согласуем ожидаемый результат." },
+      { title: "Предлагаем решение", description: "Подбираем структуру работ под конкретные условия." },
+      { title: "Проверяем результат", description: "Контролируем качество на ключевых этапах." },
+    ],
+    stats: [],
+    testimonial: null,
+    ctaHeadline: "Обсудить задачу",
+    ctaSubtext: "Расскажите о проекте — предложим следующий шаг.",
+    phone: "+375 29 000-00-00",
+    email: "info@example.by",
+    footerTagline: "Черновик концепта",
+    guarantees: [],
+  }
+}
+
+await mkdir(outputDir, { recursive: true })
+const files = []
+for (const brief of REFERENCE_BRIEFS.filter((item) => selectedIds.has(item.id))) {
+  const content = contentFor(brief)
+  const directions = curateDesignDirections(
+    baseSpecFor(brief.style),
+    brief.style,
+    brief.businessType,
+    brief.userDescription
+  )
+  for (const direction of directions) {
+    const file = resolve(outputDir, `${brief.id}-${direction.id}.html`)
+    await writeFile(file, composePage(content, direction.spec).html, "utf8")
+    files.push(file)
+  }
+}
+
+console.log(files.join("\n"))

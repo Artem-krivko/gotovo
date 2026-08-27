@@ -2,6 +2,8 @@
 
 import { useState, useCallback, useEffect, useRef } from "react"
 import type { ContentSource, GeneratedConcept } from "@/lib/types"
+import type { PageAssets, PageContent } from "@/lib/design/content"
+import type { DesignSpec } from "@/lib/design/spec"
 import { track } from "@/lib/analytics"
 
 interface GeneratorPreviewProps {
@@ -16,12 +18,18 @@ interface GeneratorPreviewProps {
    */
   source: ContentSource
   /** Контент и спека для быстрых правок без повторной генерации. */
-  content: unknown
-  spec: unknown
+  content: PageContent | null
+  spec: DesignSpec | null
+  assets: PageAssets | null
   concepts: GeneratedConcept[]
   activeConceptId: GeneratedConcept["id"]
   onConceptSelect: (concept: GeneratedConcept) => void
-  onAdjusted: (html: string, spec: unknown) => void
+  onAdjusted: (
+    html: string,
+    spec: DesignSpec,
+    assets: PageAssets,
+    designId: string | null
+  ) => void
 }
 
 /** Кнопки правок. Меняют DesignSpec, а не запускают генерацию заново. */
@@ -324,6 +332,7 @@ export function GeneratorPreview({
   source,
   content,
   spec,
+  assets,
   concepts,
   activeConceptId,
   onConceptSelect,
@@ -382,26 +391,34 @@ export function GeneratorPreview({
         const res = await fetch("/api/adjust", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ adjustment, content, spec }),
+          body: JSON.stringify({ adjustment, content, spec, assets, designId }),
         })
-        const data = (await res.json()) as { html?: string; spec?: unknown; error?: string }
-        if (!res.ok || !data.html) throw new Error(data.error ?? "Не удалось применить")
-        onAdjusted(data.html, data.spec)
+        const data = (await res.json()) as {
+          html?: string
+          spec?: DesignSpec
+          assets?: PageAssets
+          designId?: string | null
+          error?: string
+        }
+        if (!res.ok || !data.html || !data.spec || !data.assets) {
+          throw new Error(data.error ?? "Не удалось применить")
+        }
+        onAdjusted(data.html, data.spec, data.assets, data.designId ?? null)
       } catch (err) {
         setAdjustError(err instanceof Error ? err.message : `Не удалось применить «${label}»`)
       } finally {
         setAdjusting(null)
       }
     },
-    [content, spec, onAdjusted]
+    [content, spec, assets, designId, onAdjusted]
   )
 
   const handleOpenInTab = useCallback(() => {
     // Предпочитаем серверный маршрут: он отдаёт превью с заголовком
     // `Content-Security-Policy: sandbox`, то есть в изолированном origin.
-    // В БД сохраняется исходная AI-рекомендация. Альтернативные направления
-    // существуют локально, поэтому для них открываем именно текущий HTML.
-    if (designId && activeConceptId === "recommended") {
+    // Каждый концепт и каждая применённая правка сохраняются отдельной
+    // версией, поэтому designId всегда относится именно к текущему HTML.
+    if (designId) {
       window.open(`/api/design/${encodeURIComponent(designId)}`, "_blank", "noopener,noreferrer")
       return
     }
@@ -414,7 +431,7 @@ export function GeneratorPreview({
     const url = URL.createObjectURL(blob)
     window.open(url, "_blank", "noopener,noreferrer")
     setTimeout(() => URL.revokeObjectURL(url), 60_000)
-  }, [html, designId, activeConceptId])
+  }, [html, designId])
 
   return (
     <>

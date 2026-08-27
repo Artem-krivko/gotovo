@@ -270,6 +270,27 @@ export function specFingerprint(spec: DesignSpec): string {
   ].join("|")
 }
 
+/** Weighted distance between the decisions users notice first. */
+export function specDistance(a: DesignSpec, b: DesignSpec): number {
+  let distance = 0
+  if (a.sectionOrder.join(">") !== b.sectionOrder.join(">")) distance += 3
+  if (a.heroVariant !== b.heroVariant) distance += 3
+  if (a.typography.preset !== b.typography.preset) distance += 3
+  if (a.palette.mode !== b.palette.mode) distance += 3
+  if (a.servicesVariant !== b.servicesVariant) distance += 2
+  if (a.density !== b.density) distance += 2
+  if (a.cardStyle !== b.cardStyle) distance += 2
+  if (a.backgroundTreatment !== b.backgroundTreatment) distance += 2
+  if (a.processVariant !== b.processVariant) distance += 1
+  if (a.contactVariant !== b.contactVariant) distance += 1
+  if (a.faqVariant !== b.faqVariant) distance += 1
+  if (a.borderRadius !== b.borderRadius) distance += 1
+  if (a.imageTreatment !== b.imageTreatment) distance += 1
+  if (a.ctaVariant !== b.ctaVariant) distance += 1
+  if (a.layoutVariant !== b.layoutVariant) distance += 1
+  return distance
+}
+
 // ─── Точка входа ──────────────────────────────────────────────────────────────
 
 export function checkQuality(

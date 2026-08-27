@@ -1,5 +1,8 @@
 // lib/types.ts — общие типы проекта
 
+import type { PageAssets, PageContent } from "./design/content.ts"
+import type { DesignSpec } from "./design/spec.ts"
+
 // ─── Генератор дизайна ────────────────────────────────────────────────────────
 
 export type GeneratorStyle = "modern" | "minimal" | "bold" | "corporate"
@@ -55,11 +58,14 @@ export type GenerationFailureReason =
 export type GenerationProvider = "gemini" | "groq" | "none"
 
 export interface GeneratedConcept {
-  id: "recommended" | "editorial" | "focus"
+  id: string
   label: string
   description: string
   html: string
-  spec: unknown
+  spec: DesignSpec
+  assets: PageAssets
+  /** Exact persisted version of this concept; null when persistence failed. */
+  designId: string | null
 }
 
 export interface GenerateApiResponse {
@@ -78,8 +84,9 @@ export interface GenerateApiResponse {
    * Контент и спека возвращаются, чтобы правки стиля пересобирали страницу
    * локально через /api/adjust — без затрат на повторную генерацию.
    */
-  content: unknown
-  spec: unknown
+  content: PageContent
+  spec: DesignSpec
+  assets: PageAssets
 }
 
 export interface GenerateApiError {

@@ -14,7 +14,7 @@ import {
   safeUrl,
 } from "../html.ts"
 import type { DesignSpec, SectionId } from "./spec.ts"
-import type { ImageAsset, PageContent } from "./content.ts"
+import type { ImageAsset, PageAssets, PageContent } from "./content.ts"
 import { buildTokens, tokensToCss } from "./tokens.ts"
 import {
   BASE_CSS,
@@ -34,14 +34,12 @@ import {
 
 // ─── CSP превью ───────────────────────────────────────────────────────────────
 
-const LUCIDE_ORIGIN = "https://unpkg.com"
-
 export const PREVIEW_CSP = [
   "default-src 'none'",
   "img-src data: https:",
   "font-src https://fonts.gstatic.com",
   "style-src 'unsafe-inline' https://fonts.googleapis.com",
-  `script-src 'unsafe-inline' ${LUCIDE_ORIGIN}`,
+  "script-src 'unsafe-inline'",
   "connect-src 'none'",
   "form-action 'none'",
   "base-uri 'none'",
@@ -58,10 +56,28 @@ function sanitizeImage(img: ImageAsset | undefined, altFallback: string): ImageA
   return {
     url,
     alt: escapeClamped(img.alt || altFallback, 120),
+    srcSet: sanitizeSrcSet(img.srcSet),
+    sizes: img.sizes ? escapeClamped(img.sizes, 500) : undefined,
     credit: img.credit
       ? { name: escapeClamped(img.credit.name, 60), url: safeUrl(img.credit.url, "#") }
       : undefined,
   }
+}
+
+function sanitizeSrcSet(value: string | undefined): string | undefined {
+  if (!value) return undefined
+  const candidates = value
+    .split(",")
+    .map((item) => item.trim())
+    .map((item) => {
+      const match = item.match(/^(\S+)\s+(\d{2,4}w)$/)
+      if (!match) return null
+      const url = safeImageSrc(match[1])
+      return url ? `${url} ${match[2]}` : null
+    })
+    .filter((item): item is string => Boolean(item))
+    .slice(0, 6)
+  return candidates.length ? candidates.join(", ") : undefined
 }
 
 /**
@@ -69,7 +85,7 @@ function sanitizeImage(img: ImageAsset | undefined, altFallback: string): ImageA
  * результатом этой функции и не имеют доступа к сырому контенту — поэтому
  * добавление новой секции не может случайно открыть XSS.
  */
-function toRenderContent(c: PageContent): RenderContent {
+function toRenderContent(c: PageContent, assets: PageAssets): RenderContent {
   const businessName = escapeClamped(c.businessName, 60)
 
   return {
@@ -106,8 +122,8 @@ function toRenderContent(c: PageContent): RenderContent {
     email: { href: safeMailtoHref(c.email), label: escapeClamped(c.email, 90) },
     footerTagline: escapeClamped(c.footerTagline, 70),
     geography: c.geography ? escapeClamped(c.geography, 60) : undefined,
-    heroImage: sanitizeImage(c.heroImage, businessName),
-    gallery: c.gallery
+    heroImage: sanitizeImage(assets.hero, businessName),
+    gallery: assets.gallery
       .slice(0, 9)
       .map((img) => sanitizeImage(img, businessName))
       .filter((img): img is ImageAsset => Boolean(img)),
@@ -192,8 +208,12 @@ export interface ComposeResult {
   renderedSections: SectionId[]
 }
 
-export function composePage(content: PageContent, spec: DesignSpec): ComposeResult {
-  const c = toRenderContent(content)
+export function composePage(
+  content: PageContent,
+  spec: DesignSpec,
+  assets: PageAssets = { gallery: [] }
+): ComposeResult {
+  const c = toRenderContent(content, assets)
   const ctx: RenderContext = { content: c, spec }
   const tokens = buildTokens(spec)
   const faq = buildFaq(c)

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@/lib/db"
-import { PREVIEW_CSP } from "@/lib/templates"
+import { PREVIEW_CSP } from "@/lib/design/compose"
 
 // cuid — то, что генерирует Prisma (@default(cuid())). Проверяем форму id
 // до похода в БД: отсекает мусорные запросы и перебор.

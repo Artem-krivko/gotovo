@@ -105,6 +105,25 @@ const PROBE = `(() => {
   }
   offenders.sort((a, b) => b.over - a.over);
   const h1 = document.querySelector("h1");
+  const visible = (el) => {
+    const r = el.getBoundingClientRect();
+    const s = getComputedStyle(el);
+    return r.width > 0 && r.height > 0 && s.display !== "none" && s.visibility !== "hidden";
+  };
+  const smallText = [...document.querySelectorAll("p,li,a,button")].filter((el) => {
+    if (!visible(el) || el.classList.contains("credit")) return false;
+    return parseFloat(getComputedStyle(el).fontSize) < 11;
+  }).length;
+  const smallTargets = [...document.querySelectorAll(".btn,.site-phone,summary")].filter((el) => {
+    if (!visible(el) || el.classList.contains("credit")) return false;
+    const r = el.getBoundingClientRect();
+    return r.width < 40 || r.height < 40;
+  }).length;
+  const heroImage = document.querySelector(".hero-img,.hero-bg");
+  const collapsedSections = [...document.querySelectorAll("section")].filter((el) => {
+    if (!visible(el)) return false;
+    return el.getBoundingClientRect().height < 40;
+  }).length;
   return JSON.stringify({
     vw,
     scrollWidth,
@@ -112,6 +131,10 @@ const PROBE = `(() => {
     offenders: offenders.slice(0, 6),
     h1Height: h1 ? Math.round(h1.getBoundingClientRect().height) : 0,
     viewportHeight: window.innerHeight,
+    smallText,
+    smallTargets,
+    collapsedSections,
+    heroNaturalWidth: heroImage instanceof HTMLImageElement ? heroImage.naturalWidth : null,
     ctaInViewport: (() => {
       const cta = document.querySelector(".hero-cta a");
       if (!cta) return null;
@@ -178,7 +201,7 @@ async function main() {
       "--no-first-run",
       "--hide-scrollbars",
       `--remote-debugging-port=${port}`,
-      "--user-data-dir=/tmp/gotovo-viewport-check",
+      `--user-data-dir=/tmp/gotovo-viewport-check-${port}`,
       "about:blank",
     ],
     { stdio: "ignore" }
@@ -221,6 +244,22 @@ async function main() {
         if (r.ctaInViewport === false) {
           failed = true
           console.log(`      ❌ кнопка CTA не попадает в первый экран`)
+        }
+        if (r.smallText > 0) {
+          failed = true
+          console.log(`      ❌ найдено слишком мелких текстов: ${r.smallText}`)
+        }
+        if (r.smallTargets > 0) {
+          failed = true
+          console.log(`      ❌ интерактивных целей меньше 40px: ${r.smallTargets}`)
+        }
+        if (r.collapsedSections > 0) {
+          failed = true
+          console.log(`      ❌ подозрительно схлопнутых секций: ${r.collapsedSections}`)
+        }
+        if (r.heroNaturalWidth !== null && r.heroNaturalWidth < 800) {
+          failed = true
+          console.log(`      ❌ hero-изображение загружено только в ${r.heroNaturalWidth}px`)
         }
       }
     }

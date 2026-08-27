@@ -255,6 +255,11 @@ galleryVariant: grid | masonry | carousel | none
 faqVariant: accordion | two-column
 contactVariant: banner | split | boxed | minimal
 
+VISUAL BRIEF:
+- visualBrief.query — короткий поисковый запрос для фотостока на английском,
+  3–7 простых слов, описывающих конкретную услугу, а не общую категорию
+- visualBrief.avoid — до 5 коротких английских фраз с нерелевантными сюжетами
+
 ФОРМАТ ОТВЕТА:
 {
   "sectionOrder": ["hero","services","process","faq","contact"],
@@ -273,7 +278,11 @@ contactVariant: banner | split | boxed | minimal
   "processVariant": "...",
   "galleryVariant": "...",
   "faqVariant": "...",
-  "contactVariant": "..."
+  "contactVariant": "...",
+  "visualBrief": {
+    "query": "specific service in a real setting",
+    "avoid": ["irrelevant scene"]
+  }
 }`
 
 export function buildArtDirectorPrompt(params: GeneratorParams): string {

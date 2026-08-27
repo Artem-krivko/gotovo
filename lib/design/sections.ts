@@ -9,7 +9,7 @@
 // работают с безопасными строками.
 
 import type { DesignSpec } from "./spec.ts"
-import type { PageContent } from "./content.ts"
+import type { ImageAsset, PageContent } from "./content.ts"
 
 /**
  * Контент на момент рендера: все строки уже экранированы в compose.ts,
@@ -18,6 +18,8 @@ import type { PageContent } from "./content.ts"
 export interface RenderContent extends Omit<PageContent, "phone" | "email"> {
   phone: { href: string; label: string }
   email: { href: string; label: string }
+  heroImage?: ImageAsset
+  gallery: ImageAsset[]
 }
 
 export interface RenderContext {
@@ -109,7 +111,7 @@ section{padding:var(--pad) 0}
 .site-head{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
 .site-head-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;height:62px}
 .site-logo{font-family:var(--font-display);font-weight:700;font-size:17px}
-.site-phone{font-size:14px;font-weight:600;color:var(--accent)}
+.site-phone{display:inline-flex;align-items:center;min-height:40px;font-size:14px;font-weight:600;color:var(--accent)}
 .site-foot{border-top:1px solid var(--border);padding:26px 0}
 .site-foot-inner{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:13px}`
 
@@ -178,12 +180,21 @@ function heroActions(c: RenderContent): string {
 
 function heroImageTag(c: RenderContent, className: string): string {
   if (!c.heroImage) return ""
-  return `<img class="${className}" src="${c.heroImage.url}" alt="${c.heroImage.alt}" loading="eager" decoding="async">`
+  const srcSet = c.heroImage.srcSet ? ` srcset="${c.heroImage.srcSet}"` : ""
+  const sizes = c.heroImage.sizes ? ` sizes="${c.heroImage.sizes}"` : ""
+  return `<img class="${className}" src="${c.heroImage.url}"${srcSet}${sizes} alt="${c.heroImage.alt}" loading="eager" decoding="async">`
 }
 
 function photoCredit(c: RenderContent): string {
   if (!c.heroImage?.credit) return ""
   return `<a class="credit" href="${c.heroImage.credit.url}" target="_blank" rel="noopener noreferrer">Фото: ${c.heroImage.credit.name} / Pexels</a>`
+}
+
+function heroLengthClass(c: RenderContent): string {
+  const length = c.headline.replace(/&(?:#\d+|#x[\da-f]+|\w+);/gi, "x").length
+  if (length > 92) return " hero-very-long"
+  if (length > 68) return " hero-long"
+  return ""
 }
 
 export function heroSection({ content: c, spec }: RenderContext): SectionOutput {
@@ -194,12 +205,14 @@ export function heroSection({ content: c, spec }: RenderContext): SectionOutput 
 .hero-cta{display:flex;gap:12px;flex-wrap:wrap}
 .btn-accent{${ctaCss(spec)}}
 .credit{display:inline-block;margin-top:8px;font-size:11px;color:var(--text-muted)}
+.hero-long h1{font-size:clamp(34px,4.4vw,56px)!important;max-width:18ch!important}
+.hero-very-long h1{font-size:clamp(30px,3.8vw,48px)!important;max-width:21ch!important}
 `
 
   switch (spec.heroVariant) {
     case "split-image":
       return {
-        html: `<section class="hero" id="hero"><div class="wrap hero-split">
+        html: `<section class="hero${heroLengthClass(c)}" id="hero"><div class="wrap hero-split">
   <div class="reveal">
     <p class="badge">${c.tagline}</p>
     <h1>${c.headline}</h1>
@@ -217,7 +230,7 @@ export function heroSection({ content: c, spec }: RenderContext): SectionOutput 
 
     case "centered":
       return {
-        html: `<section class="hero" id="hero"><div class="wrap hero-centered reveal">
+        html: `<section class="hero${heroLengthClass(c)}" id="hero"><div class="wrap hero-centered reveal">
   <p class="badge">${c.tagline}</p>
   <h1>${c.headline}</h1>
   <p class="sub">${c.subheadline}</p>
@@ -235,7 +248,7 @@ export function heroSection({ content: c, spec }: RenderContext): SectionOutput 
 
     case "editorial":
       return {
-        html: `<section class="hero" id="hero"><div class="wrap">
+        html: `<section class="hero${heroLengthClass(c)}" id="hero"><div class="wrap">
   <div class="reveal hero-editorial">
     <p class="badge">${c.tagline}</p>
     <h1>${c.headline}</h1>
@@ -255,9 +268,10 @@ export function heroSection({ content: c, spec }: RenderContext): SectionOutput 
 
     case "full-bleed":
       return {
-        html: `<section class="hero hero-full" id="hero">
+        html: `<section class="hero hero-full${heroLengthClass(c)}" id="hero">
   ${heroImageTag(c, "hero-bg")}
   <div class="hero-scrim" aria-hidden="true"></div>
+  ${photoCredit(c)}
   <div class="wrap hero-full-inner reveal">
     <p class="badge">${c.tagline}</p>
     <h1>${c.headline}</h1>
@@ -270,6 +284,7 @@ export function heroSection({ content: c, spec }: RenderContext): SectionOutput 
 .hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;${spec.imageTreatment === "duotone" ? "filter:grayscale(1) contrast(1.15);" : ""}}
 .hero-scrim{position:absolute;inset:0;background:linear-gradient(90deg,var(--bg) 12%,color-mix(in srgb,var(--bg) 55%,transparent) 55%,transparent 100%)}
 .hero-full-inner{position:relative;max-width:var(--w);width:100%}
+.hero-full>.credit{position:absolute;right:18px;bottom:12px;z-index:3;margin:0;padding:4px 8px;border-radius:6px;background:rgba(0,0,0,.48);color:#fff}
 .hero-full-inner h1,.hero-full-inner .sub{max-width:22ch}
 .hero-full .sub{max-width:46ch}
 @media(max-width:860px){.hero-scrim{background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 40%,transparent),var(--bg) 78%)}.hero-full{min-height:auto;padding:calc(var(--pad) * .9) 0}}`,
@@ -277,7 +292,7 @@ export function heroSection({ content: c, spec }: RenderContext): SectionOutput 
 
     case "statement":
       return {
-        html: `<section class="hero hero-statement" id="hero"><div class="wrap reveal">
+        html: `<section class="hero hero-statement${heroLengthClass(c)}" id="hero"><div class="wrap reveal">
   <p class="badge">${c.tagline}</p>
   <h1>${c.headline}</h1>
   <div class="statement-row">
@@ -296,11 +311,12 @@ export function heroSection({ content: c, spec }: RenderContext): SectionOutput 
 // ─── Trust (полоса метрик) ────────────────────────────────────────────────────
 
 export function trustSection({ content: c }: RenderContext): SectionOutput {
-  if (c.stats.length === 0) return EMPTY
+  const verified = c.stats.filter((stat) => stat.verified)
+  if (verified.length < 2) return EMPTY
 
   return {
     html: `<section class="trust"><div class="wrap trust-row">
-  ${c.stats
+  ${verified
     .map(
       (s) => `<div class="trust-item reveal">
     <div class="trust-val${s.verified ? "" : " trust-val-empty"}"${s.verified ? " data-count" : ""}>${s.value}</div>
@@ -311,7 +327,7 @@ export function trustSection({ content: c }: RenderContext): SectionOutput {
 </div></section>`,
     css: `
 .trust{padding:calc(var(--pad) * .55) 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.trust-row{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap)}
+.trust-row{display:grid;grid-template-columns:repeat(${verified.length},1fr);gap:var(--gap)}
 .trust-item{text-align:center}
 .trust-val{font-family:var(--font-display);font-size:clamp(28px,4vw,44px);font-weight:700;color:var(--accent);line-height:1}
 /* Неподтверждённая метрика видна как пустое место под цифру, а не как факт. */
@@ -561,8 +577,14 @@ export function gallerySection({ content: c, spec }: RenderContext): SectionOutp
 
   const items = c.gallery
     .map(
-      (img) =>
-        `<figure class="g-item reveal"><img src="${img.url}" alt="${img.alt}" loading="lazy" decoding="async"></figure>`
+      (img) => {
+        const srcSet = img.srcSet ? ` srcset="${img.srcSet}"` : ""
+        const sizes = img.sizes ? ` sizes="${img.sizes}"` : ""
+        const credit = img.credit
+          ? `<a class="credit" href="${img.credit.url}" target="_blank" rel="noopener noreferrer">Фото: ${img.credit.name} / Pexels</a>`
+          : ""
+        return `<figure class="g-item reveal"><img src="${img.url}"${srcSet}${sizes} alt="${img.alt}" loading="lazy" decoding="async">${credit}</figure>`
+      }
     )
     .join("")
 

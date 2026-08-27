@@ -67,7 +67,16 @@ export interface Testimonial {
 export interface ImageAsset {
   url: string
   alt: string
+  /** Responsive candidates assembled from a trusted image provider. */
+  srcSet?: string
+  sizes?: string
   credit?: { name: string; url: string }
+}
+
+/** Visual assets vary by concept, while the generated copy is shared. */
+export interface PageAssets {
+  hero?: ImageAsset
+  gallery: ImageAsset[]
 }
 
 export interface PageContent {
@@ -86,8 +95,6 @@ export interface PageContent {
   email: string
   footerTagline: string
   geography?: string
-  heroImage?: ImageAsset
-  gallery: ImageAsset[]
   /** Подтверждённые гарантии — рендерятся, только если они реальны. */
   guarantees: string[]
 }

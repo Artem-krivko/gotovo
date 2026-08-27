@@ -5,13 +5,13 @@
 // должна быть корректной — иначе в разметку уедут undefined.
 
 import { sanitizeUserText } from "@/lib/validation"
-import type { ImageAsset, PageContent, Stat } from "./content.ts"
+import type { ImageAsset, PageAssets, PageContent, Stat } from "./content.ts"
 
 function str(value: unknown, max: number): string {
   return sanitizeUserText(value, max)
 }
 
-function parseImage(value: unknown): ImageAsset | undefined {
+export function parseImage(value: unknown): ImageAsset | undefined {
   if (!value || typeof value !== "object") return undefined
   const v = value as Record<string, unknown>
   const url = str(v.url, 2048)
@@ -25,7 +25,22 @@ function parseImage(value: unknown): ImageAsset | undefined {
         }
       : undefined
 
-  return { url, alt: str(v.alt, 120), credit: credit?.name ? credit : undefined }
+  const srcSet = str(v.srcSet, 6000) || undefined
+  const sizes = str(v.sizes, 500) || undefined
+
+  return { url, alt: str(v.alt, 120), srcSet, sizes, credit: credit?.name ? credit : undefined }
+}
+
+export function parsePageAssets(raw: unknown): PageAssets | null {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null
+  const value = raw as Record<string, unknown>
+  return {
+    hero: parseImage(value.hero),
+    gallery: (Array.isArray(value.gallery) ? value.gallery : [])
+      .map(parseImage)
+      .filter((image): image is ImageAsset => Boolean(image))
+      .slice(0, 9),
+  }
 }
 
 function parseStats(value: unknown): Stat[] {
@@ -91,11 +106,6 @@ export function parsePageContent(raw: unknown): PageContent | null {
     email: str(c.email, 90),
     footerTagline: str(c.footerTagline, 70),
     geography: str(c.geography, 60) || undefined,
-    heroImage: parseImage(c.heroImage),
-    gallery: (Array.isArray(c.gallery) ? c.gallery : [])
-      .map(parseImage)
-      .filter((i): i is ImageAsset => Boolean(i))
-      .slice(0, 9),
     guarantees: (Array.isArray(c.guarantees) ? c.guarantees : [])
       .map((g) => str(g, 140))
       .filter((g) => g.length > 0)

@@ -5,6 +5,8 @@ import { GeneratorForm } from "@/components/generator/generator-form"
 import { GeneratorGallery, type GalleryPreset } from "@/components/generator/generator-gallery"
 import { GeneratorPreview, GeneratorSkeleton } from "@/components/generator/generator-preview"
 import type { ContentSource, GeneratedConcept, GenerateApiResponse, GeneratorParams } from "@/lib/types"
+import type { PageAssets, PageContent } from "@/lib/design/content"
+import type { DesignSpec } from "@/lib/design/spec"
 import { track } from "@/lib/analytics"
 
 function EmptyPreview() {
@@ -39,8 +41,9 @@ export default function GeneratorPage() {
   const [source, setSource] = useState<ContentSource>("ai")
   // Контент и спека нужны для правок стиля: они пересобирают страницу
   // локально, без повторной генерации.
-  const [content, setContent] = useState<unknown>(null)
-  const [spec, setSpec] = useState<unknown>(null)
+  const [content, setContent] = useState<PageContent | null>(null)
+  const [spec, setSpec] = useState<DesignSpec | null>(null)
+  const [assets, setAssets] = useState<PageAssets | null>(null)
   const [concepts, setConcepts] = useState<GeneratedConcept[]>([])
   const [activeConceptId, setActiveConceptId] = useState<GeneratedConcept["id"]>("recommended")
 
@@ -58,8 +61,9 @@ export default function GeneratorPage() {
       id: string,
       params: GeneratorParams,
       contentSource: ContentSource,
-      resultContent: unknown,
-      resultSpec: unknown,
+      resultContent: PageContent,
+      resultSpec: DesignSpec,
+      resultAssets: PageAssets,
       resultConcepts: GeneratedConcept[]
     ) => {
       track("generation_succeeded", {
@@ -73,6 +77,7 @@ export default function GeneratorPage() {
       setSource(contentSource)
       setContent(resultContent)
       setSpec(resultSpec)
+      setAssets(resultAssets)
       setConcepts(resultConcepts)
       setActiveConceptId(resultConcepts[0]?.id ?? "recommended")
       setIsLoading(false)
@@ -80,11 +85,26 @@ export default function GeneratorPage() {
     []
   )
 
-  const handleAdjusted = useCallback((nextHtml: string, nextSpec: unknown) => {
+  const handleAdjusted = useCallback((
+    nextHtml: string,
+    nextSpec: DesignSpec,
+    nextAssets: PageAssets,
+    nextDesignId: string | null
+  ) => {
     setGeneratedHtml(nextHtml)
     setSpec(nextSpec)
+    setAssets(nextAssets)
+    setDesignId(nextDesignId ?? "")
     setConcepts((current) => current.map((concept) =>
-      concept.id === activeConceptId ? { ...concept, html: nextHtml, spec: nextSpec } : concept
+      concept.id === activeConceptId
+        ? {
+            ...concept,
+            html: nextHtml,
+            spec: nextSpec,
+            assets: nextAssets,
+            designId: nextDesignId,
+          }
+        : concept
     ))
   }, [activeConceptId])
 
@@ -93,6 +113,8 @@ export default function GeneratorPage() {
     setActiveConceptId(concept.id)
     setGeneratedHtml(concept.html)
     setSpec(concept.spec)
+    setAssets(concept.assets)
+    setDesignId(concept.designId ?? "")
   }, [])
 
   const handleLoading = useCallback((loading: boolean) => {
@@ -113,12 +135,15 @@ export default function GeneratorPage() {
         body: JSON.stringify({ params: lastParams }),
       })
       const data = await res.json() as Partial<GenerateApiResponse> & { error?: string }
-      if (!res.ok || !data.html) throw new Error(data.error)
+      if (!res.ok || !data.html || !data.content || !data.spec || !data.assets) {
+        throw new Error(data.error ?? "Ошибка повторной генерации")
+      }
       setGeneratedHtml(data.html)
       setDesignId(data.designId ?? "")
       setSource(data.source ?? "ai")
-      setContent(data.content ?? null)
-      setSpec(data.spec ?? null)
+      setContent(data.content)
+      setSpec(data.spec)
+      setAssets(data.assets)
       setConcepts(data.concepts ?? [])
       setActiveConceptId(data.concepts?.[0]?.id ?? "recommended")
     } catch {
@@ -189,6 +214,7 @@ export default function GeneratorPage() {
             source={source}
             content={content}
             spec={spec}
+            assets={assets}
             concepts={concepts}
             activeConceptId={activeConceptId}
             onConceptSelect={handleConceptSelect}

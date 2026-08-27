@@ -7,12 +7,18 @@ import {
   buildUserPrompt,
 } from "@/lib/prompts"
 import { getNicheQuery } from "@/lib/templates"
+import {
+  fetchPexelsCandidates,
+  filterCandidatesByAvoid,
+  selectConceptAssets,
+} from "@/lib/design/images/pexels"
+import { parseVisualBrief, type VisualBrief } from "@/lib/design/visual-brief"
 import { composePage } from "@/lib/design/compose"
 import { alignSpecToStyle, baseSpecFor, parseDesignSpec, type DesignSpec } from "@/lib/design/spec"
-import { buildStats, type PageContent, type VerifiedFacts } from "@/lib/design/content"
+import { buildStats, type PageAssets, type PageContent, type VerifiedFacts } from "@/lib/design/content"
 import { checkQuality } from "@/lib/design/quality"
 import { curateDesignDirections } from "@/lib/design/directions"
-import type { GeneratorParams } from "@/lib/types"
+import type { GeneratedConcept, GeneratorParams } from "@/lib/types"
 import { parseGeneratorParams, parseAiContent } from "@/lib/validation"
 import { clientIp, rateLimit } from "@/lib/rate-limit"
 import { db } from "@/lib/db"
@@ -44,7 +50,7 @@ const GEMINI_TEMPERATURE = 0.6
 // Primary и Flash-Lite запускаются последовательно, поэтому каждая попытка
 // должна оставлять запас внутри 60-секундного лимита serverless-функции.
 const GEMINI_TIMEOUT_MS = 20_000
-const IMAGE_TIMEOUT_MS = 5_000
+const REFINED_IMAGE_DEADLINE_MS = 45_000
 
 // Генерация дорогая (внешний вызов + квота), поэтому лимит жёсткий.
 const RATE_LIMIT = { limit: 10, windowMs: 10 * 60 * 1000 }
@@ -74,53 +80,6 @@ interface AiResult {
   data: unknown | null
   reason: FailureReason
   provider: AiProvider
-}
-
-// ─── Изображение ──────────────────────────────────────────────────────────────
-
-interface HeroImage {
-  url: string | null
-  credit: { name: string; url: string } | null
-}
-
-/**
- * Раньше фото скачивалось на сервере и зашивалось в HTML как base64 data URL.
- * Это давало строки в несколько мегабайт, которые целиком уезжали в
- * PostgreSQL в Design.htmlContent. Теперь в разметку идёт прямая https-ссылка
- * Pexels: строка в БД в разы меньше, картинка кешируется браузером, а один
- * серверный fetch уходит из критического пути.
- */
-async function fetchHeroImage(businessType: string): Promise<HeroImage> {
-  const apiKey = process.env.PEXELS_API_KEY
-  if (!apiKey) return { url: null, credit: null }
-
-  try {
-    const res = await fetch(
-      `https://api.pexels.com/v1/search?query=${encodeURIComponent(getNicheQuery(businessType))}&per_page=1&orientation=landscape`,
-      { headers: { Authorization: apiKey }, signal: AbortSignal.timeout(IMAGE_TIMEOUT_MS) }
-    )
-    if (!res.ok) {
-      console.warn("[generate] pexels_error", { status: res.status })
-      return { url: null, credit: null }
-    }
-
-    const data = (await res.json()) as {
-      photos?: Array<{ src?: { large?: string }; photographer?: string; photographer_url?: string }>
-    }
-    const photo = data.photos?.[0]
-    if (!photo?.src?.large) return { url: null, credit: null }
-
-    return {
-      url: photo.src.large,
-      credit: {
-        name: photo.photographer ?? "Pexels",
-        url: photo.photographer_url ?? "https://www.pexels.com",
-      },
-    }
-  } catch (error) {
-    console.warn("[generate] pexels_failed", { error: String(error) })
-    return { url: null, credit: null }
-  }
 }
 
 // ─── Фолбэк-контент ───────────────────────────────────────────────────────────
@@ -181,7 +140,6 @@ function buildFallbackContent(params: GeneratorParams, facts: VerifiedFacts = {}
     email: "info@example.by",
     footerTagline: "Черновик концепта",
     geography: facts.geography,
-    gallery: [],
     guarantees: facts.guarantees ?? [],
   }
 }
@@ -397,7 +355,6 @@ async function runStrategist(
       email: "info@example.by",
       footerTagline: v.footerTagline,
       geography: facts.geography,
-      gallery: [],
       guarantees: facts.guarantees ?? [],
     },
     reason: "none",
@@ -412,21 +369,36 @@ async function runStrategist(
  */
 async function runArtDirector(
   params: GeneratorParams
-): Promise<{ spec: DesignSpec; provider: AiProvider }> {
+): Promise<{ spec: DesignSpec; visualBrief: VisualBrief | null; provider: AiProvider }> {
   const fallback = baseSpecFor(params.style)
   const { data, provider } = await generateStructured(
     ART_DIRECTOR_SYSTEM_PROMPT,
     buildArtDirectorPrompt(params),
     "art-director"
   )
+  const visualBrief = parseVisualBrief(data)
+  if (
+    data &&
+    typeof data === "object" &&
+    !Array.isArray(data) &&
+    "visualBrief" in data &&
+    !visualBrief
+  ) {
+    console.warn("[generate] visual_brief_rejected")
+  }
   // Сбой арт-директора не критичен: берём базовую спеку и всё равно
   // отдаём пользователю рабочую страницу.
-  return { spec: alignSpecToStyle(parseDesignSpec(data, fallback), params.style), provider }
+  return {
+    spec: alignSpecToStyle(parseDesignSpec(data, fallback), params.style),
+    visualBrief,
+    provider,
+  }
 }
 
 // ─── Handler ──────────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
+  const requestStartedAt = Date.now()
   const ip = clientIp(req)
 
   const limit = rateLimit(`generate:${ip}`, RATE_LIMIT.limit, RATE_LIMIT.windowMs)
@@ -460,7 +432,8 @@ export async function POST(req: NextRequest) {
     isNewSession = true
   }
 
-  const imagePromise = fetchHeroImage(params.businessType)
+  const speculativeQuery = getNicheQuery(params.businessType, params.userDescription)
+  const speculativeImages = fetchPexelsCandidates(speculativeQuery)
   const hasAiProvider = Boolean(process.env.GOOGLE_AI_API_KEY || process.env.GROQ_API_KEY)
 
   // Подтверждённые факты приходят из брифа. Пока форма их не собирает,
@@ -469,7 +442,9 @@ export async function POST(req: NextRequest) {
   const facts: VerifiedFacts = params.facts ?? {}
 
   let content: PageContent
+  let assets: PageAssets = { gallery: [] }
   let spec: DesignSpec
+  let visualBrief: VisualBrief | null = null
   let source: ContentSource
   let failureReason: FailureReason = "none"
   let providers: { strategist: AiProvider; artDirector: AiProvider } = {
@@ -492,6 +467,7 @@ export async function POST(req: NextRequest) {
     ])
 
     spec = artDirected.spec
+    visualBrief = artDirected.visualBrief
     providers = { strategist: strategist.provider, artDirector: artDirected.provider }
 
     if (strategist.content) {
@@ -504,17 +480,20 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const hero = await imagePromise
-  if (hero.url) {
-    content.heroImage = {
-      url: hero.url,
-      alt: content.businessName,
-      credit: hero.credit ?? undefined,
-    }
+  let imageCandidates = await speculativeImages
+  if (
+    visualBrief &&
+    visualBrief.query !== speculativeQuery &&
+    Date.now() - requestStartedAt < REFINED_IMAGE_DEADLINE_MS
+  ) {
+    const refined = await fetchPexelsCandidates(visualBrief.query)
+    if (refined.length > 0) imageCandidates = refined
   }
+  imageCandidates = filterCandidatesByAvoid(imageCandidates, visualBrief?.avoid ?? [])
+  assets = selectConceptAssets(imageCandidates, `${params.businessType}:${params.userDescription}`, 1)[0]
 
   // Галерею показываем, только если для неё есть изображения.
-  if (content.gallery.length === 0 && spec.galleryVariant !== "none") {
+  if (assets.gallery.length === 0 && spec.galleryVariant !== "none") {
     spec = { ...spec, galleryVariant: "none" }
   }
 
@@ -535,7 +514,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  let { html, renderedSections } = composePage(content, spec)
+  let { html, renderedSections } = composePage(content, spec, assets)
 
   // ── Quality gate ──────────────────────────────────────────────────────────
   //
@@ -556,7 +535,7 @@ export async function POST(req: NextRequest) {
     source = "fallback"
     failureReason = "quality_rejected"
 
-    const retry = composePage(content, spec)
+    const retry = composePage(content, spec, assets)
     html = retry.html
     renderedSections = retry.renderedSections
     quality = checkQuality(html, content, spec, renderedSections)
@@ -573,28 +552,58 @@ export async function POST(req: NextRequest) {
 
   // Один контент и одна AI-спека превращаются в три кураторских направления.
   // Это даёт пользователю реальный выбор, не умножая расход квоты модели.
-  const concepts = curateDesignDirections(spec, params.style, params.businessType).map((direction) => {
-    const rendered = composePage(content, direction.spec)
+  const directions = curateDesignDirections(
+    spec,
+    params.style,
+    params.businessType,
+    params.userDescription
+  )
+  const conceptAssets = selectConceptAssets(
+    imageCandidates,
+    `${params.businessType}:${params.userDescription}`,
+    directions.length
+  )
+  const concepts: GeneratedConcept[] = directions.flatMap((direction, index) => {
+    const directionAssets = conceptAssets[index] ?? assets
+    const rendered = composePage(content, direction.spec, directionAssets)
     const report = checkQuality(rendered.html, content, direction.spec, rendered.renderedSections)
     if (!report.ok) {
       console.warn("[generate] direction_quality_failed", {
         direction: direction.id,
         issues: report.issues.filter((i) => i.severity === "error").map((i) => i.code),
       })
+      return []
     }
-    return {
+    return [{
       id: direction.id,
       label: direction.label,
       description: direction.description,
-      html: report.ok ? rendered.html : html,
-      spec: report.ok ? direction.spec : spec,
-    }
+      html: rendered.html,
+      spec: direction.spec,
+      assets: directionAssets,
+      designId: null,
+    }]
   })
+
+  // Recommended is the already validated base composition, so this is only a
+  // defensive guard against a future mismatch between direction and base logic.
+  if (concepts.length === 0) {
+    concepts.push({
+      id: "recommended",
+      label: "AI-рекомендация",
+      description: "Баланс бренда, структуры и конверсии",
+      html,
+      spec,
+      assets,
+      designId: null,
+    })
+  }
 
   // Первый концепт — исходная AI-рекомендация; сохраняем обратную
   // совместимость полей html/spec для старых клиентов.
   html = concepts[0].html
   spec = concepts[0].spec
+  assets = concepts[0].assets
 
   // ── Persistence отделён от генерации ──────────────────────────────────────
   //
@@ -603,29 +612,34 @@ export async function POST(req: NextRequest) {
   // превью в HTTP 500. Пользователь терял результат в самый мотивированный
   // момент. Теперь запись — побочный эффект: не удалась, значит превью
   // отдаётся без designId, а клиент просто не покажет «открыть в новой вкладке».
-  let designId: string | null = null
-  try {
-    const design = await db.design.create({
+  const persisted = await Promise.allSettled(
+    concepts.map((concept) => db.design.create({
       data: {
         sessionId,
-        htmlContent: html,
+        htmlContent: concept.html,
         prompt: params.userDescription,
         businessType: params.businessType,
         style: params.style,
         language: params.language,
       },
       select: { id: true },
+    }))
+  )
+  persisted.forEach((result, index) => {
+    if (result.status === "fulfilled") concepts[index].designId = result.value.id
+    else console.error("[generate] persist_failed", {
+      sessionId,
+      concept: concepts[index].id,
+      error: String(result.reason),
     })
-    designId = design.id
-  } catch (error) {
-    console.error("[generate] persist_failed", { sessionId, error: String(error) })
-  }
+  })
+  const designId = concepts[0].designId
 
   // content и spec возвращаются клиенту, чтобы кнопки правок («премиальнее»,
   // «больше воздуха», «другой hero») пересобирали страницу через /api/adjust
   // без повторного обращения к модели.
   const response = NextResponse.json(
-    { html, designId, source, failureReason, providers, concepts, content, spec },
+    { html, designId, source, failureReason, providers, concepts, content, spec, assets },
     { status: 200 }
   )
 
