@@ -12,6 +12,7 @@ import type {
 import { track } from "@/lib/analytics"
 import type { PageAssets, PageContent } from "@/lib/design/content"
 import type { DesignSpec } from "@/lib/design/spec"
+import { readApiResponse } from "@/lib/api-response"
 
 // ─── Статические данные формы ────────────────────────────────────────────────
 
@@ -192,7 +193,7 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
           body: JSON.stringify({ params }),
         })
 
-        const data = await res.json() as Partial<GenerateApiResponse> & { error?: string }
+        const data = await readApiResponse<GenerateApiResponse>(res, "Ошибка генерации")
 
         if (!res.ok || !data.html || !data.content || !data.spec || !data.assets) {
           throw new Error(data.error ?? "Ошибка генерации")

@@ -5,6 +5,7 @@ import type { ContentSource, GeneratedConcept } from "@/lib/types"
 import type { PageAssets, PageContent } from "@/lib/design/content"
 import type { DesignSpec } from "@/lib/design/spec"
 import { track } from "@/lib/analytics"
+import { readApiResponse } from "@/lib/api-response"
 
 interface GeneratorPreviewProps {
   html: string
@@ -393,13 +394,12 @@ export function GeneratorPreview({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ adjustment, content, spec, assets, designId }),
         })
-        const data = (await res.json()) as {
-          html?: string
-          spec?: DesignSpec
-          assets?: PageAssets
-          designId?: string | null
-          error?: string
-        }
+        const data = await readApiResponse<{
+          html: string
+          spec: DesignSpec
+          assets: PageAssets
+          designId: string | null
+        }>(res, "Не удалось применить правку")
         if (!res.ok || !data.html || !data.spec || !data.assets) {
           throw new Error(data.error ?? "Не удалось применить")
         }

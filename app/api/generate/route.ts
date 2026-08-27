@@ -49,14 +49,33 @@ const GEMINI_TEMPERATURE = 0.6
 
 // Primary и Flash-Lite запускаются последовательно, поэтому каждая попытка
 // должна оставлять запас внутри 60-секундного лимита serverless-функции.
-const GEMINI_TIMEOUT_MS = 20_000
-const REFINED_IMAGE_DEADLINE_MS = 45_000
+const AI_ATTEMPT_TIMEOUT_MS = 15_000
+// Оставляем запас на фото, рендер, сохранение и сериализацию ответа внутри
+// 60-секундного лимита Vercel. Стратег и арт-директор используют один deadline,
+// но работают параллельно, поэтому их бюджеты не складываются.
+const AI_DEADLINE_MS = 44_000
+const REFINED_IMAGE_DEADLINE_MS = 39_000
+const PERSIST_TIMEOUT_MS = 3_000
 
 // Генерация дорогая (внешний вызов + квота), поэтому лимит жёсткий.
 const RATE_LIMIT = { limit: 10, windowMs: 10 * 60 * 1000 }
 
 const SESSION_COOKIE = "session_id"
 const SESSION_MAX_AGE = 60 * 60 * 24 * 30
+
+async function settleWithin<T>(promise: Promise<T>, timeoutMs: number): Promise<T | null> {
+  let timeout: ReturnType<typeof setTimeout> | undefined
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<null>((resolve) => {
+        timeout = setTimeout(() => resolve(null), timeoutMs)
+      }),
+    ])
+  } finally {
+    if (timeout) clearTimeout(timeout)
+  }
+}
 
 // ─── Диагностика ──────────────────────────────────────────────────────────────
 
@@ -161,12 +180,18 @@ async function callGemini(
   apiKey: string,
   systemPrompt: string,
   userPrompt: string,
-  stage: string
+  stage: string,
+  deadlineAt: number
 ): Promise<AiResult> {
   const models = [...new Set([GEMINI_MODEL, GEMINI_FALLBACK_MODEL])]
   let lastReason: FailureReason = "ai_unavailable"
 
   for (const [index, model] of models.entries()) {
+    const remainingMs = deadlineAt - Date.now()
+    if (remainingMs < 1_500) {
+      lastReason = "ai_timeout"
+      break
+    }
     const body = JSON.stringify({
       system_instruction: { parts: [{ text: systemPrompt }] },
       contents: [{ role: "user", parts: [{ text: userPrompt }] }],
@@ -190,7 +215,7 @@ async function callGemini(
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body,
-          signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
+          signal: AbortSignal.timeout(Math.min(AI_ATTEMPT_TIMEOUT_MS, remainingMs)),
         }
       )
     } catch (error) {
@@ -253,8 +278,13 @@ async function callGroq(
   apiKey: string,
   systemPrompt: string,
   userPrompt: string,
-  stage: string
+  stage: string,
+  deadlineAt: number
 ): Promise<AiResult> {
+  const remainingMs = deadlineAt - Date.now()
+  if (remainingMs < 1_500) {
+    return { data: null, reason: "ai_timeout", provider: "groq" }
+  }
   try {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -269,7 +299,7 @@ async function callGroq(
           { role: "user", content: userPrompt },
         ],
       }),
-      signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
+      signal: AbortSignal.timeout(Math.min(AI_ATTEMPT_TIMEOUT_MS, remainingMs)),
     })
 
     if (!response.ok) {
@@ -292,19 +322,20 @@ async function callGroq(
 async function generateStructured(
   systemPrompt: string,
   userPrompt: string,
-  stage: string
+  stage: string,
+  deadlineAt: number
 ): Promise<AiResult> {
   const geminiKey = process.env.GOOGLE_AI_API_KEY
   const groqKey = process.env.GROQ_API_KEY
 
   if (geminiKey) {
-    const primary = await callGemini(geminiKey, systemPrompt, userPrompt, stage)
+    const primary = await callGemini(geminiKey, systemPrompt, userPrompt, stage, deadlineAt)
     if (primary.data) return primary
     console.warn("[generate] provider_fallback", { stage, from: "gemini", reason: primary.reason, to: groqKey ? "groq" : "none" })
     if (!groqKey) return primary
   }
 
-  if (groqKey) return callGroq(groqKey, systemPrompt, userPrompt, stage)
+  if (groqKey) return callGroq(groqKey, systemPrompt, userPrompt, stage, deadlineAt)
 
   return { data: null, reason: "ai_unavailable", provider: "none" }
 }
@@ -315,12 +346,14 @@ async function generateStructured(
  */
 async function runStrategist(
   params: GeneratorParams,
-  facts: VerifiedFacts
+  facts: VerifiedFacts,
+  deadlineAt: number
 ): Promise<{ content: PageContent | null; reason: FailureReason; provider: AiProvider }> {
   const { data, reason, provider } = await generateStructured(
     GENERATOR_SYSTEM_PROMPT,
     buildUserPrompt(params),
-    "strategist"
+    "strategist",
+    deadlineAt
   )
   if (!data) return { content: null, reason, provider }
 
@@ -368,13 +401,15 @@ async function runStrategist(
  * и не добавляет задержки к общему времени генерации.
  */
 async function runArtDirector(
-  params: GeneratorParams
+  params: GeneratorParams,
+  deadlineAt: number
 ): Promise<{ spec: DesignSpec; visualBrief: VisualBrief | null; provider: AiProvider }> {
   const fallback = baseSpecFor(params.style)
   const { data, provider } = await generateStructured(
     ART_DIRECTOR_SYSTEM_PROMPT,
     buildArtDirectorPrompt(params),
-    "art-director"
+    "art-director",
+    deadlineAt
   )
   const visualBrief = parseVisualBrief(data)
   if (
@@ -399,6 +434,7 @@ async function runArtDirector(
 
 export async function POST(req: NextRequest) {
   const requestStartedAt = Date.now()
+  const aiDeadlineAt = requestStartedAt + AI_DEADLINE_MS
   const ip = clientIp(req)
 
   const limit = rateLimit(`generate:${ip}`, RATE_LIMIT.limit, RATE_LIMIT.windowMs)
@@ -462,8 +498,8 @@ export async function POST(req: NextRequest) {
     // Стратег и арт-директор зависят только от брифа, поэтому идут параллельно:
     // два этапа не удваивают время ожидания.
     const [strategist, artDirected] = await Promise.all([
-      runStrategist(params, facts),
-      runArtDirector(params),
+      runStrategist(params, facts, aiDeadlineAt),
+      runArtDirector(params, aiDeadlineAt),
     ])
 
     spec = artDirected.spec
@@ -612,7 +648,7 @@ export async function POST(req: NextRequest) {
   // превью в HTTP 500. Пользователь терял результат в самый мотивированный
   // момент. Теперь запись — побочный эффект: не удалась, значит превью
   // отдаётся без designId, а клиент просто не покажет «открыть в новой вкладке».
-  const persisted = await Promise.allSettled(
+  const persistence = Promise.allSettled(
     concepts.map((concept) => db.design.create({
       data: {
         sessionId,
@@ -625,14 +661,19 @@ export async function POST(req: NextRequest) {
       select: { id: true },
     }))
   )
-  persisted.forEach((result, index) => {
-    if (result.status === "fulfilled") concepts[index].designId = result.value.id
-    else console.error("[generate] persist_failed", {
-      sessionId,
-      concept: concepts[index].id,
-      error: String(result.reason),
+  const persisted = await settleWithin(persistence, PERSIST_TIMEOUT_MS)
+  if (persisted) {
+    persisted.forEach((result, index) => {
+      if (result.status === "fulfilled") concepts[index].designId = result.value.id
+      else console.error("[generate] persist_failed", {
+        sessionId,
+        concept: concepts[index].id,
+        error: String(result.reason),
+      })
     })
-  })
+  } else {
+    console.warn("[generate] persist_timeout", { sessionId, concepts: concepts.length })
+  }
   const designId = concepts[0].designId
 
   // content и spec возвращаются клиенту, чтобы кнопки правок («премиальнее»,
