@@ -167,7 +167,7 @@ function AccordionRow({
 
             {/* Hint в monospace */}
             <p className="pl-[44px] font-mono text-[11px] text-violet-400/50 sm:pl-[64px]">
-              // итог: {step.deliverable.toLowerCase()}
+              {"// итог: "}{step.deliverable.toLowerCase()}
             </p>
 
             {/* Deliverable badge */}

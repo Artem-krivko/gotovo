@@ -8,16 +8,6 @@
 
 // Server Component — директива не нужна
 
-const SYMBOLS = [
-  "const", "=>", "<div>", "{}", "return", "async",
-  "await", "function", ".hero", "px-6", "flex",
-  "grid", "import", "export", "type", "interface",
-  "сайт", "заявка", "дизайн", "результат",
-  "</nav>", "<section>", "z-index:", "transform:",
-  "opacity:", "border:", "useState", "useEffect",
-  "null", "true", "class=", "href=", "~/",
-]
-
 // Фиксированные позиции и параметры — без Math.random() для SSR
 const ITEMS = [
   { symbol: "const",      top:  4, left:  3, size: 11, duration: 22, delay:  0, opacity: 0.035 },

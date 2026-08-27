@@ -67,7 +67,7 @@ export default function PricingPage() {
           </h1>
 
           <p className="reveal-up delay-2 mt-6 mx-auto max-w-xl text-lg leading-7 text-[#A1A1B5]">
-            Знаете цену до начала работы. Никаких расплывчатых оценок "посмотрим по ходу".
+            Знаете цену до начала работы. Никаких расплывчатых оценок «посмотрим по ходу».
           </p>
 
           <div className="reveal-up delay-3 mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">

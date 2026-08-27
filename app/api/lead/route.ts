@@ -1,97 +1,181 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
-import { sendTelegram } from "@/lib/telegram";
+import { sendTelegram, tgField } from "@/lib/telegram";
+import { escapeHtml, isValidEmail, isValidPhone } from "@/lib/html";
+import { sanitizeUserText } from "@/lib/validation";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
 
-// ─── Типы ────────────────────────────────────────────────────────────────────
+const RATE_LIMIT = { limit: 5, windowMs: 10 * 60 * 1000 };
 
-interface LeadRequestBody {
+const LIMITS = { contact: 120, name: 80, message: 2000 } as const;
+
+interface LeadFields {
   contact: string;
-  name?: string;
-  message?: string;
+  name: string;
+  message: string;
 }
 
 // ─── Валидация ───────────────────────────────────────────────────────────────
 
-function validateLeadBody(body: unknown): body is LeadRequestBody {
-  if (!body || typeof body !== "object") return false;
+function parseLead(body: unknown): { ok: true; value: LeadFields } | { ok: false; error: string } {
+  if (!body || typeof body !== "object") {
+    return { ok: false, error: "Некорректный запрос" };
+  }
   const b = body as Record<string, unknown>;
-  return typeof b.contact === "string" && b.contact.trim().length > 0;
+
+  const contact = sanitizeUserText(b.contact, LIMITS.contact);
+  if (!contact) {
+    return { ok: false, error: "Укажите телефон или email для связи" };
+  }
+  // Контакт — единственное, по чему мы можем вернуться к клиенту. Если это
+  // не похоже ни на телефон, ни на email, заявка бесполезна: лучше сказать
+  // об этом сразу, чем принять её в никуда.
+  if (!isValidPhone(contact) && !isValidEmail(contact)) {
+    return { ok: false, error: "Проверьте телефон или email — похоже, в контакте опечатка" };
+  }
+
+  return {
+    ok: true,
+    value: {
+      contact,
+      name: sanitizeUserText(b.name, LIMITS.name),
+      message: sanitizeUserText(b.message, LIMITS.message),
+    },
+  };
+}
+
+// ─── Письмо ──────────────────────────────────────────────────────────────────
+
+function buildLeadEmail({ contact, name, message }: LeadFields): string {
+  // Значения приходят из открытой формы, поэтому экранируется каждое.
+  const row = (label: string, value: string) => `
+    <tr>
+      <td style="padding:12px 16px 12px 0;border-bottom:1px solid #e4e4e7;color:#71717a;vertical-align:top;width:120px">${escapeHtml(label)}</td>
+      <td style="padding:12px 0;border-bottom:1px solid #e4e4e7;color:#18181b;font-weight:500">${value}</td>
+    </tr>`;
+
+  return `
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2 style="color: #18181b; margin-bottom: 24px;">Новая заявка с сайта</h2>
+      <table style="width: 100%; border-collapse: collapse;">
+        ${row("Контакт", escapeHtml(contact))}
+        ${name ? row("Имя", escapeHtml(name)) : ""}
+        ${message ? row("Задача", escapeHtml(message).replace(/\n/g, "<br>")) : ""}
+      </table>
+      <div style="margin-top: 32px; padding: 16px; background: #f4f4f5; border-radius: 12px;">
+        <p style="margin: 0; font-size: 13px; color: #71717a;">
+          Заявка отправлена через форму на сайте gotovo
+        </p>
+      </div>
+    </div>`;
 }
 
 // ─── Handler ─────────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json() as unknown;
+  const ip = clientIp(req);
 
-    if (!validateLeadBody(body)) {
-      return NextResponse.json(
-        { error: "Заполните все обязательные поля" },
-        { status: 400 }
-      );
-    }
-
-    const { contact, name, message } = body;
-    const safeName = name?.trim() || "";
-    const safeMessage = message?.trim() || "";
-
-    const apiKey = process.env.RESEND_API_KEY;
-    const toEmail = process.env.LEAD_NOTIFICATION_EMAIL;
-
-    // Если ключи не настроены — логируем и возвращаем успех (dev режим)
-    if (!apiKey || !toEmail) {
-      console.error("[POST /api/lead] RESEND_API_KEY или LEAD_NOTIFICATION_EMAIL не настроены");
-      return NextResponse.json({ success: true });
-    }
-
-    const resend = new Resend(apiKey);
-
-    await resend.emails.send({
-      from: "gotovo <noreply@usegotovo.by>",
-      to: toEmail,
-      subject: `Новая заявка от ${safeName || contact}`,
-      html: `
-        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #18181b; margin-bottom: 24px;">Новая заявка с сайта</h2>
-
-          <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-              <td style="padding: 12px 0; border-bottom: 1px solid #e4e4e7; color: #71717a; width: 120px;">Контакт</td>
-              <td style="padding: 12px 0; border-bottom: 1px solid #e4e4e7; color: #18181b; font-weight: 500;">${contact}</td>
-            </tr>
-            ${safeName ? `<tr>
-              <td style="padding: 12px 0; border-bottom: 1px solid #e4e4e7; color: #71717a;">Имя</td>
-              <td style="padding: 12px 0; border-bottom: 1px solid #e4e4e7; color: #18181b; font-weight: 500;">${safeName}</td>
-            </tr>` : ""}
-            ${safeMessage ? `<tr>
-              <td style="padding: 12px 16px 12px 0; color: #71717a; vertical-align: top;">Задача</td>
-              <td style="padding: 12px 0; color: #18181b;">${safeMessage.replace(/\n/g, "<br>")}</td>
-            </tr>` : ""}
-          </table>
-
-          <div style="margin-top: 32px; padding: 16px; background: #f4f4f5; border-radius: 12px;">
-            <p style="margin: 0; font-size: 13px; color: #71717a;">
-              Заявка отправлена через форму gotovo.studio
-            </p>
-          </div>
-        </div>
-      `,
-    });
-
-    await sendTelegram(
-      `🔔 <b>Новая заявка с сайта</b>\n\n` +
-      `📱 <b>Контакт:</b> ${contact}` +
-      (safeName ? `\n👤 <b>Имя:</b> ${safeName}` : "") +
-      (safeMessage ? `\n💬 <b>Задача:</b> ${safeMessage}` : "")
-    )
-
-    return NextResponse.json({ success: true }, { status: 200 });
-
-  } catch (error) {
-    console.error("[POST /api/lead]", error);
+  const limit = rateLimit(`lead:${ip}`, RATE_LIMIT.limit, RATE_LIMIT.windowMs);
+  if (!limit.ok) {
     return NextResponse.json(
-      { error: "Не удалось отправить заявку. Попробуйте написать напрямую." },
-      { status: 500 }
+      { error: "Слишком много заявок подряд. Попробуйте через несколько минут." },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } }
     );
   }
+
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Некорректный запрос" }, { status: 400 });
+  }
+
+  const parsed = parseLead(body);
+  if (!parsed.ok) {
+    return NextResponse.json({ error: parsed.error }, { status: 400 });
+  }
+  const lead = parsed.value;
+
+  const apiKey = process.env.RESEND_API_KEY;
+  const toEmail = process.env.LEAD_NOTIFICATION_EMAIL;
+
+  // Раньше при незаданных ключах маршрут отвечал { success: true }.
+  // В проде это означает: клиент видит «заявка отправлена», а заявки нет
+  // нигде — ни в почте, ни в Telegram. Такой ответ недопустим.
+  if (!apiKey || !toEmail) {
+    console.error("[lead] not_configured", {
+      hasResendKey: Boolean(apiKey),
+      hasNotificationEmail: Boolean(toEmail),
+      // Пишем содержимое в лог, чтобы заявку можно было восстановить вручную.
+      contact: lead.contact,
+      name: lead.name,
+      message: lead.message,
+    });
+
+    // В dev без ключей заявка ожидаемо никуда не уходит — не пугаем разработчика.
+    if (process.env.NODE_ENV !== "production") {
+      return NextResponse.json({ success: true, delivery: "logged_only" });
+    }
+
+    return NextResponse.json(
+      { error: "Не удалось отправить заявку. Напишите нам в Telegram — ответим сразу." },
+      { status: 503 }
+    );
+  }
+
+  // Два независимых канала: падение одного не отменяет другой.
+  const [emailResult, telegramResult] = await Promise.allSettled([
+    new Resend(apiKey).emails.send({
+      from: "gotovo <noreply@usegotovo.by>",
+      to: toEmail,
+      reply_to: isValidEmail(lead.contact) ? lead.contact : undefined,
+      subject: `Новая заявка от ${lead.name || lead.contact}`,
+      html: buildLeadEmail(lead),
+    }),
+    sendTelegram(
+      [
+        "🔔 <b>Новая заявка с сайта</b>",
+        "",
+        tgField("Контакт", lead.contact),
+        lead.name ? tgField("Имя", lead.name) : "",
+        lead.message ? tgField("Задача", lead.message) : "",
+      ]
+        .filter(Boolean)
+        .join("\n")
+    ),
+  ]);
+
+  // Resend отвечает 200 с полем error внутри — раньше результат не проверялся
+  // вообще, и любая ошибка доставки уходила в пустоту.
+  const emailOk = emailResult.status === "fulfilled" && !emailResult.value.error;
+  const telegramOk = telegramResult.status === "fulfilled" && telegramResult.value.ok;
+
+  if (!emailOk) {
+    console.error("[lead] email_failed", {
+      reason:
+        emailResult.status === "rejected"
+          ? String(emailResult.reason)
+          : JSON.stringify(emailResult.value.error),
+    });
+  }
+  if (!telegramOk) {
+    console.error("[lead] telegram_failed", {
+      reason:
+        telegramResult.status === "rejected"
+          ? String(telegramResult.reason)
+          : telegramResult.value.reason,
+    });
+  }
+
+  if (!emailOk && !telegramOk) {
+    // Последний рубеж: заявка не ушла никуда, поэтому пишем её целиком в лог
+    // и честно сообщаем клиенту, что нужно связаться другим способом.
+    console.error("[lead] lost", { contact: lead.contact, name: lead.name, message: lead.message });
+    return NextResponse.json(
+      { error: "Не удалось отправить заявку. Напишите нам в Telegram — ответим сразу." },
+      { status: 502 }
+    );
+  }
+
+  return NextResponse.json({ success: true }, { status: 200 });
 }

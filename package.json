@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test \"lib/**/*.test.mts\""
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",

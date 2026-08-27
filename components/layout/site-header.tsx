@@ -18,6 +18,9 @@ function Logo() {
   return (
     <Link href="/" className="group flex items-center gap-2.5">
       <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-blue-600 shadow-md shadow-violet-500/30 transition group-hover:shadow-violet-500/50">
+        {/* next/image здесь не даёт выигрыша: это векторный логотип 20x20,
+            оптимизировать в нём нечего, а Image добавил бы лишний рантайм. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/favicon.svg"
           alt="gotovo"
@@ -143,6 +146,10 @@ export function SiteHeader() {
   const handleToggle = useCallback(() => setOpen((v) => !v), []);
   const handleClose  = useCallback(() => setOpen(false), []);
 
+  // Стандартный guard от рассинхрона гидрации: до монтирования на клиенте
+  // портал/меню не рендерим. Правило react-hooks/set-state-in-effect тут
+  // неприменимо — синхронизировать нечего, нужен именно факт «мы на клиенте».
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
@@ -152,7 +159,12 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // `visible` держит меню в DOM 300 мс после закрытия, пока играет анимация
+  // выхода. Это состояние жизненного цикла анимации, а не синхронизация с
+  // внешней системой, поэтому правило set-state-in-effect здесь неприменимо:
+  // убрать setState отсюда можно только ценой потери анимации закрытия.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (open) { setVisible(true); }
     else { const t = setTimeout(() => setVisible(false), 300); return () => clearTimeout(t); }
   }, [open]);

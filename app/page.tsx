@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Faq } from "@/components/sections/faq";
 import { GeneratorExamplesFilter } from "@/components/sections/generator-examples-filter";
-import { ParallaxMockup } from "@/components/shared/parallax-mockup";
 import { ScrollGlow } from "@/components/shared/scroll-glow";
 import { homeContent } from "@/content/pages/home";
 import { PricingPreview } from "@/components/sections/pricing-preview";
@@ -58,66 +57,6 @@ function CheckCircleIcon() {
 }
 
 // ─── Мокап с видео ────────────────────────────────────────────────────────────
-
-function BrowserMockup() {
-  return (
-    <div className="relative">
-      <div
-        className="float absolute -right-4 -top-5 z-20 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-500 to-pink-500 text-center text-xs font-bold leading-tight text-white shadow-xl shadow-fuchsia-500/40 sm:-right-6 sm:-top-6 sm:h-20 sm:w-20 sm:text-sm"
-        aria-hidden="true"
-      >
-        30<br />сек
-      </div>
-
-      <div className="absolute -right-2 top-10 z-20 sm:-right-3 sm:top-14" aria-hidden="true">
-        <svg width="36" height="32" viewBox="0 0 36 32" fill="none" className="text-fuchsia-400 opacity-60">
-          <path d="M34 2 C26 2, 8 12, 4 28" stroke="currentColor" strokeWidth="1.8"
-            strokeLinecap="round" strokeDasharray="3.5 3" />
-          <path d="M2 24l2 6 5-3" stroke="currentColor" strokeWidth="1.5"
-            strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </div>
-
-      <div
-        className="absolute -bottom-6 left-8 right-8 h-10 blur-2xl"
-        style={{ background: "radial-gradient(ellipse, rgba(124,58,237,0.4), transparent 70%)" }}
-        aria-hidden="true"
-      />
-
-      <div className="mockup-3d">
-        <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#13131A] shadow-2xl shadow-black/70">
-          <div className="flex items-center gap-2 border-b border-white/[0.06] bg-[#1C1C28] px-4 py-2.5">
-            <div className="flex gap-1.5" aria-hidden="true">
-              <span className="h-2.5 w-2.5 rounded-full bg-red-500/70" />
-              <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/70" />
-              <span className="h-2.5 w-2.5 rounded-full bg-green-500/70" />
-            </div>
-            <div className="mx-auto flex items-center gap-1.5 rounded-md bg-white/5 px-3 py-1 text-[10px] text-[#6B6B80]">
-              <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1" opacity="0.5" />
-                <path d="M4 6h4M6 4v4" stroke="currentColor" strokeWidth="1" opacity="0.5" />
-              </svg>
-              roomforia.ru
-            </div>
-          </div>
-
-          {/* VIDEO TEMP HIDDEN – restore when needed
-          <div className="relative overflow-hidden" style={{ height: "300px" }} aria-label="Превью сайта roomforia.ru">
-            <div
-              className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-12"
-              style={{ background: "linear-gradient(to top, #13131A, transparent)" }}
-              aria-hidden="true"
-            />
-            <video autoPlay muted loop playsInline className="w-full" style={{ display: "block", objectFit: "cover", objectPosition: "top" }}>
-              <source src="/video/preview.mp4" type="video/mp4" />
-            </video>
-          </div>
-          */}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // ─── FLOATING TEMPLATES ───────────────────────────────────────────────────────
 

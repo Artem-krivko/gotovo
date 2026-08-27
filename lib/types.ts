@@ -18,9 +18,24 @@ export interface GenerateApiRequest {
   params: GeneratorParams
 }
 
+/** Откуда взят контент превью — чтобы не выдавать заглушку за работу AI. */
+export type ContentSource = "ai" | "fallback"
+
+export type GenerationFailureReason =
+  | "ai_unavailable"
+  | "ai_invalid_json"
+  | "ai_timeout"
+  | "none"
+
 export interface GenerateApiResponse {
   html: string
-  designId: string
+  /**
+   * null, если запись в БД не удалась. Превью при этом полностью рабочее —
+   * persistence намеренно отделён от генерации.
+   */
+  designId: string | null
+  source: ContentSource
+  failureReason: GenerationFailureReason
 }
 
 export interface GenerateApiError {

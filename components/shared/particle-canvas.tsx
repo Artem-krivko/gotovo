@@ -131,6 +131,15 @@ function generateUITargets(w: number, h: number): Array<{ x: number; y: number; 
   return targets
 }
 
+// Палитра не зависит от рендера — держим её в модульной области,
+// иначе массив пересоздаётся каждый рендер и попадает в зависимости хуков.
+const COLORS = [
+  "rgba(167,139,250,",
+  "rgba(96,165,250,",
+  "rgba(248,248,255,",
+  "rgba(217,70,239,",
+]
+
 export function ParticleCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const particlesRef = useRef<Particle[]>([])
@@ -138,13 +147,6 @@ export function ParticleCanvas() {
   const progressRef = useRef(0)
   const isHoverRef = useRef(false)
   const mouseRef = useRef({ x: 0, y: 0 })
-
-  const COLORS = [
-    "rgba(167,139,250,",
-    "rgba(96,165,250,",
-    "rgba(248,248,255,",
-    "rgba(217,70,239,",
-  ]
 
   const initParticles = useCallback((canvas: HTMLCanvasElement) => {
     const w = canvas.width
@@ -170,46 +172,52 @@ export function ParticleCanvas() {
     })
   }, [])
 
+  // Кадр рисуется внутренней функцией tick: раньше useCallback ссылался
+  // сам на себя (requestAnimationFrame(draw) внутри собственного тела),
+  // из-за чего цикл замыкал устаревшую версию колбэка.
   const draw = useCallback(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext("2d")
-    if (!ctx) return
+    const tick = () => {
+      const canvas = canvasRef.current
+      if (!canvas) return
+      const ctx = canvas.getContext("2d")
+      if (!ctx) return
 
-    const w = canvas.width
-    const h = canvas.height
-    ctx.clearRect(0, 0, w, h)
+      const w = canvas.width
+      const h = canvas.height
+      ctx.clearRect(0, 0, w, h)
 
-    const targetProgress = isHoverRef.current ? 0.6 : 1.0
-    progressRef.current = lerp(progressRef.current, targetProgress, 0.025)
-    const eased = easeOutQuart(progressRef.current)
+      const targetProgress = isHoverRef.current ? 0.6 : 1.0
+      progressRef.current = lerp(progressRef.current, targetProgress, 0.025)
+      const eased = easeOutQuart(progressRef.current)
 
-    particlesRef.current.forEach((p) => {
-      const tx = lerp(p.ox, p.tx, eased)
-      const ty = lerp(p.oy, p.ty, eased)
+      particlesRef.current.forEach((p) => {
+        const tx = lerp(p.ox, p.tx, eased)
+        const ty = lerp(p.oy, p.ty, eased)
 
-      if (isHoverRef.current) {
-        const dx = p.x - mouseRef.current.x
-        const dy = p.y - mouseRef.current.y
-        const dist = Math.sqrt(dx * dx + dy * dy)
-        if (dist < 80) {
-          const force = (80 - dist) / 80
-          p.x += dx * force * 0.08
-          p.y += dy * force * 0.08
+        if (isHoverRef.current) {
+          const dx = p.x - mouseRef.current.x
+          const dy = p.y - mouseRef.current.y
+          const dist = Math.sqrt(dx * dx + dy * dy)
+          if (dist < 80) {
+            const force = (80 - dist) / 80
+            p.x += dx * force * 0.08
+            p.y += dy * force * 0.08
+          }
         }
-      }
 
-      p.x = lerp(p.x, tx, p.speed)
-      p.y = lerp(p.y, ty, p.speed)
+        p.x = lerp(p.x, tx, p.speed)
+        p.y = lerp(p.y, ty, p.speed)
 
-      const alpha = p.opacity * Math.min(progressRef.current * 2, 1)
-      ctx.beginPath()
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
-      ctx.fillStyle = `${p.color}${alpha})`
-      ctx.fill()
-    })
+        const alpha = p.opacity * Math.min(progressRef.current * 2, 1)
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
+        ctx.fillStyle = `${p.color}${alpha})`
+        ctx.fill()
+      })
 
-    rafRef.current = requestAnimationFrame(draw)
+      rafRef.current = requestAnimationFrame(tick)
+    }
+    tick()
   }, [])
 
   useEffect(() => {
@@ -234,7 +242,7 @@ export function ParticleCanvas() {
     }
 
     initParticles(canvas)
-    rafRef.current = requestAnimationFrame(draw)
+    draw()
 
     // ── Mouse events ──────────────────────────────────────────────────────────
     // Используем canvasRef.current внутри обработчиков вместо canvas из замыкания

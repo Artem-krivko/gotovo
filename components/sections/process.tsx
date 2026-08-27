@@ -98,7 +98,7 @@ function StepRow({
 
           {/* Hint — светлеет при hover */}
           <p className="pl-4 pt-0.5 font-mono text-[11px] text-[#A1A1B5]/40 transition-colors duration-300 group-hover:text-violet-400/60 sm:pl-5">
-            // {step.hint}
+            {"// "}{step.hint}
           </p>
         </div>
 
@@ -144,7 +144,7 @@ function MobileStepCard({
 
         <h3 className="text-sm font-semibold text-white">{step.title}</h3>
         <p className="text-xs leading-5 text-[#6B6B80]">{step.description}</p>
-        <p className="font-mono text-[10px] text-[#A1A1B5]/40">// {step.hint}</p>
+        <p className="font-mono text-[10px] text-[#A1A1B5]/40">{"// "}{step.hint}</p>
       </div>
     </li>
   );

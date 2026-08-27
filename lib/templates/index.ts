@@ -1,5 +1,14 @@
 // lib/templates/index.ts — HTML-скелеты дизайна. AI заполняет только контент (JSON).
 
+import {
+  escapeClamped,
+  safeHexColor,
+  safeImageSrc,
+  safeMailtoHref,
+  safeTelHref,
+  safeUrl,
+} from "../html.ts"
+
 export interface DesignContent {
   businessName: string
   headline: string
@@ -9,7 +18,13 @@ export interface DesignContent {
   services: Array<{ icon: string; name: string; description: string; price?: string }>
   features: Array<{ icon: string; title: string; description: string }>
   stats: Array<{ value: string; label: string }>
-  testimonial: { text: string; author: string; role: string }
+  /**
+   * Отзыв рендерится ТОЛЬКО если он реально предоставлен владельцем бизнеса.
+   * Модель это поле не заполняет — раньше промпт прямо просил её сочинить
+   * отзыв и подписать несуществующим человеком.
+   * Когда отзыва нет, sanitizeContent подставляет явный placeholder.
+   */
+  testimonial?: { text: string; author: string; role: string }
   ctaHeadline: string
   ctaSubtext: string
   phone: string
@@ -18,6 +33,27 @@ export interface DesignContent {
   heroImageUrl?: string
   heroImageCredit?: { name: string; url: string }
 }
+
+/**
+ * Контент, уже прошедший sanitizeContent: все строки экранированы, цвет и URL
+ * проверены, отзыв гарантированно заполнен (реальный либо placeholder).
+ *
+ * Builder'ы принимают именно этот тип, а не DesignContent — так невозможно
+ * случайно отрендерить неэкранированные данные в обход границы безопасности.
+ */
+type SanitizedContent = Omit<DesignContent, "testimonial"> & {
+  testimonial: NonNullable<DesignContent["testimonial"]>
+}
+
+// ─── Внешние ресурсы превью ───────────────────────────────────────────────────
+
+/**
+ * Версия зафиксирована намеренно. Раньше здесь был `lucide@latest` — это
+ * сторонний скрипт без пина, исполняющийся внутри превью: любой релиз (или
+ * компрометация пакета) сразу попадал бы всем пользователям генератора.
+ */
+const LUCIDE_CDN_ORIGIN = "https://unpkg.com"
+const LUCIDE_CDN_URL = `${LUCIDE_CDN_ORIGIN}/lucide@0.454.0/dist/umd/lucide.min.js`
 
 // ─── Нишевые сиды ─────────────────────────────────────────────────────────────
 
@@ -50,36 +86,35 @@ export function getNicheQuery(businessType: string): string {
 
 // ─── Атрибуция фото ───────────────────────────────────────────────────────────
 
-function creditBadge(d: DesignContent): string {
+function creditBadge(d: SanitizedContent): string {
   if (!d.heroImageCredit) return ""
   return `<a href="${d.heroImageCredit.url}" target="_blank" rel="noopener noreferrer" style="position:absolute;top:10px;right:10px;z-index:3;font-size:10px;font-weight:500;color:rgba(255,255,255,.7);text-decoration:none;background:rgba(0,0,0,.35);padding:3px 7px;border-radius:6px;backdrop-filter:blur(4px)">📷 Pexels</a>`
 }
 
-function creditCaption(d: DesignContent): string {
-  if (!d.heroImageCredit) return ""
-  return `<div style="max-width:1140px;margin:6px auto 0;padding:0 32px;text-align:right"><a href="${d.heroImageCredit.url}" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#9CA3AF;text-decoration:none">Фото: ${d.heroImageCredit.name} / Pexels</a></div>`
-}
-
-function buildFaqItems(d: DesignContent): Array<{ q: string; a: string }> {
+function buildFaqItems(d: SanitizedContent): Array<{ q: string; a: string }> {
   const svcs = d.services.slice(0, 3)
+  // Формулировки намеренно не обещают ничего от имени владельца бизнеса.
+  // Прежние варианты гарантировали ответ «в течение 15 минут», старт работ
+  // «за 1–3 рабочих дня» и договор без доплат — ни одного из этих условий
+  // владелец нам не подтверждал.
   return [
     {
       q: svcs[0] ? `Сколько стоит «${svcs[0].name}»?` : "Как рассчитывается стоимость?",
       a: svcs[0]?.price
-        ? `Базовая стоимость — ${svcs[0].price}. Точная цена зависит от объёма задачи — позвоните или напишите, рассчитаем за 15 минут.`
-        : "Стоимость рассчитывается индивидуально под ваш запрос. Позвоните или напишите — ответим в течение 15 минут.",
+        ? `Ориентир — ${svcs[0].price}. Итоговая стоимость зависит от объёма задачи: свяжитесь с нами, чтобы уточнить расчёт.`
+        : "Стоимость зависит от объёма и условий задачи. Свяжитесь с нами — рассчитаем под ваш запрос.",
     },
     {
       q: svcs[1] ? `Что входит в услугу «${svcs[1].name}»?` : "Что включает базовая услуга?",
-      a: svcs[1] ? svcs[1].description : "Подробный состав услуги обсуждается на первой консультации.",
+      a: svcs[1] ? svcs[1].description : "Состав услуги обсуждаем на первой консультации.",
     },
     {
-      q: "Работаете ли вы по договору?",
-      a: "Да. Стоимость и сроки фиксируем в договоре до начала работ — никаких скрытых доплат и устных договорённостей.",
+      q: "Как проходит работа?",
+      a: "Сначала уточняем задачу и условия, затем согласуем состав работ и стоимость, и только после этого приступаем.",
     },
     {
-      q: "Как быстро можно приступить к работе?",
-      a: "Обычно начинаем в течение 1–3 рабочих дней после согласования. Свяжитесь с нами, уточним вашу ситуацию.",
+      q: "Как с вами связаться?",
+      a: "Позвоните или напишите на почту — контакты указаны в блоке ниже. Ответим и обсудим вашу задачу.",
     },
   ]
 }
@@ -111,6 +146,29 @@ function getNicheFont(businessType: string): NicheFont {
   return DEFAULT_NICHE_FONT
 }
 
+// ─── CSP превью ───────────────────────────────────────────────────────────────
+
+/**
+ * Второй рубеж после экранирования: даже если в разметку когда-нибудь просочится
+ * инъекция, CSP не даст ей загрузить внешний скрипт или отправить данные наружу.
+ *
+ * 'unsafe-inline' для script-src, к сожалению, обязателен — шаблоны используют
+ * инлайновый скрипт scroll-reveal и счётчиков. Ограничиваем хотя бы источники:
+ * никаких произвольных доменов, никакого connect-src, никаких форм.
+ */
+export const PREVIEW_CSP = [
+  "default-src 'none'",
+  "img-src data: https:",
+  "font-src https://fonts.gstatic.com",
+  "style-src 'unsafe-inline' https://fonts.googleapis.com",
+  `script-src 'unsafe-inline' ${LUCIDE_CDN_ORIGIN}`,
+  "connect-src 'none'",
+  "form-action 'none'",
+  "base-uri 'none'",
+  "frame-src 'none'",
+  "object-src 'none'",
+].join("; ")
+
 // ─── head() — общий для всех шаблонов ────────────────────────────────────────
 
 function head(
@@ -121,6 +179,7 @@ function head(
   fontFamily = "'Space Grotesk',system-ui,sans-serif",
 ) {
   return `<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="${PREVIEW_CSP}">
 <title>${title}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="${fontUrl}" rel="stylesheet">
@@ -147,7 +206,7 @@ const ANIM_CSS = `
 
 // ─── Scroll-reveal + анимированные счётчики ───────────────────────────────────
 
-const ANIM_JS = `<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+const ANIM_JS = `<script src="${LUCIDE_CDN_URL}"></script>
 <script>
 (function(){
 if(typeof lucide!=='undefined')lucide.createIcons();
@@ -192,7 +251,7 @@ document.querySelectorAll('[data-count]').forEach(function(el){
 // MODERN — Aurora Glassmorphism
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function buildModern(d: DesignContent, _nf: NicheFont = DEFAULT_NICHE_FONT): string {
+export function buildModern(d: SanitizedContent): string {
   const svcs  = d.services.slice(0, 3)
   const feats = d.features.slice(0, 3)
   const stats = d.stats.slice(0, 3)
@@ -352,7 +411,7 @@ details.faq[open] .faq-plus{transform:rotate(45deg)}
       <a href="#process">Как работаем</a>
       <a href="#contact">Контакты</a>
     </nav>
-    <a href="tel:${d.phone.replace(/\s/g, "")}" class="btn btn-p btn-hdr" style="padding:10px 18px;font-size:13px">Позвонить</a>
+    <a href="${safeTelHref(d.phone)}" class="btn btn-p btn-hdr" style="padding:10px 18px;font-size:13px">Позвонить</a>
   </div>
 </header>
 
@@ -431,8 +490,8 @@ details.faq[open] .faq-plus{transform:rotate(45deg)}
     <h2>${d.ctaHeadline}</h2>
     <p class="cta-sub">${d.ctaSubtext}</p>
     <div class="ctas" style="justify-content:center">
-      <a href="tel:${d.phone.replace(/\s/g, "")}" class="btn btn-p">${d.phone}</a>
-      <a href="mailto:${d.email}" class="btn btn-s">${d.email}</a>
+      <a href="${safeTelHref(d.phone)}" class="btn btn-p">${d.phone}</a>
+      <a href="${safeMailtoHref(d.email)}" class="btn btn-s">${d.email}</a>
     </div>
   </div>
 </section>
@@ -453,7 +512,7 @@ ${ANIM_JS}
 // MINIMAL — Editorial Swiss
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function buildMinimal(d: DesignContent, nf: NicheFont = DEFAULT_NICHE_FONT): string {
+export function buildMinimal(d: SanitizedContent, nf: NicheFont = DEFAULT_NICHE_FONT): string {
   const svcs  = d.services.slice(0, 3)
   const feats = d.features.slice(0, 3)
   const stats = d.stats.slice(0, 3)
@@ -585,7 +644,7 @@ details.faq[open] .faq-plus{transform:rotate(45deg)}
       <a href="#about">О нас</a>
       <a href="#contact">Контакты</a>
     </nav>
-    <a href="tel:${d.phone.replace(/\s/g, "")}" class="btn btn-p btn-hdr" style="padding:10px 18px;font-size:13px">Позвонить</a>
+    <a href="${safeTelHref(d.phone)}" class="btn btn-p btn-hdr" style="padding:10px 18px;font-size:13px">Позвонить</a>
   </div>
 </header>
 
@@ -651,8 +710,8 @@ details.faq[open] .faq-plus{transform:rotate(45deg)}
   <h2 class="cta-h reveal">${d.ctaHeadline}</h2>
   <p class="cta-sub reveal">${d.ctaSubtext}</p>
   <div class="ctas reveal" style="justify-content:center">
-    <a href="tel:${d.phone.replace(/\s/g, "")}" class="btn btn-p">${d.phone}</a>
-    <a href="mailto:${d.email}" class="btn btn-s">${d.email}</a>
+    <a href="${safeTelHref(d.phone)}" class="btn btn-p">${d.phone}</a>
+    <a href="${safeMailtoHref(d.email)}" class="btn btn-s">${d.email}</a>
   </div>
 </section>
 
@@ -672,7 +731,7 @@ ${ANIM_JS}
 // BOLD — Brutalist Kinetic
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function buildBold(d: DesignContent, _nf: NicheFont = DEFAULT_NICHE_FONT): string {
+export function buildBold(d: SanitizedContent): string {
   const svcs  = d.services.slice(0, 3)
   const feats = d.features.slice(0, 3)
   const stats = d.stats.slice(0, 3)
@@ -827,7 +886,7 @@ details.faq-b[open] .faq-b-plus{transform:rotate(45deg)}
       <a href="#about">О нас</a>
       <a href="#contact">Контакты</a>
     </nav>
-    <a href="tel:${d.phone.replace(/\s/g, "")}" class="btn btn-p btn-hdr" style="padding:10px 18px">Звонок</a>
+    <a href="${safeTelHref(d.phone)}" class="btn btn-p btn-hdr" style="padding:10px 18px">Звонок</a>
   </div>
 </header>
 
@@ -898,8 +957,8 @@ ${d.heroImageUrl ? `<div class="img-banner"><img src="${d.heroImageUrl}" alt="${
   <h2 class="cta-h reveal">${d.ctaHeadline}</h2>
   <p class="cta-sub reveal">${d.ctaSubtext}</p>
   <div class="ctas reveal" style="justify-content:center">
-    <a href="tel:${d.phone.replace(/\s/g, "")}" class="btn btn-dark">${d.phone}</a>
-    <a href="mailto:${d.email}" class="btn" style="border:2px solid rgba(255,255,255,.4);color:#fff;clip-path:none">${d.email}</a>
+    <a href="${safeTelHref(d.phone)}" class="btn btn-dark">${d.phone}</a>
+    <a href="${safeMailtoHref(d.email)}" class="btn" style="border:2px solid rgba(255,255,255,.4);color:#fff;clip-path:none">${d.email}</a>
   </div>
 </section>
 
@@ -919,7 +978,7 @@ ${ANIM_JS}
 // CORPORATE — Professional Trust
 // ─────────────────────────────────────────────────────────────────────────────
 
-export function buildCorporate(d: DesignContent, nf: NicheFont = DEFAULT_NICHE_FONT): string {
+export function buildCorporate(d: SanitizedContent, nf: NicheFont = DEFAULT_NICHE_FONT): string {
   const svcs  = d.services.slice(0, 3)
   const feats = d.features.slice(0, 3)
   const stats = d.stats.slice(0, 3)
@@ -1063,7 +1122,7 @@ details.faq-c[open] .faq-c-plus{transform:rotate(45deg)}
       <a href="#process">Как работаем</a>
       <a href="#contact">Контакты</a>
     </nav>
-    <a href="tel:${d.phone.replace(/\s/g, "")}" class="btn btn-p btn-hdr" style="padding:9px 18px;font-size:13px">Позвонить</a>
+    <a href="${safeTelHref(d.phone)}" class="btn btn-p btn-hdr" style="padding:9px 18px;font-size:13px">Позвонить</a>
   </div>
 </header>
 
@@ -1101,7 +1160,8 @@ details.faq-c[open] .faq-c-plus{transform:rotate(45deg)}
 <section class="sec" id="services">
   <div class="sec-head reveal"><p class="sec-tag">Услуги</p><h2>Что мы предлагаем</h2></div>
   <div class="grid3">
-    ${svcs.map((s, i) => `<div class="card${i === 0 ? " card-featured" : ""} reveal">${i === 0 ? `<div class="card-badge">★ Популярно</div>` : ""}<div class="ibox">0${i+1}</div><h3>${s.name}</h3><p>${s.description}</p>${s.price ? `<p class="price">${s.price}</p>` : ""}</div>`).join("")}
+    ${/* Бейдж «★ Популярно» убран: это утверждение о спросе, которого мы не знаем. */ ""}
+    ${svcs.map((s, i) => `<div class="card${i === 0 ? " card-featured" : ""} reveal"><div class="ibox">0${i+1}</div><h3>${s.name}</h3><p>${s.description}</p>${s.price ? `<p class="price">${s.price}</p>` : ""}</div>`).join("")}
   </div>
 </section>
 
@@ -1120,7 +1180,8 @@ details.faq-c[open] .faq-c-plus{transform:rotate(45deg)}
 <section class="quote-sec">
   <div class="quote-inner">
     <div class="qbox reveal">
-      <div class="stars">★★★★★</div>
+      ${/* Рейтинг ★★★★★ убран: он выводился всегда, в том числе над
+            placeholder-отзывом — то есть был выдуманной оценкой. */ ""}
       <div class="qmark">&#8220;</div>
       <blockquote>${d.testimonial.text}</blockquote>
       <div class="author">
@@ -1141,12 +1202,14 @@ details.faq-c[open] .faq-c-plus{transform:rotate(45deg)}
 </section>
 
 <section class="cta-sec" id="contact">
-  <p class="guarantee reveal"><i data-lucide="lock" style="width:13px;height:13px;flex-shrink:0" aria-hidden="true"></i>Без риска — 100% возврат, если работа не устроит</p>
+  ${/* «100% возврат» — гарантия, которую владелец бизнеса не давал.
+        Заменено на нейтральное утверждение о процессе. */ ""}
+  <p class="guarantee reveal"><i data-lucide="message-circle" style="width:13px;height:13px;flex-shrink:0" aria-hidden="true"></i>Обсудим задачу до начала работы</p>
   <h2 class="cta-h reveal">${d.ctaHeadline}</h2>
   <p class="cta-sub reveal">${d.ctaSubtext}</p>
   <div class="ctas reveal" style="justify-content:center">
-    <a href="tel:${d.phone.replace(/\s/g, "")}" class="btn btn-white">${d.phone}</a>
-    <a href="mailto:${d.email}" class="btn btn-outline-w">${d.email}</a>
+    <a href="${safeTelHref(d.phone)}" class="btn btn-white">${d.phone}</a>
+    <a href="${safeMailtoHref(d.email)}" class="btn btn-outline-w">${d.email}</a>
   </div>
 </section>
 
@@ -1162,14 +1225,96 @@ ${ANIM_JS}
 </html>`
 }
 
+// ─── Честность контента ───────────────────────────────────────────────────────
+
+/**
+ * Блок отзыва — самое опасное место с точки зрения честности: до этой правки
+ * промпт прямо требовал от модели «отзыв с конкретным результатом в цифрах»
+ * и подпись вида «Имя Фамилия, Должность, Компания». То есть на превью,
+ * которое видит потенциальный клиент, выводился выдуманный человек
+ * с выдуманным результатом.
+ *
+ * Теперь: либо реальный отзыв, переданный владельцем бизнеса, либо честный
+ * placeholder, который прямо говорит, что это место под будущий отзыв.
+ * Ничего не выдумывается.
+ */
+function resolveTestimonial(
+  testimonial: DesignContent["testimonial"]
+): NonNullable<DesignContent["testimonial"]> {
+  const text = escapeClamped(testimonial?.text, 420)
+
+  if (text) {
+    return {
+      text,
+      author: escapeClamped(testimonial?.author, 60) || "Клиент",
+      role: escapeClamped(testimonial?.role, 90),
+    }
+  }
+
+  return {
+    text: "Здесь будет реальный отзыв вашего клиента — с конкретным результатом и именем. Мы не придумываем отзывы за вас.",
+    author: "Место под отзыв",
+    role: "Добавим после запуска",
+  }
+}
+
+// ─── Санитизация ──────────────────────────────────────────────────────────────
+
+/**
+ * Единственная граница безопасности для сгенерированного HTML.
+ *
+ * Значения приходят из двух недоверенных источников: поля формы (businessName,
+ * businessType, userDescription) и ответ модели. Оба могут содержать разметку —
+ * случайно или намеренно. Экранируем ОДИН раз здесь, а не в 60+ местах
+ * интерполяции, иначе следующая правка шаблона неизбежно пропустит одно из них.
+ *
+ * Лимиты длины тут не косметика: они не дают модели сломать вёрстку строкой
+ * на 4000 символов и заодно ограничивают размер строки в БД.
+ */
+function sanitizeContent(d: DesignContent): SanitizedContent {
+  return {
+    businessName:  escapeClamped(d.businessName, 60),
+    headline:      escapeClamped(d.headline, 120),
+    subheadline:   escapeClamped(d.subheadline, 280),
+    tagline:       escapeClamped(d.tagline, 48),
+    accentColor:   safeHexColor(d.accentColor),
+    services: (Array.isArray(d.services) ? d.services : []).slice(0, 6).map((s) => ({
+      icon:        escapeClamped(s?.icon, 8),
+      name:        escapeClamped(s?.name, 70),
+      description: escapeClamped(s?.description, 320),
+      price:       s?.price ? escapeClamped(s.price, 32) : undefined,
+    })),
+    features: (Array.isArray(d.features) ? d.features : []).slice(0, 6).map((f) => ({
+      icon:        escapeClamped(f?.icon, 8),
+      title:       escapeClamped(f?.title, 90),
+      description: escapeClamped(f?.description, 280),
+    })),
+    stats: (Array.isArray(d.stats) ? d.stats : []).slice(0, 6).map((s) => ({
+      value: escapeClamped(s?.value, 24),
+      label: escapeClamped(s?.label, 48),
+    })),
+    testimonial: resolveTestimonial(d.testimonial),
+    ctaHeadline:   escapeClamped(d.ctaHeadline, 100),
+    ctaSubtext:    escapeClamped(d.ctaSubtext, 220),
+    phone:         escapeClamped(d.phone, 24),
+    email:         escapeClamped(d.email, 90),
+    footerTagline: escapeClamped(d.footerTagline, 70),
+    heroImageUrl:  d.heroImageUrl ? safeImageSrc(d.heroImageUrl) || undefined : undefined,
+    heroImageCredit: d.heroImageCredit
+      ? { name: escapeClamped(d.heroImageCredit.name, 60), url: safeUrl(d.heroImageCredit.url, "#") }
+      : undefined,
+  }
+}
+
 // ─── Router ───────────────────────────────────────────────────────────────────
 
 export function fillTemplate(style: string, content: DesignContent, businessType = ""): string {
   const nf = getNicheFont(businessType)
+  const d = sanitizeContent(content)
   switch (style) {
-    case "minimal":   return buildMinimal(content, nf)
-    case "bold":      return buildBold(content, nf)
-    case "corporate": return buildCorporate(content, nf)
-    default:          return buildModern(content, nf)
+    case "minimal":   return buildMinimal(d, nf)
+    case "bold":      return buildBold(d)
+    case "corporate": return buildCorporate(d, nf)
+    default:          return buildModern(d)
   }
 }

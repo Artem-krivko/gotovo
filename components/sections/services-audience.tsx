@@ -12,13 +12,6 @@ type ServicesAudienceProps = {
   items: AudienceItem[];
 };
 
-const accents = [
-  "from-violet-100 via-white to-blue-50",
-  "from-blue-100 via-white to-cyan-50",
-  "from-fuchsia-100 via-white to-violet-50",
-  "from-sky-100 via-white to-indigo-50",
-];
-
 const labels = [
   "Частый сценарий",
   "Подходит экспертам",

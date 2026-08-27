@@ -1,12 +1,19 @@
 "use client"
 
 import { useState, useCallback, useEffect, useRef } from "react"
+import type { ContentSource } from "@/lib/types"
 
 interface GeneratorPreviewProps {
   html: string
   designId: string
   onRegenerate: () => void
   isLoading: boolean
+  /**
+   * "fallback" — модель была недоступна и показан нейтральный черновик.
+   * Раньше в этом случае пользователю молча отдавалась заглушка с выдуманными
+   * цифрами и отзывом, и он считал это результатом работы AI.
+   */
+  source: ContentSource
 }
 
 // ─── Скелетон загрузки ────────────────────────────────────────────────────────
@@ -289,30 +296,61 @@ function OrderModal({ designId, onClose }: { designId: string; onClose: () => vo
 
 // ─── Основной компонент превью ────────────────────────────────────────────────
 
-export function GeneratorPreview({ html, designId, onRegenerate, isLoading }: GeneratorPreviewProps) {
+export function GeneratorPreview({ html, designId, onRegenerate, isLoading, source }: GeneratorPreviewProps) {
   const [showModal, setShowModal] = useState(false)
-  const [showTimedBanner, setShowTimedBanner] = useState(false)
-  const bannerFiredRef = useRef(false)
+  const [engaged, setEngaged] = useState(false)
+  const [bannerDismissed, setBannerDismissed] = useState(false)
+  const previewRef = useRef<HTMLDivElement | null>(null)
 
-  // Запускаем баннер через 10 секунд после первой генерации
+  /**
+   * Баннер заявки раньше выскакивал строго через 10 секунд после генерации —
+   * то есть чаще всего до того, как человек успевал рассмотреть результат.
+   *
+   * Теперь триггер осмысленный: показываем только после реального
+   * взаимодействия с превью. Превью лежит в sandbox-iframe без
+   * allow-same-origin, поэтому напрямую скролл внутри не отследить — но клик
+   * внутрь iframe надёжно определяется по потере фокуса окном в момент,
+   * когда активным элементом стал именно наш iframe.
+   */
   useEffect(() => {
-    if (!html || isLoading || bannerFiredRef.current) return
-    bannerFiredRef.current = true
-    const timer = setTimeout(() => setShowTimedBanner(true), 10_000)
-    return () => clearTimeout(timer)
-  }, [html, isLoading])
+    if (!html || isLoading || engaged) return
 
-  // Скрываем баннер когда открывается основной модал
-  useEffect(() => {
-    if (showModal) setShowTimedBanner(false)
-  }, [showModal])
+    const onBlur = () => {
+      if (document.activeElement?.tagName === "IFRAME") setEngaged(true)
+    }
+    // Клик по тулбару/области превью — тоже осознанное взаимодействие.
+    const onPointerDown = () => setEngaged(true)
+
+    window.addEventListener("blur", onBlur)
+    const node = previewRef.current
+    node?.addEventListener("pointerdown", onPointerDown)
+
+    return () => {
+      window.removeEventListener("blur", onBlur)
+      node?.removeEventListener("pointerdown", onPointerDown)
+    }
+  }, [html, isLoading, engaged])
+
+  // Пока открыт основной модал, баннер не нужен — это один и тот же шаг воронки.
+  const showTimedBanner = engaged && !bannerDismissed && !showModal && Boolean(designId)
 
   const handleOpenInTab = useCallback(() => {
+    // Предпочитаем серверный маршрут: он отдаёт превью с заголовком
+    // `Content-Security-Policy: sandbox`, то есть в изолированном origin.
+    if (designId) {
+      window.open(`/api/design/${encodeURIComponent(designId)}`, "_blank", "noopener,noreferrer")
+      return
+    }
+
+    // Фолбэк, когда запись в БД не удалась и designId нет: blob: наследует наш
+    // origin, поэтому полагаемся на экранирование и на CSP-мету внутри самого
+    // документа. noopener обязателен — иначе открытая вкладка получает
+    // window.opener и может подменить исходную страницу.
     const blob = new Blob([html], { type: "text/html" })
     const url = URL.createObjectURL(blob)
-    window.open(url, "_blank")
+    window.open(url, "_blank", "noopener,noreferrer")
     setTimeout(() => URL.revokeObjectURL(url), 60_000)
-  }, [html])
+  }, [html, designId])
 
   return (
     <>
@@ -353,8 +391,19 @@ export function GeneratorPreview({ html, designId, onRegenerate, isLoading }: Ge
           </div>
         </div>
 
+        {source === "fallback" && (
+          <p
+            role="status"
+            className="border-b border-amber-200 bg-amber-50 px-4 py-2.5 text-xs text-amber-900"
+          >
+            <strong className="font-semibold">ИИ сейчас недоступен.</strong> Это нейтральный
+            черновик структуры без текстов и цифр — не результат генерации. Попробуйте «Ещё раз»
+            через минуту.
+          </p>
+        )}
+
         {/* iframe */}
-        <div className="relative flex-1 overflow-hidden">
+        <div ref={previewRef} className="relative flex-1 overflow-hidden">
           {isLoading && (
             <div className="absolute inset-0 z-10 bg-white">
               <GeneratorSkeleton />
@@ -365,11 +414,17 @@ export function GeneratorPreview({ html, designId, onRegenerate, isLoading }: Ge
             title="Превью сгенерированного сайта"
             className="h-full w-full border-0"
             loading="lazy"
+            // allow-same-origin намеренно отсутствует: превью содержит текст от
+            // пользователя и от модели, поэтому исполняться оно должно в
+            // изолированном origin и не иметь доступа к нашим cookie и DOM.
+            // allow-scripts нужен для scroll-reveal и счётчиков,
+            // allow-popups — для ссылки на автора фото (требование Pexels).
+            sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
           />
-          {showTimedBanner && !showModal && (
+          {showTimedBanner && (
             <TimedBanner
               designId={designId}
-              onDismiss={() => setShowTimedBanner(false)}
+              onDismiss={() => setBannerDismissed(true)}
             />
           )}
         </div>

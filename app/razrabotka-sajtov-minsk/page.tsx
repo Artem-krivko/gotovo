@@ -321,7 +321,7 @@ export default function RazrabotkaMinskPage() {
                   <p className="text-xs font-semibold uppercase tracking-widest text-violet-400">
                     Наш процесс
                   </p>
-                  {PROCESS_STEPS.map((step, i) => (
+                  {PROCESS_STEPS.map((step) => (
                     <div key={step.num} className="flex items-start gap-4">
                       <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-violet-500/30 bg-violet-500/10 text-xs font-bold text-violet-400">
                         {step.num}

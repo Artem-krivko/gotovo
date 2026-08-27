@@ -4,7 +4,7 @@ import { useState, useCallback } from "react"
 import { GeneratorForm } from "@/components/generator/generator-form"
 import { GeneratorGallery, type GalleryPreset } from "@/components/generator/generator-gallery"
 import { GeneratorPreview, GeneratorSkeleton } from "@/components/generator/generator-preview"
-import type { GeneratorParams } from "@/lib/types"
+import type { ContentSource, GenerateApiResponse, GeneratorParams } from "@/lib/types"
 
 function EmptyPreview() {
   return (
@@ -35,6 +35,7 @@ export default function GeneratorPage() {
   const [generatedHtml, setGeneratedHtml] = useState<string>("")
   const [designId, setDesignId] = useState<string>("")
   const [lastParams, setLastParams] = useState<GeneratorParams | null>(null)
+  const [source, setSource] = useState<ContentSource>("ai")
 
   const handleGallerySelect = useCallback((p: GalleryPreset | null) => {
     setPreset(p)
@@ -43,12 +44,16 @@ export default function GeneratorPage() {
     setDesignId("")
   }, [])
 
-  const handleResult = useCallback((html: string, id: string, params: GeneratorParams) => {
-    setGeneratedHtml(html)
-    setDesignId(id)
-    setLastParams(params)
-    setIsLoading(false)
-  }, [])
+  const handleResult = useCallback(
+    (html: string, id: string, params: GeneratorParams, contentSource: ContentSource) => {
+      setGeneratedHtml(html)
+      setDesignId(id)
+      setLastParams(params)
+      setSource(contentSource)
+      setIsLoading(false)
+    },
+    []
+  )
 
   const handleLoading = useCallback((loading: boolean) => {
     setIsLoading(loading)
@@ -66,10 +71,11 @@ export default function GeneratorPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ params: lastParams }),
       })
-      const data = await res.json() as { html?: string; designId?: string; error?: string }
+      const data = await res.json() as Partial<GenerateApiResponse> & { error?: string }
       if (!res.ok || !data.html) throw new Error(data.error)
       setGeneratedHtml(data.html)
       setDesignId(data.designId ?? "")
+      setSource(data.source ?? "ai")
     } catch {
       // keep existing result
     } finally {
@@ -130,6 +136,7 @@ export default function GeneratorPage() {
             designId={designId}
             onRegenerate={handleRegenerate}
             isLoading={isLoading}
+            source={source}
           />
         ) : (
           <EmptyPreview />

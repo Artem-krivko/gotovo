@@ -1,16 +1,34 @@
 import { Pool } from "pg"
 import { PrismaPg } from "@prisma/adapter-pg"
-// @ts-ignore — Prisma 7 generated client
 import { PrismaClient } from "./generated/prisma/client"
 
-function createClient() {
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL! })
+// Пул создаётся лениво: раньше `process.env.DATABASE_URL!` вычислялся при
+// импорте модуля, поэтому отсутствие переменной роняло любой маршрут,
+// который просто импортировал db — даже если обращения к БД в нём не было.
+function createClient(): PrismaClient {
+  const connectionString = process.env.DATABASE_URL
+  if (!connectionString) {
+    throw new Error("DATABASE_URL не задан")
+  }
+  const pool = new Pool({ connectionString })
   const adapter = new PrismaPg(pool)
-  // @ts-ignore
   return new PrismaClient({ adapter })
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const globalForPrisma = globalThis as any
-export const db = globalForPrisma.prisma ?? createClient()
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db
+const globalForPrisma = globalThis as typeof globalThis & {
+  prisma?: PrismaClient
+}
+
+/**
+ * Прокси вместо готового клиента: соединение поднимается при первом реальном
+ * обращении, а не при импорте. Если DATABASE_URL нет, ошибка возникнет внутри
+ * try/catch вызывающего маршрута — а маршруты генерации и заявок именно так
+ * и написаны, чтобы сбой БД не уничтожал результат.
+ */
+export const db: PrismaClient = new Proxy({} as PrismaClient, {
+  get(_target, prop, receiver) {
+    const client = (globalForPrisma.prisma ??= createClient())
+    const value = Reflect.get(client, prop, receiver)
+    return typeof value === "function" ? value.bind(client) : value
+  },
+})

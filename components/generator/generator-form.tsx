@@ -1,7 +1,13 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import type { GeneratorParams, GeneratorStyle, GeneratorLanguage } from "@/lib/types"
+import type {
+  ContentSource,
+  GenerateApiResponse,
+  GeneratorParams,
+  GeneratorStyle,
+  GeneratorLanguage,
+} from "@/lib/types"
 
 // ─── Статические данные формы ────────────────────────────────────────────────
 
@@ -80,7 +86,12 @@ interface DefaultValues {
 }
 
 interface GeneratorFormProps {
-  onResult: (html: string, designId: string, params: GeneratorParams) => void
+  onResult: (
+    html: string,
+    designId: string,
+    params: GeneratorParams,
+    source: ContentSource
+  ) => void
   onLoading: (loading: boolean) => void
   isLoading: boolean
   defaultValues?: DefaultValues
@@ -127,13 +138,13 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
           body: JSON.stringify({ params }),
         })
 
-        const data = await res.json() as { html?: string; designId?: string; error?: string }
+        const data = await res.json() as Partial<GenerateApiResponse> & { error?: string }
 
         if (!res.ok || !data.html) {
           throw new Error(data.error ?? "Ошибка генерации")
         }
 
-        onResult(data.html, data.designId ?? "", params)
+        onResult(data.html, data.designId ?? "", params, data.source ?? "ai")
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Попробуйте ещё раз"
         setError(msg)
