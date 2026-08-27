@@ -9,10 +9,10 @@
 | Фреймворк | Next.js 16 (App Router) | SSR, API routes, файловый роутинг |
 | Язык | TypeScript | Безопасность типов, автодополнение |
 | Стили | Tailwind CSS 4 | Скорость разработки |
-| ИИ | Anthropic Claude API (claude-sonnet-4-20250514) | Качество генерации кода/HTML |
+| ИИ | Google Gemini (gemini-2.0-flash-001, версия зафиксирована) | Два этапа: контент и DesignSpec |
 | Email | Resend | Бесплатный tier, простая интеграция |
 | Деплой | Vercel | Бесплатно для Next.js, автодеплой из GitHub |
-| Хранение заявок | JSON файл → Notion API | Без БД на старте |
+| Хранение заявок | PostgreSQL через Prisma 7 | Модели Design и Order |
 
 ---
 
@@ -26,7 +26,7 @@ POST /api/generate
   ↓
 Сборка промпта из параметров пользователя
   ↓
-Claude API: claude-sonnet-4-20250514
+Gemini: gemini-2.0-flash-001
   ↓
 Получение HTML/CSS строки
   ↓
@@ -102,7 +102,7 @@ app/api/
 ## Переменные окружения (.env.local)
 
 ```
-ANTHROPIC_API_KEY=          # Claude API ключ
+GOOGLE_AI_API_KEY=          # Gemini API ключ
 RESEND_API_KEY=             # Email нотификации
 LEAD_EMAIL=                 # Куда слать заявки (твой email)
 NOTION_TOKEN=               # (Фаза 4) для CRM

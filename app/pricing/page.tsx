@@ -9,10 +9,15 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
 
 export const metadata: Metadata = {
   title: "Стоимость разработки сайта: лендинг до 300 $ | gotovo",
-  description: "Прозрачные пакеты: лендинг до 300 $ за 7 дней, бизнес-сайт до 1000 $ за 14 дней. Фиксированный объём, без скрытых доплат. Оплата 50/50.",
+  description: "Прозрачные пакеты: лендинг до 300 $ за 7 дней, бизнес-сайт до 1000 $ за 14 дней. Фиксированный объём, без скрытых доплат. Оплата после результата.",
   alternates: { canonical: `${SITE_URL}/pricing` },
   openGraph: { url: `${SITE_URL}/pricing`, images: [{ url: "/og-image.png", width: 1200, height: 630 }] },
 };
+
+/** Первое число из строки вида «до 1000 $» или «500–800 $». */
+function extractPrice(raw: string): string {
+  return raw.replace(/\s/g, "").match(/\d+/)?.[0] ?? "0"
+}
 
 const pricingSchema = {
   "@context": "https://schema.org",
@@ -22,7 +27,14 @@ const pricingSchema = {
     "@type": "ListItem",
     position: i + 1,
     item: { "@type": "Service", name: plan.name, description: plan.description,
-      offers: { "@type": "Offer", priceCurrency: "EUR", price: plan.price.replace(/[€–\s]/g, "").split("").find(Boolean) } },
+      offers: {
+        "@type": "Offer",
+        priceCurrency: "USD",
+        // Прежняя версия делала .split("").find(Boolean) и брала ПЕРВЫЙ СИМВОЛ:
+        // «до 1000 $» превращалось в цену "1". Берём первое число целиком.
+        price: extractPrice(plan.price),
+        ...(plan.price.includes("–") ? { priceSpecification: { "@type": "PriceSpecification", minPrice: extractPrice(plan.price) } } : {}),
+      } },
   })),
 };
 
@@ -86,7 +98,7 @@ export default function PricingPage() {
             {[
               { value: "до 300 $", label: "лендинг", border: "border-violet-500/40", glow: "shadow-lg shadow-violet-500/20" },
               { value: "7–14 дней", label: "типичный срок", border: "border-blue-500/40", glow: "shadow-lg shadow-blue-500/20" },
-              { value: "50/50", label: "схема оплаты", border: "border-emerald-500/40", glow: "shadow-lg shadow-emerald-500/20" },
+              { value: "После", label: "результата — оплата", border: "border-emerald-500/40", glow: "shadow-lg shadow-emerald-500/20" },
             ].map((m) => (
               <div key={m.label} className={`rounded-2xl border ${m.border} bg-[#13131A] p-4 text-center shadow-lg ${m.glow}`}>
                 <p className="text-base font-bold text-white sm:text-xl">{m.value}</p>

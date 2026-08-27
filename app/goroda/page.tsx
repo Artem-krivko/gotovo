@@ -8,7 +8,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio"
 export const metadata: Metadata = {
   title: "Создание сайтов по городам Беларуси — gotovo",
   description:
-    "Разрабатываем сайты для бизнеса во всех городах Беларуси. Минск, Гомель, Брест, Гродно, Витебск, Могилёв. Работаем удалённо. От 500 €, за 7–14 дней.",
+    "Разрабатываем сайты для бизнеса во всех городах Беларуси. Минск, Гомель, Брест, Гродно, Витебск, Могилёв. Работаем удалённо. От 500 $, за 7–14 дней.",
   alternates: { canonical: `${SITE_URL}/goroda` },
   openGraph: {
     url: `${SITE_URL}/goroda`,

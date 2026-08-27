@@ -1,36 +1,128 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# gotovo
 
-## Getting Started
+AI веб-агентство с генератором концептов сайтов.
+Клиент описывает бизнес → ИИ собирает персональный концепт → клиент оставляет заявку.
 
-First, run the development server:
+**Монетизация:** лид-генерация. Генератор бесплатный, платят за разработку.
+
+---
+
+## Стек
+
+- Next.js 16 (App Router) + React 19 + TypeScript
+- Tailwind CSS 4
+- Prisma 7 + PostgreSQL (адаптер `@prisma/adapter-pg`)
+- Google Gemini — генерация контента и визуального решения
+- Pexels — нишевые фотографии
+- Resend + Telegram — уведомления о заявках
+
+---
+
+## Запуск
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Скрипты
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Команда | Что делает |
+|---|---|
+| `npm run dev` | Дев-сервер |
+| `npm run build` | `prisma generate` + production-сборка |
+| `npm run lint` | ESLint (норма — 0 ошибок и 0 предупреждений) |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run test` | Тесты через `node --test` (без внешних зависимостей) |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Переменные окружения
 
-## Learn More
+| Переменная | Обязательна | Назначение |
+|---|---|---|
+| `DATABASE_URL` | для сохранения | PostgreSQL. Без неё генерация РАБОТАЕТ, но превью не сохраняется |
+| `GOOGLE_AI_API_KEY` | для AI | Без неё отдаётся нейтральный черновик с пометкой «ИИ недоступен» |
+| `PEXELS_API_KEY` | нет | Фото в hero. Без неё страница собирается без изображения |
+| `RESEND_API_KEY` | в проде | Письма о заявках |
+| `LEAD_NOTIFICATION_EMAIL` | в проде | Куда слать заявки |
+| `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` | нет | Дублирование заявок в Telegram |
+| `NEXT_PUBLIC_SITE_URL` | в проде | Канонические URL и ссылки в письмах |
 
-To learn more about Next.js, take a look at the following resources:
+> В production при отсутствии `RESEND_API_KEY`/`LEAD_NOTIFICATION_EMAIL` формы
+> отвечают ошибкой, а не ложным «успешно»: терять заявку молча нельзя.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Как устроен генератор
 
-## Deploy on Vercel
+```
+Бриф пользователя
+   ├─→ AI-стратег      → структура и честный текст   ─┐  (параллельно:
+   └─→ AI-арт-директор → DesignSpec                  ─┘   обоим нужен только бриф)
+                              │
+                     библиотека вариантов секций
+                              │
+                        композиция страницы
+                              │
+                    quality gate (1 контролируемый ретрай)
+                              │
+                      превью в sandbox-iframe
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Ключевые модули
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Файл | Ответственность |
+|---|---|
+| `lib/design/spec.ts` | `DesignSpec` — типизированные решения арт-директора + быстрые правки |
+| `lib/design/tokens.ts` | Spec → CSS-переменные, коррекция контраста |
+| `lib/design/sections.ts` | Библиотека вариантов секций |
+| `lib/design/compose.ts` | Сборка страницы, единая граница экранирования |
+| `lib/design/content.ts` | Разделение verified / assumptions / placeholders |
+| `lib/design/quality.ts` | Автоматические проверки перед показом |
+| `lib/html.ts` | Экранирование и валидация всех динамических значений |
+| `lib/rate-limit.ts` | Ограничение частоты запросов |
+
+### Почему композиция — это данные
+
+Модель выбирает не HTML, а значения из перечислений `DesignSpec`:
+порядок секций, вариант hero, типографику, плотность, скругления и т.д.
+Это даёт три вещи сразу:
+
+1. **Разнообразие.** Разные ниши получают разную структуру, а не один
+   шаблон с другим акцентным цветом.
+2. **Безопасность.** Произвольную разметку модель прислать не может
+   в принципе — всё проходит через allow-list `parseDesignSpec`.
+3. **Дешёвые правки.** `POST /api/adjust` пересобирает страницу
+   за ~0.2 с без обращения к модели.
+
+---
+
+## Честность контента
+
+Модель **не генерирует** отзывы, цифры, гарантии, сертификаты, цены и сроки.
+Всё это берётся только из подтверждённых полей брифа (`VerifiedFacts`).
+Если данных нет — рендерится явный placeholder («—» с подписью метрики),
+а блок отзывов не показывается вовсе.
+
+`lib/design/quality.ts` дополнительно ловит формулировки вида
+«более 500 клиентов» и «гарантия 24 месяца» в сгенерированном тексте.
+
+---
+
+## Тесты
+
+```bash
+npm run test
+```
+
+- `lib/__tests__/xss.test.mts` — XSS-payload'ы во всех шаблонах
+- `lib/__tests__/compose.test.mts` — разнообразие композиции, контраст, правки спеки
+- `lib/__tests__/quality.test.mts` — quality gate на 30 эталонных брифах
+
+---
+
+## Документация
+
+- `CLAUDE.md` — контекст проекта и дизайн-система
+- `_ai-skills/` — роли (developer, designer, seo, pm, copywriter)
+- `_docs/DECISIONS.md` — принятые решения
+- `_docs/ARCHITECTURE.md` — архитектура

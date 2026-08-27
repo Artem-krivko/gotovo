@@ -123,7 +123,7 @@ const FAQ_ITEMS = [
   },
   {
     question: "Как оплатить?",
-    answer: "50% предоплата перед стартом, 50% после финального согласования. Оплата удобным способом.",
+    answer: "Без предоплаты: вы платите после того, как увидели и одобрили результат. Способ оплаты — удобный вам.",
   },
 ];
 
@@ -193,7 +193,7 @@ export default function LendingMinskPage() {
                 { value: "от 500$", label: "стоимость" },
                 { value: "7–10 дней", label: "срок" },
                 { value: "30 сек", label: "превью дизайна" },
-                { value: "50/50", label: "оплата" },
+                { value: "После", label: "оплата" },
               ].map((m) => (
                 <div key={m.label} className="rounded-2xl border border-white/10 bg-[#13131A] px-4 py-4 text-center">
                   <p className="text-lg font-bold text-white">{m.value}</p>

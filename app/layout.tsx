@@ -19,11 +19,11 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "gotovo — опишите бизнес, получите сайт за 30 секунд",
+    default: "gotovo — концепт сайта за 30 секунд, готовый сайт за 7–14 дней",
     template: "%s | gotovo",
   },
   description:
-    "AI-генератор дизайна сайтов. Опишите бизнес — ИИ создаёт превью за 30 секунд бесплатно. Нравится — заказываете разработку. Лендинги до 300 $.",
+    "Опишите бизнес — ИИ соберёт персональный концепт сайта за 30 секунд, бесплатно. Подходит направление — доведём до готового сайта за 7–14 дней. Лендинги до 300 $.",
   keywords: [
     "создание сайтов для бизнеса",
     "ai генератор сайтов",
@@ -50,13 +50,13 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: "gotovo",
     title: "gotovo — AI-генератор дизайна сайтов",
-    description: "Опишите бизнес — ИИ создаёт дизайн за 30 секунд. Бесплатно. От 300 $.",
+    description: "Опишите бизнес — ИИ соберёт концепт сайта за 30 секунд. Бесплатно. Готовый сайт от 300 $.",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "gotovo — AI веб-агентство" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "gotovo — AI-генератор дизайна сайтов",
-    description: "Превью дизайна за 30 секунд — бесплатно. От 300 $.",
+    description: "Концепт сайта за 30 секунд — бесплатно. Готовый сайт от 300 $.",
     images: ["/og-image.png"],
   },
   robots: {
@@ -70,7 +70,7 @@ const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
   name: "gotovo",
-  description: "AI-агентство по разработке сайтов. Генератор дизайна за 30 секунд бесплатно.",
+  description: "AI-агентство по разработке сайтов. Генератор концептов дизайна — бесплатно, за 30 секунд.",
   url: SITE_URL,
   serviceType: "Web Development",
   areaServed: [
@@ -109,7 +109,10 @@ gtag('js',new Date());gtag('config','G-MSXLMK8X5K',{anonymize_ip:true});`}
       >
         <SiteHeader />
         <div className="h-16" aria-hidden="true" />
-        <main>{children}</main>
+        {/* Обёртки <main> здесь быть не должно: каждая страница рендерит
+            свой <main>, и получалась вложенность main в main — невалидная
+            разметка, из-за которой скринридеры видят два main-landmark'а. */}
+        {children}
         <SiteFooter />
         <AnalyticsConsent />
         <a

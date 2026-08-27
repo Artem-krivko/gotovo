@@ -57,7 +57,7 @@ export const SERVICE_FORMATS: ServiceFormat[] = [
     title: "Запуск + SEO",
     description:
       "Подготовка сайта к индексации и нормальному старту. Мета, аналитика, sitemap — всё чтобы сайт работал.",
-    price: "€150–250",
+    price: "150–250 $",
     duration: "3–5 дней",
     bullets: ["Meta и Open Graph", "Sitemap и аналитика", "Подготовка к росту"],
     colorClasses: "border-cyan-200 bg-gradient-to-br from-cyan-50 to-sky-50",

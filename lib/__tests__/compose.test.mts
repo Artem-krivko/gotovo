@@ -11,7 +11,7 @@ import assert from "node:assert/strict"
 import { composePage } from "../design/compose.ts"
 import { adjustSpec, baseSpecFor, parseDesignSpec, type DesignSpec } from "../design/spec.ts"
 import { accentOn, contrastRatio, readableOn } from "../design/tokens.ts"
-import type { PageContent } from "../design/content.ts"
+import { buildStats, type PageContent } from "../design/content.ts"
 
 function content(overrides: Partial<PageContent> = {}): PageContent {
   return {
@@ -265,5 +265,34 @@ describe("безопасность composePage", () => {
   test("в документе есть CSP-мета", () => {
     const { html } = composePage(content(), baseSpecFor("modern"))
     assert.ok(html.includes('http-equiv="Content-Security-Policy"'))
+  })
+})
+
+// ─── Подтверждённые факты ─────────────────────────────────────────────────────
+
+describe("подтверждённые факты владельца", () => {
+  test("buildStats помечает недостающие метрики как неподтверждённые", () => {
+    const stats = buildStats({ yearsInBusiness: "12" })
+    const verified = stats.filter((s) => s.verified)
+    assert.equal(verified.length, 1)
+    assert.equal(verified[0].value, "12")
+    assert.ok(
+      stats.some((s) => !s.verified && s.value === "—"),
+      "Недостающие метрики должны стать placeholder'ами"
+    )
+  })
+
+  test("реальные цифры рендерятся как факт, а не как placeholder", () => {
+    const c = content({
+      stats: [
+        { value: "12", label: "лет на рынке", verified: true },
+        { value: "—", label: "проектов", verified: false },
+      ],
+    })
+    const { html } = composePage(c, baseSpecFor("modern"))
+    assert.ok(html.includes(">12<"), "Подтверждённая цифра не отрисована")
+    // Анимация счётчика должна быть только у подтверждённых значений.
+    assert.ok(html.includes("data-count"), "У реальной цифры нет data-count")
+    assert.ok(html.includes("trust-val-empty"), "Placeholder не помечен")
   })
 })

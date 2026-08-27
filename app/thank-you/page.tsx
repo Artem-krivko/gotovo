@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 
 export const metadata: Metadata = {
-  title: "Заявка отправлена | AI Web Studio",
+  title: "Заявка отправлена | gotovo",
   description: "Спасибо за заявку. Свяжемся с вами в течение нескольких часов.",
 }
 

@@ -73,7 +73,7 @@ const FAQ_ITEMS = [
   },
   {
     question: "Вы работаете с ИП и небольшими компаниями?",
-    answer: "Да, большинство наших клиентов — ИП и малый бизнес. Порог входа от 500$, оплата 50/50.",
+    answer: "Да, большинство наших клиентов — ИП и малый бизнес. Порог входа от 500 $, оплата после результата — без предоплаты.",
   },
 ];
 
@@ -143,7 +143,7 @@ export default function SozdanieSajtovPage() {
               { value: "от 500$", label: "Лендинг" },
               { value: "от 800$", label: "Корпоративный" },
               { value: "7–14 дней", label: "Срок" },
-              { value: "50/50", label: "Оплата" },
+              { value: "После результата", label: "Оплата" },
             ].map((m) => (
               <div key={m.label} className="rounded-2xl border border-white/10 bg-[#13131A] px-4 py-4 text-center">
                 <p className="text-lg font-bold text-white">{m.value}</p>

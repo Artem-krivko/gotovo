@@ -116,12 +116,16 @@ export default function GeneratorPage() {
 
   // ── Шаг 1: галерея примеров ─────────────────────────────────────────────────
   if (step === "gallery") {
-    return <GeneratorGallery onSelect={handleGallerySelect} />
+    return (
+      <main>
+        <GeneratorGallery onSelect={handleGallerySelect} />
+      </main>
+    )
   }
 
   // ── Шаг 2+: форма + превью ──────────────────────────────────────────────────
   return (
-    <div className="flex h-[calc(100vh-64px)] flex-col lg:flex-row">
+    <main className="flex h-[calc(100vh-64px)] flex-col lg:flex-row">
 
       {/* ── Левая панель: форма ───────────────────────────────────────────── */}
       <div className={`w-full shrink-0 flex-col border-b border-zinc-200 bg-white lg:w-[400px] lg:border-b-0 lg:border-r ${hasResult ? "hidden lg:flex" : "flex"}`}>
@@ -175,6 +179,6 @@ export default function GeneratorPage() {
         )}
       </div>
 
-    </div>
+    </main>
   )
 }

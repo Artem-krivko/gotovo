@@ -12,9 +12,9 @@ import { GENERATOR_CASES } from "@/content/generator-cases";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
 
 export const metadata: Metadata = {
-  title: "gotovo — опишите бизнес, получите сайт за 30 секунд",
+  title: "gotovo — концепт сайта за 30 секунд, готовый сайт за 7–14 дней",
   description:
-    "AI-генератор дизайна сайтов. Опишите бизнес — ИИ создаёт превью за 30 секунд бесплатно. Лендинги до 300 $, бизнес-сайты до 1000 $.",
+    "Опишите бизнес — ИИ соберёт персональный концепт сайта за 30 секунд, бесплатно. Подходит направление — доведём до готового сайта. Лендинги до 300 $, бизнес-сайты до 1000 $.",
   alternates: { canonical: SITE_URL },
   openGraph: { url: SITE_URL, images: [{ url: "/og-image.png", width: 1200, height: 630 }] },
 };
@@ -258,7 +258,7 @@ function StepIconRocket() {
 function HowItWorks() {
   const steps = [
     { num: "1", icon: <StepIconDescribe />, title: "Опишите бизнес", desc: "Расскажите о своей компании в паре предложений" },
-    { num: "2", icon: <StepIconAI />, title: "AI создаёт дизайн", desc: "Искусственный интеллект генерирует дизайн сайта за 30 секунд" },
+    { num: "2", icon: <StepIconAI />, title: "AI создаёт дизайн", desc: "Искусственный интеллект собирает концепт дизайна за 30 секунд" },
     { num: "3", icon: <StepIconEye />, title: "Посмотрите и оцените", desc: "Оцените дизайн. Нравится — переходим к разработке" },
     { num: "4", icon: <StepIconBrush />, title: "Мы дорабатываем", desc: "Берём AI-дизайн как основу и доводим до профессионального результата" },
     { num: "5", icon: <StepIconRocket />, title: "Получите готовый сайт", desc: "Запускаем под ключ, настраиваем аналитику и SEO" },
@@ -427,7 +427,7 @@ function FinalCta() {
               style={{ background: "radial-gradient(ellipse 70% 60% at 50% 0%, rgba(124,58,237,0.5), transparent 70%)" }} />
             <div className="grid-overlay pointer-events-none absolute inset-0 rounded-3xl opacity-40" aria-hidden="true" />
             <div className="relative">
-              <p className="text-xs font-semibold uppercase tracking-widest text-violet-400">Готовы получить сайт за 30 секунд?</p>
+              <p className="text-xs font-semibold uppercase tracking-widest text-violet-400">Готовы увидеть концепт за 30 секунд?</p>
               <h2 className="mt-4 text-3xl font-bold tracking-tight text-white sm:text-4xl">
                 Опишите свой бизнес и получите<br className="hidden sm:block" /> дизайн прямо сейчас
               </h2>

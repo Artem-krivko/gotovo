@@ -290,7 +290,7 @@ export default function RazrabotkaMinskPage() {
                   { label: "Лендинг", value: "от 500$" },
                   { label: "Сайт", value: "от 800$" },
                   { label: "Срок", value: "7–14 дней" },
-                  { label: "Оплата", value: "50/50" },
+                  { label: "Оплата", value: "После результата" },
                 ].map((m) => (
                   <div key={m.label} className="flex flex-col">
                     <span className="text-xl font-bold text-white">{m.value}</span>

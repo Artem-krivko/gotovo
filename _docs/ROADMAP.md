@@ -20,7 +20,7 @@
 ## ФАЗА 2 — AI Design Generator ⏸️ ЖДЁТ API КЛЮЧ
 
 - ✅ lib/types.ts, lib/prompts.ts — промпты готовы
-- ✅ app/api/generate/route.ts — Claude API + HTML заглушка без ключа
+- ✅ app/api/generate/route.ts — Gemini (2 этапа) + нейтральный черновик без ключа
 - ✅ components/generator/ — форма, превью, модал заявки
 - ✅ app/generator/page.tsx — split-layout, работает с заглушкой
 - ✅ app/thank-you/page.tsx
@@ -64,7 +64,7 @@
 - ⬜ Страница /privacy
 - ⬜ Кнопка Regenerate в генераторе
 - ⬜ Загрузка референс-скриншота клиентом
-- ⬜ Notion API CRM для заявок
+- ⬜ CRM для заявок (сейчас: PostgreSQL + email/Telegram)
 
 ---
 

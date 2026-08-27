@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Создание сайтов для бизнеса — AI Web Studio",
+  title: "Создание сайтов для бизнеса — gotovo",
   description:
     "Разработка сайтов с AI-генератором дизайна. Увидите результат до оплаты — опишите бизнес, получите превью за 30 секунд.",
 };
@@ -138,7 +138,7 @@ export const homeContent: HomePageContent = {
       },
       {
         name: "SEO-старт",
-        price: "€150–250",
+        price: "150–250 $",
         description: "Дополнение к любому пакету",
         featured: false,
         features: [
@@ -180,7 +180,7 @@ export const homeContent: HomePageContent = {
       {
         question: "Как происходит оплата?",
         answer:
-          "50% предоплата перед стартом разработки, 50% после финального согласования перед запуском. Работаю с переводом на карту или PayPal.",
+          "Без предоплаты: оплата после финального согласования, перед запуском. Перевод на карту или PayPal.",
       },
       {
         question: "Что если результат не понравится?",

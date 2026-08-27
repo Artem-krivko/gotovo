@@ -419,8 +419,11 @@ export function GeneratorPreview({
             <span className="h-3 w-3 rounded-full bg-emerald-400" />
           </div>
 
+          {/* Раньше здесь стоял preview.ai-web-studio.dev — домен, который
+              не имеет отношения к проекту и создавал впечатление, что
+              концепт уже опубликован. */}
           <div className="flex-1 rounded-lg bg-white border border-zinc-200 px-3 py-1 text-xs text-zinc-400 truncate">
-            preview.ai-web-studio.dev
+            Черновик концепта — ещё не опубликован
           </div>
 
           <div className="flex items-center gap-2">

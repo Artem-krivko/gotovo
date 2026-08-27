@@ -71,9 +71,9 @@ export default function PrivacyPage() {
             </p>
 
             <div className="mt-3 space-y-1">
-              <div>Telegram: @YOUR_TELEGRAM</div>
-              <div>Email: your@email.com</div>
-              <div>Телефон: +000000000</div>
+              <div>Telegram: <a href="https://t.me/Artem_k_r" className="text-violet-400 hover:underline" target="_blank" rel="noopener noreferrer">@Artem_k_r</a></div>
+              <div>Email: <a href="mailto:info@usegotovo.by" className="text-violet-400 hover:underline">info@usegotovo.by</a></div>
+              <div>Телефон: <a href="tel:+375296333337" className="text-violet-400 hover:underline">+375 29 633-33-37</a></div>
             </div>
           </section>
         </div>

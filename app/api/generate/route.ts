@@ -117,7 +117,7 @@ async function fetchHeroImage(businessType: string): Promise<HeroImage> {
  * «Дмитрия Ковалёва, владельца АвтоЛюкс Минск» — всё выдуманное, и всё это
  * показывалось как результат работы AI любому пользователю без API-ключа.
  */
-function buildFallbackContent(params: GeneratorParams): PageContent {
+function buildFallbackContent(params: GeneratorParams, facts: VerifiedFacts = {}): PageContent {
   const businessName = params.businessName || params.businessType
 
   return {
@@ -154,16 +154,19 @@ function buildFallbackContent(params: GeneratorParams): PageContent {
         description: "Условия работы, формат обслуживания или что-то ещё, что важно вашим клиентам.",
       },
     ],
-    // Цифр не выдумываем — показываем, какие метрики здесь будут стоять.
-    stats: buildStats({}),
-    testimonial: null,
+    // Подтверждённые цифры используем и здесь: то, что клиент указал сам,
+    // остаётся правдой независимо от доступности модели. Недостающие метрики
+    // buildStats превратит в честные placeholder'ы.
+    stats: buildStats(facts),
+    testimonial: facts.testimonials?.[0] ?? null,
     ctaHeadline: "Обсудить проект",
     ctaSubtext: "Расскажите о задаче — предложим структуру и сроки.",
     phone: "+375 29 000-00-00",
     email: "info@example.by",
     footerTagline: "Черновик концепта",
+    geography: facts.geography,
     gallery: [],
-    guarantees: [],
+    guarantees: facts.guarantees ?? [],
   }
 }
 
@@ -382,7 +385,7 @@ export async function POST(req: NextRequest) {
 
   if (!apiKey) {
     console.error("[generate] missing_api_key — отдаём заглушку, помеченную как fallback")
-    content = buildFallbackContent(params)
+    content = buildFallbackContent(params, facts)
     spec = baseSpecFor(params.style)
     source = "fallback"
     failureReason = "ai_unavailable"
@@ -400,7 +403,7 @@ export async function POST(req: NextRequest) {
       content = strategist.content
       source = "ai"
     } else {
-      content = buildFallbackContent(params)
+      content = buildFallbackContent(params, facts)
       source = "fallback"
       failureReason = strategist.reason
     }
@@ -420,6 +423,23 @@ export async function POST(req: NextRequest) {
     spec = { ...spec, galleryVariant: "none" }
   }
 
+  // Реальный отзыв или подтверждённая гарантия — самый ценный контент на
+  // странице, и он не должен потеряться из-за того, что арт-директор
+  // не включил секцию proof в порядок. Если социальное доказательство
+  // настоящее, место для него находим принудительно.
+  const hasRealProof = Boolean(content.testimonial) || content.guarantees.length > 0
+  if (hasRealProof && !spec.sectionOrder.includes("proof")) {
+    const order = [...spec.sectionOrder]
+    // Ставим после услуг: сначала «что мы делаем», потом «вот подтверждение».
+    const afterServices = order.indexOf("services") + 1
+    order.splice(afterServices || order.length - 1, 0, "proof")
+    spec = {
+      ...spec,
+      sectionOrder: order,
+      proofVariant: content.testimonial ? "quote" : "logos",
+    }
+  }
+
   let { html, renderedSections } = composePage(content, spec)
 
   // ── Quality gate ──────────────────────────────────────────────────────────
@@ -436,7 +456,7 @@ export async function POST(req: NextRequest) {
       issues: quality.issues.filter((i) => i.severity === "error").map((i) => i.code),
     })
 
-    content = buildFallbackContent(params)
+    content = buildFallbackContent(params, facts)
     spec = baseSpecFor(params.style)
     source = "fallback"
     failureReason = "quality_rejected"

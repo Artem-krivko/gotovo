@@ -108,6 +108,20 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
   const [userDescription, setUserDescription] = useState(defaultValues?.description ?? "")
   const [style, setStyle] = useState<GeneratorStyle>(defaultValues?.style ?? "modern")
   const [language, setLanguage] = useState<GeneratorLanguage>("ru")
+  // Расширенный бриф скрыт за progressive disclosure: быстрый сценарий
+  // (тип бизнеса + описание + стиль) остаётся в три поля.
+  const [showDetails, setShowDetails] = useState(false)
+  const [audience, setAudience] = useState("")
+  const [mainAction, setMainAction] = useState("")
+  const [geography, setGeography] = useState("")
+  const [brandColor, setBrandColor] = useState("")
+  // Факты — единственный источник цифр и отзывов на странице.
+  const [yearsInBusiness, setYearsInBusiness] = useState("")
+  const [projectsCompleted, setProjectsCompleted] = useState("")
+  const [priceFrom, setPriceFrom] = useState("")
+  const [guarantee, setGuarantee] = useState("")
+  const [testimonialText, setTestimonialText] = useState("")
+  const [testimonialAuthor, setTestimonialAuthor] = useState("")
   const [error, setError] = useState("")
   // generator_form_started шлём один раз — на первое реальное касание формы,
   // а не на монтирование: иначе событие срабатывало бы у всех, кто просто
@@ -140,6 +154,22 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
         userDescription: userDescription.trim(),
         style,
         language,
+        colorPreference: brandColor.trim() || undefined,
+        audience: audience.trim() || undefined,
+        mainAction: mainAction.trim() || undefined,
+        geography: geography.trim() || undefined,
+        facts: {
+          yearsInBusiness: yearsInBusiness.trim() || undefined,
+          projectsCompleted: projectsCompleted.trim() || undefined,
+          priceFrom: priceFrom.trim() || undefined,
+          geography: geography.trim() || undefined,
+          guarantees: guarantee.trim() ? [guarantee.trim()] : [],
+          // Отзыв попадает на страницу, только если указаны и текст, и автор.
+          testimonials:
+            testimonialText.trim() && testimonialAuthor.trim()
+              ? [{ text: testimonialText.trim(), author: testimonialAuthor.trim(), role: "" }]
+              : [],
+        },
       }
 
       track("generator_submitted", {
@@ -172,7 +202,13 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
         onLoading(false)
       }
     },
-    [businessType, businessName, userDescription, style, language, onResult, onLoading]
+    [
+      businessType, businessName, userDescription, style, language,
+      brandColor, audience, mainAction, geography,
+      yearsInBusiness, projectsCompleted, priceFrom, guarantee,
+      testimonialText, testimonialAuthor,
+      onResult, onLoading,
+    ]
   )
 
   return (
@@ -282,6 +318,157 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Расширенный бриф — по желанию */}
+      <div className="rounded-xl border border-zinc-200 bg-zinc-50/60">
+        <button
+          type="button"
+          onClick={() => setShowDetails((v) => !v)}
+          aria-expanded={showDetails}
+          className="flex w-full items-center justify-between gap-2 px-4 py-3.5 text-left"
+        >
+          <span>
+            <span className="block text-sm font-semibold text-zinc-800">
+              Уточнить детали
+            </span>
+            <span className="block text-xs text-zinc-500">
+              Реальные факты и цифры — чтобы мы ничего не выдумывали
+            </span>
+          </span>
+          <span aria-hidden="true" className={`text-lg text-zinc-400 transition-transform ${showDetails ? "rotate-45" : ""}`}>
+            +
+          </span>
+        </button>
+
+        {showDetails && (
+          <div className="flex flex-col gap-4 border-t border-zinc-200 px-4 py-4">
+            <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-900">
+              ИИ не придумывает цифры, отзывы и гарантии. Что не заполните —
+              останется явным местом под ваши данные.
+            </p>
+
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="gen-audience" className="text-xs font-semibold text-zinc-700">
+                Кто ваш клиент
+              </label>
+              <input
+                id="gen-audience" type="text" value={audience}
+                onChange={(e) => setAudience(e.target.value)} disabled={isLoading}
+                placeholder="Например: владельцы квартир 30–50 лет"
+                className="rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 disabled:opacity-50"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="gen-action" className="text-xs font-semibold text-zinc-700">
+                Главное действие посетителя
+              </label>
+              <input
+                id="gen-action" type="text" value={mainAction}
+                onChange={(e) => setMainAction(e.target.value)} disabled={isLoading}
+                placeholder="Позвонить, записаться, оставить заявку"
+                className="rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 disabled:opacity-50"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="gen-geo" className="text-xs font-semibold text-zinc-700">
+                  Город
+                </label>
+                <input
+                  id="gen-geo" type="text" value={geography}
+                  onChange={(e) => setGeography(e.target.value)} disabled={isLoading}
+                  placeholder="Минск"
+                  className="rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 disabled:opacity-50"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="gen-color" className="text-xs font-semibold text-zinc-700">
+                  Цвет бренда
+                </label>
+                <input
+                  id="gen-color" type="text" value={brandColor}
+                  onChange={(e) => setBrandColor(e.target.value)} disabled={isLoading}
+                  placeholder="#2563EB"
+                  className="rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 disabled:opacity-50"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="gen-years" className="text-xs font-semibold text-zinc-700">
+                  Лет на рынке
+                </label>
+                <input
+                  id="gen-years" type="text" value={yearsInBusiness}
+                  onChange={(e) => setYearsInBusiness(e.target.value)} disabled={isLoading}
+                  placeholder="12"
+                  className="rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 disabled:opacity-50"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="gen-projects" className="text-xs font-semibold text-zinc-700">
+                  Выполнено проектов
+                </label>
+                <input
+                  id="gen-projects" type="text" value={projectsCompleted}
+                  onChange={(e) => setProjectsCompleted(e.target.value)} disabled={isLoading}
+                  placeholder="340"
+                  className="rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 disabled:opacity-50"
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="gen-price" className="text-xs font-semibold text-zinc-700">
+                Цена от
+              </label>
+              <input
+                id="gen-price" type="text" value={priceFrom}
+                onChange={(e) => setPriceFrom(e.target.value)} disabled={isLoading}
+                placeholder="от 150 $"
+                className="rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 disabled:opacity-50"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="gen-guarantee" className="text-xs font-semibold text-zinc-700">
+                Реальная гарантия
+              </label>
+              <input
+                id="gen-guarantee" type="text" value={guarantee}
+                onChange={(e) => setGuarantee(e.target.value)} disabled={isLoading}
+                placeholder="Договор до начала работ"
+                className="rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 disabled:opacity-50"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="gen-testimonial" className="text-xs font-semibold text-zinc-700">
+                Реальный отзыв клиента
+              </label>
+              <textarea
+                id="gen-testimonial" rows={2} value={testimonialText}
+                onChange={(e) => setTestimonialText(e.target.value)} disabled={isLoading}
+                placeholder="Дословный текст отзыва"
+                className="resize-none rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 disabled:opacity-50"
+              />
+              <input
+                type="text" value={testimonialAuthor}
+                onChange={(e) => setTestimonialAuthor(e.target.value)} disabled={isLoading}
+                placeholder="Кто это сказал — имя обязательно"
+                aria-label="Автор отзыва"
+                className="rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 disabled:opacity-50"
+              />
+              <p className="text-xs text-zinc-500">
+                Без имени автора отзыв не будет показан.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Ошибка */}
