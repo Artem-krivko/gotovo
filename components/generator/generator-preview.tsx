@@ -1,11 +1,16 @@
 "use client"
 
 import { useState, useCallback, useEffect, useRef } from "react"
-import type { ContentSource, GeneratedConcept } from "@/lib/types"
+import type {
+  ContentSource,
+  GeneratedConcept,
+  GenerationFailureReason,
+} from "@/lib/types"
 import type { PageAssets, PageContent } from "@/lib/design/content"
 import type { DesignSpec } from "@/lib/design/spec"
 import { track } from "@/lib/analytics"
 import { readApiResponse } from "@/lib/api-response"
+import { getGenerationFailureCopy } from "@/lib/generation-diagnostics"
 
 interface GeneratorPreviewProps {
   html: string
@@ -18,6 +23,8 @@ interface GeneratorPreviewProps {
    * цифрами и отзывом, и он считал это результатом работы AI.
    */
   source: ContentSource
+  failureReason: GenerationFailureReason
+  requestId: string
   /** Контент и спека для быстрых правок без повторной генерации. */
   content: PageContent | null
   spec: DesignSpec | null
@@ -331,6 +338,8 @@ export function GeneratorPreview({
   onRegenerate,
   isLoading,
   source,
+  failureReason,
+  requestId,
   content,
   spec,
   assets,
@@ -339,6 +348,7 @@ export function GeneratorPreview({
   onConceptSelect,
   onAdjusted,
 }: GeneratorPreviewProps) {
+  const failureCopy = getGenerationFailureCopy(failureReason)
   const [adjusting, setAdjusting] = useState<string | null>(null)
   const [adjustError, setAdjustError] = useState("")
   const [showModal, setShowModal] = useState(false)
@@ -480,9 +490,13 @@ export function GeneratorPreview({
             role="status"
             className="border-b border-amber-200 bg-amber-50 px-4 py-2.5 text-xs text-amber-900"
           >
-            <strong className="font-semibold">ИИ сейчас недоступен.</strong> Это нейтральный
-            черновик структуры без текстов и цифр — не результат генерации. Попробуйте «Ещё раз»
-            через минуту.
+            <strong className="font-semibold">{failureCopy.title}</strong>{" "}
+            {failureCopy.description} {failureCopy.retryHint}
+            {requestId && (
+              <span className="ml-1 whitespace-nowrap text-amber-700/70">
+                Код: {requestId.slice(0, 8)}
+              </span>
+            )}
           </p>
         )}
 

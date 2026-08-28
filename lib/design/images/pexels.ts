@@ -29,6 +29,10 @@ export interface PexelsCandidate {
   height: number
   alt: string
   asset: ImageAsset
+  /** По какому запросу найдено фото; нужно для разнообразия концепций. */
+  query?: string
+  /** Позиция в ответе фотостока — более ранние результаты обычно точнее. */
+  sourceRank?: number
 }
 
 function responsiveAsset(photo: PexelsPhoto, altFallback: string): ImageAsset | null {
@@ -72,7 +76,7 @@ export async function fetchPexelsCandidates(query: string): Promise<PexelsCandid
   if (cached && cached.expiresAt > Date.now()) return cached.photos
   if (cached) cache.delete(normalized)
 
-  const apiKey = process.env.PEXELS_API_KEY
+  const apiKey = process.env.PEXELS_API_KEY?.trim()
   if (!apiKey) return []
 
   try {
@@ -86,9 +90,11 @@ export async function fetchPexelsCandidates(query: string): Promise<PexelsCandid
     }
 
     const data = (await response.json()) as { photos?: PexelsPhoto[] }
-    const photos = (data.photos ?? [])
-      .map((photo) => usablePhoto(photo, normalized))
-      .filter((photo): photo is PexelsCandidate => Boolean(photo))
+    const photos: PexelsCandidate[] = (data.photos ?? [])
+      .flatMap((photo, sourceRank): PexelsCandidate[] => {
+        const candidate = usablePhoto(photo, normalized)
+        return candidate ? [{ ...candidate, query: normalized, sourceRank }] : []
+      })
 
     // Serverless instances are usually short-lived, but the cache must still
     // remain bounded when an instance is reused for many different briefs.
@@ -113,16 +119,104 @@ function hash(value: string): number {
   return result >>> 0
 }
 
+function normalizedWords(value: string): string[] {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]/g, " ")
+    .split(/\s+/)
+    .filter((word) => word.length >= 3)
+}
+
+function visualSignature(candidate: PexelsCandidate): string {
+  return [...new Set(normalizedWords(candidate.alt))].sort().join(" ")
+}
+
+function relevanceScore(candidate: PexelsCandidate, queries: string[]): number {
+  const altWords = new Set(normalizedWords(candidate.alt))
+  const sourceQueryIndex = Math.max(0, queries.indexOf(candidate.query ?? ""))
+  const queryWords = normalizedWords(candidate.query ?? queries[0] ?? "")
+  const overlap = queryWords.filter((word) => altWords.has(word)).length
+  const ratio = candidate.height > 0 ? candidate.width / candidate.height : 0
+  const compositionScore = ratio >= 1.35 && ratio <= 1.85 ? 8 : 0
+  const resolutionScore = Math.min(8, Math.floor(candidate.width / 500))
+
+  return (
+    100 - sourceQueryIndex * 12 - (candidate.sourceRank ?? 0) * 2 +
+    overlap * 10 + compositionScore + resolutionScore
+  )
+}
+
+/**
+ * Объединяет результаты нескольких точных запросов, удаляет дубликаты и
+ * ранжирует их по смысловой близости, позиции фотостока и пригодности для hero.
+ */
+export function mergeAndRankPexelsCandidates(
+  groups: PexelsCandidate[][],
+  queries: string[],
+  avoid: string[] = []
+): PexelsCandidate[] {
+  const unique = new Map<string, PexelsCandidate>()
+  const signatures = new Set<string>()
+  for (const candidate of groups.flat()) {
+    const key = candidate.id ? `id:${candidate.id}` : `url:${candidate.asset.url}`
+    const signature = visualSignature(candidate)
+    if (unique.has(key) || (signature && signatures.has(signature))) continue
+    unique.set(key, candidate)
+    if (signature) signatures.add(signature)
+  }
+
+  const filtered = filterCandidatesByAvoid([...unique.values()], avoid)
+  return filtered.sort((left, right) => {
+    const scoreDelta = relevanceScore(right, queries) - relevanceScore(left, queries)
+    if (scoreDelta !== 0) return scoreDelta
+    return left.id - right.id
+  })
+}
+
 export function selectConceptAssets(
   candidates: PexelsCandidate[],
   seed: string,
   count: number
 ): PageAssets[] {
   if (candidates.length === 0) return Array.from({ length: count }, () => ({ gallery: [] }))
-  const start = hash(seed) % candidates.length
+
+  const queryGroups = new Map<string, PexelsCandidate[]>()
+  for (const candidate of candidates) {
+    const key = candidate.query ?? "default"
+    const group = queryGroups.get(key) ?? []
+    group.push(candidate)
+    queryGroups.set(key, group)
+  }
+  const groupKeys = [...queryGroups.keys()]
+  const groupStart = hash(seed) % groupKeys.length
+  const usedHeroIds = new Set<number>()
+  const usedPhotographers = new Set<string>()
+
   return Array.from({ length: count }, (_, index) => {
-    const candidate = candidates[(start + index) % candidates.length]
-    return { hero: candidate.asset, gallery: [] }
+    const preferredKey = groupKeys[(groupStart + index) % groupKeys.length]
+    const preferred = queryGroups.get(preferredKey) ?? []
+    const hero = preferred.find((candidate) =>
+      !usedHeroIds.has(candidate.id) &&
+      !usedPhotographers.has(candidate.asset.credit?.name ?? "")
+    )
+      ?? preferred.find((candidate) => !usedHeroIds.has(candidate.id))
+      ?? candidates.find((candidate) => !usedHeroIds.has(candidate.id))
+      ?? candidates[index % candidates.length]
+
+    usedHeroIds.add(hero.id)
+    if (hero.asset.credit?.name) usedPhotographers.add(hero.asset.credit.name)
+
+    // Галерея продолжает выбранный сюжет, но не повторяет hero. При нехватке
+    // кадров добираем из соседних релевантных запросов.
+    const gallery = [...preferred, ...candidates]
+      .filter((candidate, candidateIndex, all) =>
+        candidate.id !== hero.id &&
+        all.findIndex((item) => item.id === candidate.id) === candidateIndex
+      )
+      .slice(0, 3)
+      .map((candidate) => candidate.asset)
+
+    return { hero: hero.asset, gallery }
   })
 }
 
@@ -135,7 +229,8 @@ export function filterCandidatesByAvoid(
     const alt = candidate.alt.toLowerCase()
     return !avoid.some((term) => alt.includes(term.toLowerCase()))
   })
-  // Never turn a useful result set into an empty/duplicate selection because
-  // stock metadata happened to be vague.
-  return filtered.length >= 3 ? filtered : candidates
+  // Не возвращаем заведомо запрещённый сюжет только ради количества. Если
+  // metadata отфильтровала абсолютно всё, сохраняем исходный набор как
+  // безопасный отказ от слишком агрессивного avoid-фильтра.
+  return filtered.length > 0 ? filtered : candidates
 }

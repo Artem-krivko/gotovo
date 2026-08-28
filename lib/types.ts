@@ -47,6 +47,9 @@ export interface GenerateApiRequest {
 export type ContentSource = "ai" | "fallback"
 
 export type GenerationFailureReason =
+  | "ai_not_configured"
+  | "ai_quota_exceeded"
+  | "ai_auth_error"
   | "ai_unavailable"
   | "ai_invalid_json"
   | "ai_timeout"
@@ -69,6 +72,8 @@ export interface GeneratedConcept {
 }
 
 export interface GenerateApiResponse {
+  /** Безопасный идентификатор запроса для поиска причины в server logs. */
+  requestId: string
   html: string
   /**
    * null, если запись в БД не удалась. Превью при этом полностью рабочее —

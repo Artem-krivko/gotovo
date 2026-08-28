@@ -6,10 +6,10 @@ import {
   buildArtDirectorPrompt,
   buildUserPrompt,
 } from "@/lib/prompts"
-import { getNicheQuery } from "@/lib/templates"
+import { getNicheQueries } from "@/lib/templates"
 import {
   fetchPexelsCandidates,
-  filterCandidatesByAvoid,
+  mergeAndRankPexelsCandidates,
   selectConceptAssets,
 } from "@/lib/design/images/pexels"
 import { parseVisualBrief, type VisualBrief } from "@/lib/design/visual-brief"
@@ -18,7 +18,12 @@ import { alignSpecToStyle, baseSpecFor, parseDesignSpec, type DesignSpec } from 
 import { buildStats, type PageAssets, type PageContent, type VerifiedFacts } from "@/lib/design/content"
 import { checkQuality } from "@/lib/design/quality"
 import { curateDesignDirections } from "@/lib/design/directions"
-import type { GeneratedConcept, GeneratorParams } from "@/lib/types"
+import type {
+  GeneratedConcept,
+  GenerationFailureReason,
+  GeneratorParams,
+} from "@/lib/types"
+import { classifyProviderHttpFailure } from "@/lib/generation-diagnostics"
 import { parseGeneratorParams, parseAiContent } from "@/lib/validation"
 import { clientIp, rateLimit } from "@/lib/rate-limit"
 import { db } from "@/lib/db"
@@ -84,12 +89,7 @@ async function settleWithin<T>(promise: Promise<T>, timeoutMs: number): Promise<
  * Раньше любая ошибка — квота Gemini, битый JSON, недоступная БД — сводилась
  * к одному «Внутренняя ошибка», и понять причину по логам было нельзя.
  */
-type FailureReason =
-  | "ai_unavailable"
-  | "ai_invalid_json"
-  | "ai_timeout"
-  | "quality_rejected"
-  | "none"
+type FailureReason = GenerationFailureReason
 
 /** Откуда взят контент. Возвращается клиенту, чтобы не выдавать заглушку за AI. */
 export type ContentSource = "ai" | "fallback"
@@ -181,6 +181,7 @@ async function callGemini(
   systemPrompt: string,
   userPrompt: string,
   stage: string,
+  requestId: string,
   deadlineAt: number
 ): Promise<AiResult> {
   const models = [...new Set([GEMINI_MODEL, GEMINI_FALLBACK_MODEL])]
@@ -221,19 +222,26 @@ async function callGemini(
     } catch (error) {
       const isTimeout = error instanceof Error && error.name === "TimeoutError"
       lastReason = isTimeout ? "ai_timeout" : "ai_unavailable"
-      console.error("[generate] gemini_fetch_failed", { stage, model, isTimeout, error: String(error) })
+      console.error("[generate] gemini_fetch_failed", {
+        requestId,
+        stage,
+        model,
+        isTimeout,
+        error: String(error),
+      })
       continue
     }
 
     if (!response.ok) {
       const detail = await response.text().catch(() => "")
       console.error("[generate] gemini_http_error", {
+        requestId,
         stage,
         model,
         status: response.status,
         detail: detail.slice(0, 300),
       })
-      lastReason = response.status === 408 || response.status === 504 ? "ai_timeout" : "ai_unavailable"
+      lastReason = classifyProviderHttpFailure(response.status, detail)
       if (index < models.length - 1) {
         continue
       }
@@ -255,6 +263,7 @@ async function callGemini(
       return { data: extractJson(rawText), reason: "none", provider: "gemini" }
     } catch (error) {
       console.error("[generate] gemini_json_parse_failed", {
+        requestId,
         stage,
         model,
         error: String(error),
@@ -279,6 +288,7 @@ async function callGroq(
   systemPrompt: string,
   userPrompt: string,
   stage: string,
+  requestId: string,
   deadlineAt: number
 ): Promise<AiResult> {
   const remainingMs = deadlineAt - Date.now()
@@ -304,8 +314,17 @@ async function callGroq(
 
     if (!response.ok) {
       const detail = await response.text().catch(() => "")
-      console.error("[generate] groq_http_error", { stage, status: response.status, detail: detail.slice(0, 300) })
-      return { data: null, reason: "ai_unavailable", provider: "groq" }
+      console.error("[generate] groq_http_error", {
+        requestId,
+        stage,
+        status: response.status,
+        detail: detail.slice(0, 300),
+      })
+      return {
+        data: null,
+        reason: classifyProviderHttpFailure(response.status, detail),
+        provider: "groq",
+      }
     }
 
     const payload = (await response.json()) as { choices?: Array<{ message?: { content?: string } }> }
@@ -313,7 +332,7 @@ async function callGroq(
     return { data: extractJson(rawText), reason: "none", provider: "groq" }
   } catch (error) {
     const isTimeout = error instanceof Error && error.name === "TimeoutError"
-    console.error("[generate] groq_failed", { stage, isTimeout, error: String(error) })
+    console.error("[generate] groq_failed", { requestId, stage, isTimeout, error: String(error) })
     return { data: null, reason: isTimeout ? "ai_timeout" : "ai_unavailable", provider: "groq" }
   }
 }
@@ -323,19 +342,26 @@ async function generateStructured(
   systemPrompt: string,
   userPrompt: string,
   stage: string,
+  requestId: string,
   deadlineAt: number
 ): Promise<AiResult> {
-  const geminiKey = process.env.GOOGLE_AI_API_KEY
-  const groqKey = process.env.GROQ_API_KEY
+  const geminiKey = process.env.GOOGLE_AI_API_KEY?.trim()
+  const groqKey = process.env.GROQ_API_KEY?.trim()
 
   if (geminiKey) {
-    const primary = await callGemini(geminiKey, systemPrompt, userPrompt, stage, deadlineAt)
+    const primary = await callGemini(geminiKey, systemPrompt, userPrompt, stage, requestId, deadlineAt)
     if (primary.data) return primary
-    console.warn("[generate] provider_fallback", { stage, from: "gemini", reason: primary.reason, to: groqKey ? "groq" : "none" })
+    console.warn("[generate] provider_fallback", {
+      requestId,
+      stage,
+      from: "gemini",
+      reason: primary.reason,
+      to: groqKey ? "groq" : "none",
+    })
     if (!groqKey) return primary
   }
 
-  if (groqKey) return callGroq(groqKey, systemPrompt, userPrompt, stage, deadlineAt)
+  if (groqKey) return callGroq(groqKey, systemPrompt, userPrompt, stage, requestId, deadlineAt)
 
   return { data: null, reason: "ai_unavailable", provider: "none" }
 }
@@ -347,19 +373,21 @@ async function generateStructured(
 async function runStrategist(
   params: GeneratorParams,
   facts: VerifiedFacts,
+  requestId: string,
   deadlineAt: number
 ): Promise<{ content: PageContent | null; reason: FailureReason; provider: AiProvider }> {
   const { data, reason, provider } = await generateStructured(
     GENERATOR_SYSTEM_PROMPT,
     buildUserPrompt(params),
     "strategist",
+    requestId,
     deadlineAt
   )
   if (!data) return { content: null, reason, provider }
 
   const parsed = parseAiContent(data)
   if (!parsed.ok) {
-    console.error("[generate] strategist_schema_invalid", { error: parsed.error })
+    console.error("[generate] strategist_schema_invalid", { requestId, error: parsed.error })
     return { content: null, reason: "ai_invalid_json", provider }
   }
   const v = parsed.value
@@ -402,6 +430,7 @@ async function runStrategist(
  */
 async function runArtDirector(
   params: GeneratorParams,
+  requestId: string,
   deadlineAt: number
 ): Promise<{ spec: DesignSpec; visualBrief: VisualBrief | null; provider: AiProvider }> {
   const fallback = baseSpecFor(params.style)
@@ -409,6 +438,7 @@ async function runArtDirector(
     ART_DIRECTOR_SYSTEM_PROMPT,
     buildArtDirectorPrompt(params),
     "art-director",
+    requestId,
     deadlineAt
   )
   const visualBrief = parseVisualBrief(data)
@@ -419,7 +449,7 @@ async function runArtDirector(
     "visualBrief" in data &&
     !visualBrief
   ) {
-    console.warn("[generate] visual_brief_rejected")
+    console.warn("[generate] visual_brief_rejected", { requestId })
   }
   // Сбой арт-директора не критичен: берём базовую спеку и всё равно
   // отдаём пользователю рабочую страницу.
@@ -433,6 +463,7 @@ async function runArtDirector(
 // ─── Handler ──────────────────────────────────────────────────────────────────
 
 export async function POST(req: NextRequest) {
+  const requestId = randomUUID()
   const requestStartedAt = Date.now()
   const aiDeadlineAt = requestStartedAt + AI_DEADLINE_MS
   const ip = clientIp(req)
@@ -468,9 +499,13 @@ export async function POST(req: NextRequest) {
     isNewSession = true
   }
 
-  const speculativeQuery = getNicheQuery(params.businessType, params.userDescription)
-  const speculativeImages = fetchPexelsCandidates(speculativeQuery)
-  const hasAiProvider = Boolean(process.env.GOOGLE_AI_API_KEY || process.env.GROQ_API_KEY)
+  const speculativeQueries = getNicheQueries(params.businessType, params.userDescription).slice(0, 2)
+  const speculativeImages = Promise.all(
+    speculativeQueries.map((query) => fetchPexelsCandidates(query))
+  ).then((groups) => mergeAndRankPexelsCandidates(groups, speculativeQueries))
+  const hasAiProvider = Boolean(
+    process.env.GOOGLE_AI_API_KEY?.trim() || process.env.GROQ_API_KEY?.trim()
+  )
 
   // Подтверждённые факты приходят из брифа. Пока форма их не собирает,
   // объект пустой — и это корректно: без фактов stats станут честными
@@ -489,17 +524,17 @@ export async function POST(req: NextRequest) {
   }
 
   if (!hasAiProvider) {
-    console.error("[generate] missing_ai_provider_key — отдаём заглушку, помеченную как fallback")
+    console.error("[generate] missing_ai_provider_key", { requestId })
     content = buildFallbackContent(params, facts)
     spec = baseSpecFor(params.style)
     source = "fallback"
-    failureReason = "ai_unavailable"
+    failureReason = "ai_not_configured"
   } else {
     // Стратег и арт-директор зависят только от брифа, поэтому идут параллельно:
     // два этапа не удваивают время ожидания.
     const [strategist, artDirected] = await Promise.all([
-      runStrategist(params, facts, aiDeadlineAt),
-      runArtDirector(params, aiDeadlineAt),
+      runStrategist(params, facts, requestId, aiDeadlineAt),
+      runArtDirector(params, requestId, aiDeadlineAt),
     ])
 
     spec = artDirected.spec
@@ -519,13 +554,23 @@ export async function POST(req: NextRequest) {
   let imageCandidates = await speculativeImages
   if (
     visualBrief &&
-    visualBrief.query !== speculativeQuery &&
+    !speculativeQueries.includes(visualBrief.query) &&
     Date.now() - requestStartedAt < REFINED_IMAGE_DEADLINE_MS
   ) {
     const refined = await fetchPexelsCandidates(visualBrief.query)
-    if (refined.length > 0) imageCandidates = refined
+    if (refined.length > 0) {
+      imageCandidates = mergeAndRankPexelsCandidates(
+        [refined, imageCandidates],
+        [visualBrief.query, ...speculativeQueries],
+        visualBrief.avoid
+      )
+    }
   }
-  imageCandidates = filterCandidatesByAvoid(imageCandidates, visualBrief?.avoid ?? [])
+  imageCandidates = mergeAndRankPexelsCandidates(
+    [imageCandidates],
+    [visualBrief?.query, ...speculativeQueries].filter((query): query is string => Boolean(query)),
+    visualBrief?.avoid ?? []
+  )
   assets = selectConceptAssets(imageCandidates, `${params.businessType}:${params.userDescription}`, 1)[0]
 
   // Галерею показываем, только если для неё есть изображения.
@@ -682,11 +727,21 @@ export async function POST(req: NextRequest) {
   }
   const designId = concepts[0].designId
 
+  console.info("[generate] completed", {
+    requestId,
+    source,
+    failureReason,
+    providers,
+    concepts: concepts.length,
+    imageCandidates: imageCandidates.length,
+    durationMs: Date.now() - requestStartedAt,
+  })
+
   // content и spec возвращаются клиенту, чтобы кнопки правок («премиальнее»,
   // «больше воздуха», «другой hero») пересобирали страницу через /api/adjust
   // без повторного обращения к модели.
   const response = NextResponse.json(
-    { html, designId, source, failureReason, providers, concepts, content, spec, assets },
+    { requestId, html, designId, source, failureReason, providers, concepts, content, spec, assets },
     { status: 200 }
   )
 

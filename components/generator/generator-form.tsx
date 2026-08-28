@@ -5,6 +5,7 @@ import type {
   ContentSource,
   GeneratedConcept,
   GenerateApiResponse,
+  GenerationFailureReason,
   GeneratorParams,
   GeneratorStyle,
   GeneratorLanguage,
@@ -99,7 +100,9 @@ interface GeneratorFormProps {
     content: PageContent,
     spec: DesignSpec,
     assets: PageAssets,
-    concepts: GeneratedConcept[]
+    concepts: GeneratedConcept[],
+    failureReason: GenerationFailureReason,
+    requestId: string
   ) => void
   onLoading: (loading: boolean) => void
   isLoading: boolean
@@ -207,7 +210,9 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
           data.content,
           data.spec,
           data.assets,
-          data.concepts ?? []
+          data.concepts ?? [],
+          data.failureReason ?? "none",
+          data.requestId ?? ""
         )
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Попробуйте ещё раз"

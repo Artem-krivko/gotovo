@@ -2,11 +2,15 @@ import { describe, test } from "node:test"
 import assert from "node:assert/strict"
 
 import { curateDesignDirections } from "../design/directions.ts"
-import { selectConceptAssets, type PexelsCandidate } from "../design/images/pexels.ts"
+import {
+  mergeAndRankPexelsCandidates,
+  selectConceptAssets,
+  type PexelsCandidate,
+} from "../design/images/pexels.ts"
 import { specDistance } from "../design/quality.ts"
 import { baseSpecFor } from "../design/spec.ts"
 import { parseVisualBrief } from "../design/visual-brief.ts"
-import { getNicheQuery } from "../templates/index.ts"
+import { getNicheQueries, getNicheQuery } from "../templates/index.ts"
 import { REFERENCE_BRIEFS } from "../design/reference-briefs.ts"
 
 describe("visual brief", () => {
@@ -28,6 +32,21 @@ describe("visual brief", () => {
       getNicheQuery("Строительная компания", "Бурение скважин и обустройство воды"),
       "water well drilling equipment"
     )
+    assert.deepEqual(
+      getNicheQueries("Строительная компания", "Монтаж септиков и бурение скважин"),
+      [
+        "septic tank installation private house",
+        "water well drilling equipment",
+        "construction site building",
+      ]
+    )
+  })
+
+  test("эталонные ниши не сваливаются в общую офисную фотографию", () => {
+    for (const brief of REFERENCE_BRIEFS) {
+      const [query] = getNicheQueries(brief.businessType, brief.userDescription)
+      assert.notEqual(query, "modern office business team", `Общий фотосюжет: ${brief.id}`)
+    }
   })
 })
 
@@ -49,6 +68,43 @@ describe("concept assets", () => {
     const second = selectConceptAssets(candidates, "same brief", 3)
     assert.deepEqual(first, second)
     assert.equal(new Set(first.map((assets) => assets.hero?.url)).size, 3)
+  })
+
+  test("разводит концепции по разным релевантным фотосюжетам", () => {
+    const multiQueryCandidates: PexelsCandidate[] = [
+      { ...candidates[0], query: "wedding photographer", alt: "wedding couple photographer", sourceRank: 0 },
+      { ...candidates[1], query: "camera studio", alt: "professional camera studio", sourceRank: 0 },
+      { ...candidates[2], query: "wedding photographer", alt: "wedding ceremony", sourceRank: 1 },
+    ]
+    const selected = selectConceptAssets(multiQueryCandidates, "wedding brief", 2)
+    const selectedQueries = selected.map((assets) => {
+      const candidate = multiQueryCandidates.find((item) => item.asset.url === assets.hero?.url)
+      return candidate?.query
+    })
+    assert.equal(new Set(selectedQueries).size, 2)
+  })
+
+  test("удаляет дубликаты, отрицательные сюжеты и поднимает точные фото", () => {
+    const exact: PexelsCandidate = {
+      ...candidates[0],
+      query: "wedding photographer",
+      alt: "wedding photographer with newlywed couple",
+      sourceRank: 1,
+    }
+    const generic: PexelsCandidate = {
+      ...candidates[1],
+      query: "wedding photographer",
+      alt: "generic office team",
+      sourceRank: 0,
+    }
+    const duplicate = { ...exact }
+    const ranked = mergeAndRankPexelsCandidates(
+      [[generic, exact], [duplicate]],
+      ["wedding photographer"],
+      ["office team"]
+    )
+    assert.equal(ranked.length, 1)
+    assert.equal(ranked[0].id, exact.id)
   })
 })
 

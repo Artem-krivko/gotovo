@@ -63,21 +63,37 @@ const NICHE_SEEDS: Array<[RegExp, string, string]> = [
   [/солнечн.{0,8}панел|электростанц/i, "solar", "solar panel installation house"],
   [/перманентн.{0,8}макияж|бров/i, "permanent-makeup", "permanent makeup eyebrow studio"],
   [/мини.?экскаватор|экскаватор|землян|котлован|транше/i, "excavator", "mini excavator earthmoving machinery"],
+  [/барбер|мужск.{0,8}стриж|брить/i, "barbershop", "barbershop haircut beard grooming"],
+  [/ветеринар|ветклиник|вакцинац.{0,12}животн/i, "veterinary", "veterinarian examining pet clinic"],
+  [/цветоч|флорист|букет/i, "flowers", "florist arranging flower bouquet workshop"],
+  [/мебел|кухн.{0,8}заказ|шкаф.{0,8}заказ/i, "furniture", "custom furniture kitchen workshop"],
+  [/клининг|уборк|химчистк/i, "cleaning", "professional home cleaning service"],
+  [/психолог|психотерап|тревог|выгорани/i, "psychology", "psychologist counseling calm office"],
+  [/языков|английск|разговорн.{0,8}клуб/i, "language-school", "english language class adult students"],
+  [/типограф|полиграф|визитк|баннер|наклейк/i, "printing", "printing press graphic production"],
+  [/турист|подбор тур|авиабилет|визов/i, "travel", "travel planning map passport"],
+  [/архитект|проектирован.{0,12}дом|авторск.{0,8}надзор/i, "architecture", "architect studio house plans"],
+  [/охран|видеонаблюден|безопасност/i, "security", "security guard surveillance control room"],
+  [/кейтеринг|фуршет|выездн.{0,12}обслуж/i, "catering", "event catering buffet table"],
+  [/ателье|пошив|подгонк.{0,8}фигур|ремонт одежд/i, "tailor", "tailor atelier sewing fabric"],
+  [/интернет.?магазин|товар.{0,8}дом|посуда|текстил|декор/i, "ecommerce", "home decor products collection"],
+  [/кондиционер|вентиляц|отоплен|климатическ/i, "hvac", "hvac technician installing air conditioner"],
+  [/электрик|электромонтаж|проводк/i, "electrician", "electrician wiring residential house"],
   [/стоматол|зуб|дент/i,                                    "dentist",     "dental clinic interior"],
   [/ресторан|кафе|суши|пицц|бургер|шашлык|еда|бар/i,        "restaurant",  "restaurant interior cozy"],
   [/салон|красот|барбер|парикмах|маникюр|педикюр|макияж|перманент/i, "beauty", "beauty salon interior"],
   [/фитнес|спорт|тренаж|йога|зал|бокс/i,                    "fitness",     "gym fitness training"],
   [/медицин|клиник|врач|больниц|лечени/i,                    "medical",     "medical clinic doctor"],
   [/юрист|адвокат|право|нотар|юридич/i,                      "justice",     "law office lawyer"],
-  [/строительств|строитель|ремонт|отделк|кровл|монтаж/i, "construction", "construction site building"],
+  [/строительств|строитель|ремонт|отделк|кровл|фасад|фундамент/i, "construction", "construction site building"],
   [/\bit\b|айти|разработк|программ|сайт|приложен/i,          "technology",  "modern office team technology"],
   [/курс|обучен|школ|образован|репетитор/i,                  "education",   "classroom education learning"],
   [/бухгалт|налог|аудит|финанс/i,                            "finance",     "finance office accounting"],
   [/недвижим|риелтор|квартир|аренда жилья|аренда квартир/i, "interior",    "modern apartment interior"],
   [/авто|шиномонтаж|сто|кузов|машин/i,                       "automobile",  "car repair garage mechanic"],
-  [/свадьб|праздник|event|мероприят/i,                       "wedding",     "wedding event photography"],
+  [/свадьб|love story|молодож|венчан/i,                       "wedding",     "wedding photographer couple outdoor"],
   [/доставка|логистик|курьер|транспорт/i,                    "logistics",   "delivery logistics warehouse"],
-  [/фото|видео|съёмк/i,                                      "studio",      "photography studio camera"],
+  [/фото|видео|съёмк/i,                                      "studio",      "professional photographer camera studio"],
 ]
 
 export function getNicheImage(businessType: string, w = 800, h = 500): string {
@@ -86,8 +102,23 @@ export function getNicheImage(businessType: string, w = 800, h = 500): string {
 }
 
 export function getNicheQuery(businessType: string, userDescription = ""): string {
+  return getNicheQueries(businessType, userDescription)[0]
+}
+
+/**
+ * Возвращает несколько точных фотосюжетов, когда в брифе есть больше одной
+ * услуги. Например, «септики и бурение скважин» больше не сводится к первой
+ * общей фотографии стройки. Порядок NICHE_SEEDS задаёт приоритет узких
+ * сюжетов над широкой категорией бизнеса.
+ */
+export function getNicheQueries(businessType: string, userDescription = ""): string[] {
   const searchable = `${userDescription} ${businessType}`.trim()
-  return NICHE_SEEDS.find(([re]) => re.test(searchable))?.[2] ?? "modern office business team"
+  const matches = NICHE_SEEDS
+    .filter(([re]) => re.test(searchable))
+    .map(([, , query]) => query)
+
+  const unique = [...new Set(matches)]
+  return (unique.length > 0 ? unique : ["modern office business team"]).slice(0, 3)
 }
 
 // ─── Атрибуция фото ───────────────────────────────────────────────────────────

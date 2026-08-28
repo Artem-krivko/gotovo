@@ -4,7 +4,13 @@ import { useState, useCallback } from "react"
 import { GeneratorForm } from "@/components/generator/generator-form"
 import { GeneratorGallery, type GalleryPreset } from "@/components/generator/generator-gallery"
 import { GeneratorPreview, GeneratorSkeleton } from "@/components/generator/generator-preview"
-import type { ContentSource, GeneratedConcept, GenerateApiResponse, GeneratorParams } from "@/lib/types"
+import type {
+  ContentSource,
+  GeneratedConcept,
+  GenerateApiResponse,
+  GenerationFailureReason,
+  GeneratorParams,
+} from "@/lib/types"
 import type { PageAssets, PageContent } from "@/lib/design/content"
 import type { DesignSpec } from "@/lib/design/spec"
 import { track } from "@/lib/analytics"
@@ -40,6 +46,8 @@ export default function GeneratorPage() {
   const [designId, setDesignId] = useState<string>("")
   const [lastParams, setLastParams] = useState<GeneratorParams | null>(null)
   const [source, setSource] = useState<ContentSource>("ai")
+  const [failureReason, setFailureReason] = useState<GenerationFailureReason>("none")
+  const [requestId, setRequestId] = useState("")
   // Контент и спека нужны для правок стиля: они пересобирают страницу
   // локально, без повторной генерации.
   const [content, setContent] = useState<PageContent | null>(null)
@@ -65,17 +73,29 @@ export default function GeneratorPage() {
       resultContent: PageContent,
       resultSpec: DesignSpec,
       resultAssets: PageAssets,
-      resultConcepts: GeneratedConcept[]
+      resultConcepts: GeneratedConcept[],
+      resultFailureReason: GenerationFailureReason,
+      resultRequestId: string
     ) => {
-      track("generation_succeeded", {
-        businessType: params.businessType,
-        style: params.style,
-        source: contentSource,
-      })
+      if (contentSource === "ai") {
+        track("generation_succeeded", {
+          businessType: params.businessType,
+          style: params.style,
+          source: contentSource,
+        })
+      } else {
+        track("generation_failed", {
+          stage: "provider",
+          reason: resultFailureReason,
+          requestId: resultRequestId.slice(0, 8),
+        })
+      }
       setGeneratedHtml(html)
       setDesignId(id)
       setLastParams(params)
       setSource(contentSource)
+      setFailureReason(resultFailureReason)
+      setRequestId(resultRequestId)
       setContent(resultContent)
       setSpec(resultSpec)
       setAssets(resultAssets)
@@ -142,6 +162,8 @@ export default function GeneratorPage() {
       setGeneratedHtml(data.html)
       setDesignId(data.designId ?? "")
       setSource(data.source ?? "ai")
+      setFailureReason(data.failureReason ?? "none")
+      setRequestId(data.requestId ?? "")
       setContent(data.content)
       setSpec(data.spec)
       setAssets(data.assets)
@@ -213,6 +235,8 @@ export default function GeneratorPage() {
             onRegenerate={handleRegenerate}
             isLoading={isLoading}
             source={source}
+            failureReason={failureReason}
+            requestId={requestId}
             content={content}
             spec={spec}
             assets={assets}
