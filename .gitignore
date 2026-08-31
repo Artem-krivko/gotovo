@@ -41,3 +41,10 @@ yarn-error.log*
 next-env.d.ts
 
 /lib/generated/prisma
+
+# paid advertising credentials and exports
+/ads/.env.local
+/ads/secrets/
+/ads/tokens/
+/ads/exports/private/
+/tmp/pdfs/google-ads-api-tool-design/

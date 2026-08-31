@@ -11,7 +11,10 @@
     "test": "node --test \"lib/**/*.test.mts\"",
     "check:seo": "node scripts/check-seo.mjs",
     "check:viewport": "node scripts/check-viewport.mjs",
-    "render:references": "node scripts/render-reference-previews.mjs"
+    "render:references": "node scripts/render-reference-previews.mjs",
+    "ads:yandex:check": "node --env-file=ads/.env.local ads/scripts/yandex-check.mjs",
+    "ads:google:authorize": "node --env-file=ads/.env.local ads/scripts/google-authorize.mjs",
+    "ads:google:check": "node --env-file=ads/.env.local ads/scripts/google-check.mjs"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
