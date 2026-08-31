@@ -147,8 +147,8 @@ function Hero() {
         <div className="mt-12 grid gap-3 sm:grid-cols-12 lg:mt-20">
           <div className="relative min-h-[290px] overflow-hidden bg-[#222] sm:col-span-8 sm:min-h-[430px] lg:min-h-[540px]">
             <Image
-              src="/images/hero-ui.jpg"
-              alt="Фрагменты интерфейсов и веб-дизайна"
+              src="/images/hero-process-v2.jpg"
+              alt="Печатные вайрфреймы, модульные сетки и цветовые пробы сайта"
               fill
               priority
               sizes="(max-width: 640px) 100vw, 66vw"
