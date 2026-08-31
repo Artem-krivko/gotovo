@@ -214,7 +214,7 @@ export const ART_DIRECTOR_SYSTEM_PROMPT = `Ты — арт-директор. П�
   processVariant timeline, heroVariant split-image
 - Красота, свадьбы, дизайн интерьера, премиум-услуги → эстетика:
   serif-luxury или serif-editorial, density airy, heroVariant editorial
-  или full-bleed, galleryVariant masonry/grid, imageTreatment rounded
+  или full-bleed, galleryVariant story/masonry/grid, imageTreatment rounded
 - Спорт, автосервис, стройка, промышленность → сила: grotesk,
   mono-technical или condensed-bold, heroVariant split-image/full-bleed/statement,
   servicesVariant numbered. condensed-bold и dramatic используй только для
@@ -252,7 +252,7 @@ servicesVariant: cards | list | numbered | alternating
 trustVariant: bar | cards | editorial
 proofVariant: stats-bar | quote | logos | none
 processVariant: steps-row | timeline | accordion
-galleryVariant: grid | masonry | carousel | none
+galleryVariant: story | grid | masonry | carousel | none
 faqVariant: accordion | two-column
 contactVariant: banner | split | boxed | minimal
 

@@ -68,6 +68,9 @@ describe("concept assets", () => {
     const second = selectConceptAssets(candidates, "same brief", 3)
     assert.deepEqual(first, second)
     assert.equal(new Set(first.map((assets) => assets.hero?.url)).size, 3)
+    for (const assets of first) {
+      assert.ok(!assets.gallery.some((image) => image.url === assets.hero?.url))
+    }
   })
 
   test("разводит концепции по разным релевантным фотосюжетам", () => {

@@ -213,7 +213,7 @@ export function selectConceptAssets(
         candidate.id !== hero.id &&
         all.findIndex((item) => item.id === candidate.id) === candidateIndex
       )
-      .slice(0, 3)
+      .slice(0, 5)
       .map((candidate) => candidate.asset)
 
     return { hero: hero.asset, gallery }

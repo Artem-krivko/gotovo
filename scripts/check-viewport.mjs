@@ -164,9 +164,28 @@ async function checkFile(client, sessionId, fileUrl) {
     results.push({ viewport: vp.name, ...JSON.parse(result.value) })
 
     if (process.env.SCREENSHOT_DIR) {
+      // Full-page screenshots include sections outside the initial viewport.
+      // IntersectionObserver has not revealed those yet, so force the final
+      // visual state before capturing the QA artifact.
+      await client.send(
+        "Runtime.evaluate",
+        { expression: `document.querySelectorAll('.reveal').forEach((el) => el.classList.add('in'))` },
+        sessionId
+      )
+      const { contentSize } = await client.send("Page.getLayoutMetrics", {}, sessionId)
       const shot = await client.send(
         "Page.captureScreenshot",
-        { format: "png", captureBeyondViewport: false },
+        {
+          format: "png",
+          captureBeyondViewport: true,
+          clip: {
+            x: 0,
+            y: 0,
+            width: vp.width,
+            height: Math.min(Math.ceil(contentSize.height), 12_000),
+            scale: 1,
+          },
+        },
         sessionId
       )
       const name = basename(fileUrl).replace(/\.html$/, "")

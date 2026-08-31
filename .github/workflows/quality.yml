@@ -3,7 +3,7 @@ name: Code Quality
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, "codex/**"]
 
 jobs:
   test:
@@ -19,3 +19,19 @@ jobs:
       - run: npm test
       - run: npm run typecheck
       - run: npm run build
+      - name: Render deterministic reference concepts
+        run: npm run render:references
+      - name: Check mobile and desktop viewports
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+          SCREENSHOT_DIR: .reference-screenshots
+        run: |
+          mkdir -p .reference-screenshots
+          npm run check:viewport -- .reference-previews/*.html
+      - name: Upload visual QA screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reference-previews
+          path: .reference-screenshots
+          if-no-files-found: ignore

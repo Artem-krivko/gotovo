@@ -17,6 +17,21 @@ const selectedIds = new Set(
     : ["dental", "septic-installation", "gym", "wedding-photo"]
 )
 
+const PIXELS = [
+  "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFElEQVR4nGP4z8DAwMDAxAADCBYAG10CAa5Wl5sAAAAASUVORK5CYII=",
+  "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFElEQVR4nGP4z8DAwMDAxAADCBYAG10CAa5Wl5sAAAAASUVORK5CYII=",
+  "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFElEQVR4nGP4z8DAwMDAxAADCBYAG10CAa5Wl5sAAAAASUVORK5CYII=",
+]
+
+function assetsFor(brief) {
+  return {
+    gallery: PIXELS.map((pixel, index) => ({
+      url: `data:image/png;base64,${pixel}`,
+      alt: `${brief.businessType}: визуальный пример ${index + 1}`,
+    })),
+  }
+}
+
 function contentFor(brief) {
   return {
     businessName: brief.businessName ?? brief.businessType,
@@ -62,7 +77,7 @@ for (const brief of REFERENCE_BRIEFS.filter((item) => selectedIds.has(item.id)))
   )
   for (const direction of directions) {
     const file = resolve(outputDir, `${brief.id}-${direction.id}.html`)
-    await writeFile(file, composePage(content, direction.spec).html, "utf8")
+    await writeFile(file, composePage(content, direction.spec, assetsFor(brief)).html, "utf8")
     files.push(file)
   }
 }

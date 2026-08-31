@@ -67,7 +67,7 @@ export const PROOF_VARIANTS = [
 ] as const
 
 export const PROCESS_VARIANTS = ["steps-row", "timeline", "accordion"] as const
-export const GALLERY_VARIANTS = ["grid", "masonry", "carousel", "none"] as const
+export const GALLERY_VARIANTS = ["story", "grid", "masonry", "carousel", "none"] as const
 export const FAQ_VARIANTS = ["accordion", "two-column"] as const
 export const CONTACT_VARIANTS = ["banner", "split", "boxed", "minimal"] as const
 
@@ -447,6 +447,7 @@ export function adjustSpec(spec: DesignSpec, adjustment: SpecAdjustment): Design
         trustVariant: rotate(TRUST_VARIANTS, spec.trustVariant),
         servicesVariant: rotate(SERVICES_VARIANTS, spec.servicesVariant),
         processVariant: rotate(PROCESS_VARIANTS, spec.processVariant),
+        galleryVariant: rotate(GALLERY_VARIANTS, spec.galleryVariant),
         contactVariant: rotate(CONTACT_VARIANTS, spec.contactVariant),
       }
     }

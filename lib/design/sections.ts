@@ -622,7 +622,32 @@ export function gallerySection({ content: c, spec }: RenderContext): SectionOutp
     )
     .join("")
 
-  const head = sectionHead("Портфолио", "Примеры работ")
+  const head = spec.galleryVariant === "story"
+    ? sectionHead("Избранное", "Работа в деталях")
+    : spec.galleryVariant === "masonry"
+      ? sectionHead("Портфолио", "Избранные проекты")
+      : sectionHead("Портфолио", "Примеры работ")
+
+  if (spec.galleryVariant === "story") {
+    return {
+      html: `<section id="gallery"><div class="wrap">${head}
+  <div class="g-story">${items}</div>
+</div></section>`,
+      css: `
+.g-story{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(220px,.55fr);grid-template-rows:repeat(2,minmax(180px,1fr));gap:var(--gap)}
+.g-story .g-item{margin:0;min-width:0;position:relative}
+.g-story .g-item:first-child{grid-row:1 / 3}
+.g-story .g-item:nth-child(n+4){display:none}
+.g-story img{width:100%;height:100%;min-height:220px;object-fit:cover;${imageCss(spec)}}
+.g-story .credit{position:absolute;left:12px;bottom:10px;margin:0;padding:4px 8px;border-radius:999px;background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(8px);color:var(--text);font-size:11px}
+@media(max-width:720px){
+  .g-story{grid-template-columns:1fr 1fr;grid-template-rows:auto auto}
+  .g-story .g-item:first-child{grid-column:1 / 3;grid-row:auto}
+  .g-story img{min-height:160px;aspect-ratio:4/3}
+  .g-story .g-item:first-child img{aspect-ratio:16/10}
+}`,
+    }
+  }
 
   if (spec.galleryVariant === "carousel") {
     return {

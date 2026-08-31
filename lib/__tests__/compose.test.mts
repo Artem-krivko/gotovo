@@ -61,6 +61,7 @@ function layoutFingerprint(html: string): string {
     "steps-row", "timeline", "proc-acc",
     "contact-banner", "contact-split", "contact-box",
     "faq-acc", "faq-cols",
+    "g-story", "g-grid", "g-masonry", "g-carousel",
   ].filter((cls) => html.includes(`class="${cls}"`) || html.includes(` ${cls}"`))
   return `${sections.join(">")}|${layoutClasses.join(",")}`
 }
@@ -177,6 +178,26 @@ describe("разнообразие композиции", () => {
     )
 
     assert.equal(seen.size, variants.length, "Некоторые варианты доверия совпали")
+  })
+
+  test("каждый galleryVariant даёт самостоятельную композицию", () => {
+    const base = baseSpecFor("minimal")
+    const gallery = [1, 2, 3, 4].map((id) => ({
+      url: `https://images.pexels.com/photos/${id}/image.jpg`,
+      alt: `Работа ${id}`,
+      credit: { name: `Автор ${id}`, url: `https://www.pexels.com/photo/${id}` },
+    }))
+    const variants: DesignSpec["galleryVariant"][] = ["story", "grid", "masonry", "carousel"]
+    const seen = new Set(variants.map((galleryVariant) => {
+      const spec = {
+        ...base,
+        sectionOrder: ["hero", "gallery", "services", "contact"] as DesignSpec["sectionOrder"],
+        galleryVariant,
+      }
+      return layoutFingerprint(composePage(content(), spec, { gallery }).html)
+    }))
+
+    assert.equal(seen.size, variants.length, "Некоторые варианты галереи совпали")
   })
 })
 
