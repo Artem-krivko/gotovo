@@ -186,10 +186,12 @@ export async function POST(req: NextRequest) {
 
   const resendKey = process.env.RESEND_API_KEY
   const notifyEmail = process.env.LEAD_NOTIFICATION_EMAIL
+  const designUrl = design ? `${SITE_URL}/api/design/${encodeURIComponent(design.id)}` : ""
 
   const telegramText = [
     "🎯 <b>Новая заявка на разработку</b>",
     "",
+    orderId ? tgField("ID заявки", orderId) : "",
     tgField("Телефон", order.phone),
     order.name ? tgField("Имя", order.name) : "",
     order.email ? tgField("Email", order.email) : "",
@@ -198,6 +200,7 @@ export async function POST(req: NextRequest) {
     design ? tgField("Описание", design.prompt) : "",
     order.comment ? tgField("Комментарий", order.comment) : "",
     Object.keys(order.attribution).length ? tgField("Источник", JSON.stringify(order.attribution)) : "",
+    designUrl ? `\n<a href="${designUrl}">Открыть сгенерированный дизайн</a>` : "",
     orderId ? "" : "\n⚠️ Заявку не удалось записать в БД — сохраните контакт вручную.",
   ]
     .filter(Boolean)
