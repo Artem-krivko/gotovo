@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/brand/brand-logo";
 
 const NAVIGATION = [
   { href: "/services", label: "Услуги" },
@@ -23,10 +24,7 @@ export function SiteFooter() {
       <div className="mx-auto max-w-[1440px]">
         <div className="grid gap-12 border-b border-[#f2efe7]/20 pb-14 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <Link href="/" className="inline-flex items-center gap-2.5">
-              <span className="flex h-9 w-9 items-center justify-center bg-[#f2efe7] text-sm font-bold text-[#171712]">g</span>
-              <span className="text-lg font-bold tracking-[-0.04em]">gotovo</span>
-            </Link>
+            <BrandLogo tone="light" />
             <p className="mt-7 max-w-md text-3xl font-medium leading-[1.05] tracking-[-0.04em] sm:text-4xl">
               Проектируем и запускаем сайты, которыми бизнес может уверенно представляться.
             </p>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { BrandLogo } from "@/components/brand/brand-logo";
 
 const NAV_LINKS = [
   { href: "/services", label: "Услуги" },
@@ -10,15 +11,6 @@ const NAV_LINKS = [
   { href: "/process", label: "Процесс" },
   { href: "/about", label: "О нас" },
 ] as const;
-
-function Logo() {
-  return (
-    <Link href="/" className="group flex items-center gap-2.5 rounded-sm focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-[#2656d8]">
-      <span className="flex h-8 w-8 items-center justify-center bg-[#171712] text-sm font-bold text-[#f2efe7] transition-transform group-hover:-rotate-6">g</span>
-      <span className="text-[15px] font-bold tracking-[-0.03em] text-[#171712]">gotovo</span>
-    </Link>
-  );
-}
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -38,7 +30,7 @@ export function SiteHeader() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-[#171712]/20 bg-[#f2efe7]/95 text-[#171712] backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-4 sm:px-6">
-        <Logo />
+        <BrandLogo />
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Основная навигация">
           {NAV_LINKS.map((link) => (

@@ -1,7 +1,7 @@
 {
-  "name": "gotovo — AI веб-агентство",
+  "name": "gotovo — независимая веб-студия",
   "short_name": "gotovo",
-  "description": "AI-генератор дизайна сайтов. Превью за 30 секунд бесплатно.",
+  "description": "Проектируем и запускаем выразительные сайты для бизнеса.",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
@@ -16,8 +16,8 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#0A0A0F",
-  "background_color": "#0A0A0F",
+  "theme_color": "#171712",
+  "background_color": "#f2efe7",
   "display": "standalone",
   "start_url": "/"
 }
