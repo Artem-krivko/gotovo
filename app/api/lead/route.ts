@@ -4,6 +4,8 @@ import { sendTelegram, tgField } from "@/lib/telegram";
 import { escapeHtml, isValidEmail, isValidPhone } from "@/lib/html";
 import { sanitizeUserText } from "@/lib/validation";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { normalizeAttribution } from "@/lib/attribution";
+import type { AttributionData } from "@/lib/attribution";
 
 const RATE_LIMIT = { limit: 5, windowMs: 10 * 60 * 1000 };
 
@@ -13,6 +15,7 @@ interface LeadFields {
   contact: string;
   name: string;
   message: string;
+  attribution: AttributionData;
 }
 
 // ─── Валидация ───────────────────────────────────────────────────────────────
@@ -30,8 +33,9 @@ function parseLead(body: unknown): { ok: true; value: LeadFields } | { ok: false
   // Контакт — единственное, по чему мы можем вернуться к клиенту. Если это
   // не похоже ни на телефон, ни на email, заявка бесполезна: лучше сказать
   // об этом сразу, чем принять её в никуда.
-  if (!isValidPhone(contact) && !isValidEmail(contact)) {
-    return { ok: false, error: "Проверьте телефон или email — похоже, в контакте опечатка" };
+  const telegram = /^@?[a-zA-Z0-9_]{5,32}$/.test(contact);
+  if (!isValidPhone(contact) && !isValidEmail(contact) && !telegram) {
+    return { ok: false, error: "Проверьте телефон, email или Telegram username" };
   }
 
   return {
@@ -40,13 +44,14 @@ function parseLead(body: unknown): { ok: true; value: LeadFields } | { ok: false
       contact,
       name: sanitizeUserText(b.name, LIMITS.name),
       message: sanitizeUserText(b.message, LIMITS.message),
+      attribution: normalizeAttribution(b.attribution),
     },
   };
 }
 
 // ─── Письмо ──────────────────────────────────────────────────────────────────
 
-function buildLeadEmail({ contact, name, message }: LeadFields): string {
+function buildLeadEmail({ contact, name, message, attribution }: LeadFields): string {
   // Значения приходят из открытой формы, поэтому экранируется каждое.
   const row = (label: string, value: string) => `
     <tr>
@@ -61,6 +66,7 @@ function buildLeadEmail({ contact, name, message }: LeadFields): string {
         ${row("Контакт", escapeHtml(contact))}
         ${name ? row("Имя", escapeHtml(name)) : ""}
         ${message ? row("Задача", escapeHtml(message).replace(/\n/g, "<br>")) : ""}
+        ${Object.keys(attribution).length ? row("Атрибуция", escapeHtml(JSON.stringify(attribution))) : ""}
       </table>
       <div style="margin-top: 32px; padding: 16px; background: #f4f4f5; border-radius: 12px;">
         <p style="margin: 0; font-size: 13px; color: #71717a;">
@@ -139,6 +145,7 @@ export async function POST(req: NextRequest) {
         tgField("Контакт", lead.contact),
         lead.name ? tgField("Имя", lead.name) : "",
         lead.message ? tgField("Задача", lead.message) : "",
+        Object.keys(lead.attribution).length ? tgField("Источник", JSON.stringify(lead.attribution)) : "",
       ]
         .filter(Boolean)
         .join("\n")

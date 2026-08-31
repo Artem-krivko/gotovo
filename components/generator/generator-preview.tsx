@@ -11,6 +11,7 @@ import type { DesignSpec } from "@/lib/design/spec"
 import { track } from "@/lib/analytics"
 import { readApiResponse } from "@/lib/api-response"
 import { getGenerationFailureCopy } from "@/lib/generation-diagnostics"
+import { getAttribution } from "@/lib/attribution"
 
 interface GeneratorPreviewProps {
   html: string
@@ -113,7 +114,7 @@ function TimedBanner({ designId, onDismiss }: { designId: string; onDismiss: () 
       const res = await fetch("/api/submit-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ designId, phone }),
+        body: JSON.stringify({ designId, phone, attribution: getAttribution() }),
       })
       const data = await res.json() as { success?: boolean }
       if (res.ok && data.success) {
@@ -194,7 +195,7 @@ function OrderModal({ designId, onClose }: { designId: string; onClose: () => vo
       const res = await fetch("/api/submit-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ designId, name, phone, email, comment }),
+        body: JSON.stringify({ designId, name, phone, email, comment, attribution: getAttribution() }),
       })
       const data = await res.json() as { success?: boolean; error?: string }
       if (!res.ok || !data.success) throw new Error(data.error ?? "Ошибка отправки")

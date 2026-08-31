@@ -4,6 +4,8 @@ import { sendTelegram, tgField } from "@/lib/telegram"
 import { escapeHtml, isValidEmail, isValidPhone } from "@/lib/html"
 import { sanitizeUserText } from "@/lib/validation"
 import { clientIp, rateLimit } from "@/lib/rate-limit"
+import { normalizeAttribution } from "@/lib/attribution"
+import type { AttributionData } from "@/lib/attribution"
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
 
@@ -19,6 +21,7 @@ interface OrderFields {
   phone: string
   email: string
   comment: string
+  attribution: AttributionData
 }
 
 // ─── Валидация ───────────────────────────────────────────────────────────────
@@ -55,6 +58,7 @@ function parseOrder(body: unknown): { ok: true; value: OrderFields } | { ok: fal
       email,
       name: sanitizeUserText(b.name, LIMITS.name),
       comment: sanitizeUserText(b.comment, LIMITS.comment),
+      attribution: normalizeAttribution(b.attribution),
     },
   }
 }
@@ -94,6 +98,7 @@ function buildEmail({
         ${order.name ? row("Имя", order.name) : ""}
         ${order.email ? row("Email", order.email) : ""}
         ${order.comment ? row("Комментарий", order.comment) : ""}
+        ${Object.keys(order.attribution).length ? row("Атрибуция", JSON.stringify(order.attribution)) : ""}
       </table>
 
       <hr style="border:none;border-top:1px solid #f4f4f5;margin:20px 0">
@@ -168,6 +173,7 @@ export async function POST(req: NextRequest) {
         phone: order.phone,
         email: order.email,
         comment: order.comment || null,
+        attributionJson: Object.keys(order.attribution).length ? JSON.stringify(order.attribution) : null,
       },
       select: { id: true },
     })
@@ -191,6 +197,7 @@ export async function POST(req: NextRequest) {
     design ? tgField("Стиль", design.style) : "",
     design ? tgField("Описание", design.prompt) : "",
     order.comment ? tgField("Комментарий", order.comment) : "",
+    Object.keys(order.attribution).length ? tgField("Источник", JSON.stringify(order.attribution)) : "",
     orderId ? "" : "\n⚠️ Заявку не удалось записать в БД — сохраните контакт вручную.",
   ]
     .filter(Boolean)

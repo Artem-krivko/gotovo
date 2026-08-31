@@ -27,6 +27,7 @@ model Order {
   phone     String
   email     String
   comment   String?
+  attributionJson String?
   createdAt DateTime @default(now())
 
   design Design @relation(fields: [designId], references: [id])

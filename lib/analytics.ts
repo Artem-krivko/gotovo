@@ -22,6 +22,8 @@ export type FunnelEvent =
   | "preview_engaged"
   | "lead_modal_opened"
   | "lead_submitted"
+  | "lead_form_started"
+  | "lead_submit_failed"
   | "telegram_clicked"
 
 export type EventParams = Record<string, string | number | boolean | undefined>

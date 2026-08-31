@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
+import { getAttribution } from "@/lib/attribution";
+import { track } from "@/lib/analytics";
 
 type FormStatus = "idle" | "loading" | "success" | "error";
 
@@ -42,6 +44,13 @@ export function ContactForm() {
   const [fields, setFields] = useState<FormFields>({ name: "", contact: "", message: "" });
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const formStartedRef = useRef(false);
+
+  const handleFirstInteraction = useCallback(() => {
+    if (formStartedRef.current) return;
+    formStartedRef.current = true;
+    track("lead_form_started", { form: "contacts" });
+  }, []);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -57,12 +66,14 @@ export function ContactForm() {
       const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(fields),
+        body: JSON.stringify({ ...fields, attribution: getAttribution() }),
       });
       const data = await res.json() as { success?: boolean; error?: string };
       if (!res.ok || !data.success) throw new Error(data.error ?? "Ошибка отправки");
+      track("lead_submitted", { form: "contacts" });
       setStatus("success");
     } catch (err) {
+      track("lead_submit_failed", { form: "contacts" });
       setErrorMessage(err instanceof Error ? err.message : "Не удалось отправить. Напишите напрямую.");
       setStatus("error");
     }
@@ -73,7 +84,7 @@ export function ContactForm() {
   const isLoading = status === "loading";
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} onFocusCapture={handleFirstInteraction} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
         <label htmlFor="contact-name" className="text-sm font-semibold text-ink/70">Имя</label>
         <input id="contact-name" name="name" type="text" required
@@ -82,9 +93,9 @@ export function ContactForm() {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="contact-contact" className="text-sm font-semibold text-ink/70">Email или Telegram</label>
+        <label htmlFor="contact-contact" className="text-sm font-semibold text-ink/70">Email, телефон или Telegram</label>
         <input id="contact-contact" name="contact" type="text" required
-          placeholder="Как с вами связаться" value={fields.contact}
+          placeholder="Email, телефон или @username" value={fields.contact}
           onChange={handleChange} disabled={isLoading} className={inputClass} />
       </div>
 
