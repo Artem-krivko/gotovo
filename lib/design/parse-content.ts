@@ -34,12 +34,20 @@ export function parseImage(value: unknown): ImageAsset | undefined {
 export function parsePageAssets(raw: unknown): PageAssets | null {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null
   const value = raw as Record<string, unknown>
+  const roles = value.roles && typeof value.roles === "object" && !Array.isArray(value.roles)
+    ? value.roles as Record<string, unknown>
+    : {}
   return {
     hero: parseImage(value.hero),
     gallery: (Array.isArray(value.gallery) ? value.gallery : [])
       .map(parseImage)
       .filter((image): image is ImageAsset => Boolean(image))
       .slice(0, 9),
+    roles: {
+      service: parseImage(roles.service),
+      process: parseImage(roles.process),
+      proof: parseImage(roles.proof),
+    },
   }
 }
 
@@ -110,5 +118,21 @@ export function parsePageContent(raw: unknown): PageContent | null {
       .map((g) => str(g, 140))
       .filter((g) => g.length > 0)
       .slice(0, 4),
+    advantages: (Array.isArray(c.advantages) ? c.advantages : [])
+      .map((item) => str(item, 140)).filter(Boolean).slice(0, 4),
+    caseStudies: (Array.isArray(c.caseStudies) ? c.caseStudies : [])
+      .filter((item): item is Record<string, unknown> => !!item && typeof item === "object")
+      .map((item) => ({
+        title: str(item.title, 90),
+        summary: str(item.summary, 360),
+        result: str(item.result, 100) || undefined,
+      }))
+      .filter((item) => item.title && item.summary).slice(0, 3),
+    teamMembers: (Array.isArray(c.teamMembers) ? c.teamMembers : [])
+      .filter((item): item is Record<string, unknown> => !!item && typeof item === "object")
+      .map((item) => ({ name: str(item.name, 60), role: str(item.role, 90) }))
+      .filter((item) => item.name && item.role).slice(0, 6),
+    serviceAreas: (Array.isArray(c.serviceAreas) ? c.serviceAreas : [])
+      .map((item) => str(item, 80)).filter(Boolean).slice(0, 8),
   }
 }

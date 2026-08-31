@@ -48,6 +48,10 @@ function content(overrides: Partial<PageContent> = {}): PageContent {
     email: "info@example.by",
     footerTagline: "Слоган в подвале",
     guarantees: [],
+    advantages: [],
+    caseStudies: [],
+    teamMembers: [],
+    serviceAreas: [],
     ...overrides,
   }
 }
@@ -62,6 +66,7 @@ function layoutFingerprint(html: string): string {
     "contact-banner", "contact-split", "contact-box",
     "faq-acc", "faq-cols",
     "g-story", "g-grid", "g-masonry", "g-carousel",
+    "adv-grid", "cases-layout", "price-grid", "team-grid", "area-box",
   ].filter((cls) => html.includes(`class="${cls}"`) || html.includes(` ${cls}"`))
   return `${sections.join(">")}|${layoutClasses.join(",")}`
 }
@@ -234,6 +239,40 @@ describe("честность контента", () => {
     const { html } = composePage(content(), baseSpecFor("modern"))
     assert.ok(!html.includes('class="trust"'), "Пустая полоса метрик не должна отображаться")
     assert.ok(!html.includes("trust-val-empty"), "Placeholder не должен попадать в страницу")
+  })
+})
+
+describe("нишевые секции из расширенного брифа", () => {
+  test("показывает только секции с подтверждёнными данными", () => {
+    const spec = {
+      ...baseSpecFor("modern"),
+      sectionOrder: ["hero", "advantages", "cases", "pricing", "team", "area", "services", "contact"],
+    } as DesignSpec
+    const { html, renderedSections } = composePage(content({
+      services: [{ name: "Монтаж", description: "Описание", price: "от 500 BYN" }],
+      advantages: ["Собственный инструмент"],
+      caseStudies: [{ title: "Дом в Минске", summary: "Выполнили монтаж по согласованному проекту." }],
+      teamMembers: [{ name: "Анна", role: "Инженер проекта" }],
+      serviceAreas: ["Минск", "Минский район"],
+    }), spec)
+
+    for (const section of ["advantages", "cases", "pricing", "team", "area"] as const) {
+      assert.ok(renderedSections.includes(section), `${section} не отрисован`)
+    }
+    assert.match(html, /Собственный инструмент/)
+    assert.match(html, /Дом в Минске/)
+    assert.match(html, /от 500 BYN/)
+  })
+
+  test("не создаёт кейсы, команду и цены из пустых данных", () => {
+    const spec = {
+      ...baseSpecFor("minimal"),
+      sectionOrder: ["hero", "cases", "pricing", "team", "area", "services", "contact"],
+    } as DesignSpec
+    const { renderedSections } = composePage(content(), spec)
+    for (const section of ["cases", "pricing", "team", "area"] as const) {
+      assert.ok(!renderedSections.includes(section), `${section} не должен быть выдуман`)
+    }
   })
 })
 

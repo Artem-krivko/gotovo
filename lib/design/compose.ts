@@ -20,6 +20,11 @@ import {
   BASE_CSS,
   backgroundLayer,
   contactSection,
+  advantagesSection,
+  casesSection,
+  pricingSection,
+  teamSection,
+  areaSection,
   faqSection,
   gallerySection,
   heroSection,
@@ -127,7 +132,23 @@ function toRenderContent(c: PageContent, assets: PageAssets): RenderContent {
       .slice(0, 9)
       .map((img) => sanitizeImage(img, businessName))
       .filter((img): img is ImageAsset => Boolean(img)),
+    roleImages: {
+      service: sanitizeImage(assets.roles?.service, businessName),
+      process: sanitizeImage(assets.roles?.process, businessName),
+      proof: sanitizeImage(assets.roles?.proof, businessName),
+    },
     guarantees: c.guarantees.slice(0, 4).map((g) => escapeClamped(g, 140)),
+    advantages: c.advantages.slice(0, 4).map((item) => escapeClamped(item, 140)),
+    caseStudies: c.caseStudies.slice(0, 3).map((item) => ({
+      title: escapeClamped(item.title, 90),
+      summary: escapeClamped(item.summary, 360),
+      result: item.result ? escapeClamped(item.result, 100) : undefined,
+    })),
+    teamMembers: c.teamMembers.slice(0, 6).map((item) => ({
+      name: escapeClamped(item.name, 60),
+      role: escapeClamped(item.role, 90),
+    })),
+    serviceAreas: c.serviceAreas.slice(0, 8).map((item) => escapeClamped(item, 80)),
   }
 }
 
@@ -195,6 +216,16 @@ function renderSection(id: SectionId, ctx: RenderContext, faq: Array<{ q: string
       return proofSection(ctx)
     case "gallery":
       return gallerySection(ctx)
+    case "advantages":
+      return advantagesSection(ctx)
+    case "cases":
+      return casesSection(ctx)
+    case "pricing":
+      return pricingSection(ctx)
+    case "team":
+      return teamSection(ctx)
+    case "area":
+      return areaSection(ctx)
     case "faq":
       return faqSection(ctx, faq)
     case "contact":

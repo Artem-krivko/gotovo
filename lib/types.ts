@@ -19,6 +19,10 @@ export interface GeneratorParams {
   audience?: string
   mainAction?: string
   geography?: string
+  /** Короткие преимущества, сформулированные самим владельцем бизнеса. */
+  advantages?: string[]
+  /** Прямые HTTPS-ссылки на реальные фотографии владельца. */
+  referenceImages?: string[]
   /**
    * Факты, которые пользователь подтвердил сам. ТОЛЬКО их можно утверждать
    * на странице: цифры, гарантии и отзывы отсюда, а не из ответа модели.
@@ -37,6 +41,9 @@ export interface VerifiedFactsInput {
   guarantees?: string[]
   certifications?: string[]
   testimonials?: Array<{ text: string; author: string; role: string }>
+  caseStudies?: Array<{ title: string; summary: string; result?: string }>
+  teamMembers?: Array<{ name: string; role: string }>
+  serviceAreas?: string[]
 }
 
 export interface GenerateApiRequest {

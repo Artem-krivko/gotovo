@@ -3,6 +3,7 @@ import assert from "node:assert/strict"
 
 import { curateDesignDirections } from "../design/directions.ts"
 import {
+  applyReferenceImages,
   mergeAndRankPexelsCandidates,
   selectConceptAssets,
   type PexelsCandidate,
@@ -108,6 +109,20 @@ describe("concept assets", () => {
     )
     assert.equal(ranked.length, 1)
     assert.equal(ranked[0].id, exact.id)
+  })
+
+  test("реальные фотографии получают приоритет и разные роли", () => {
+    const selected = selectConceptAssets(candidates, "brief", 2)
+    const references = [
+      "https://cdn.example.com/real-1.jpg",
+      "https://cdn.example.com/real-2.jpg",
+      "https://cdn.example.com/real-3.jpg",
+    ]
+    const enriched = applyReferenceImages(selected, references, "Компания")
+    assert.equal(enriched[0].hero?.url, references[0])
+    assert.equal(enriched[1].hero?.url, references[1])
+    assert.equal(enriched[0].roles?.service?.url, references[1])
+    assert.equal(enriched[0].roles?.process?.url, references[2])
   })
 })
 

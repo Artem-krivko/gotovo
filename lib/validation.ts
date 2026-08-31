@@ -86,6 +86,8 @@ export function parseGeneratorParams(body: unknown): ValidationResult<GeneratorP
   const audience = sanitizeUserText(p.audience, INPUT_LIMITS.freeText)
   const mainAction = sanitizeUserText(p.mainAction, INPUT_LIMITS.freeText)
   const geography = sanitizeUserText(p.geography, 80)
+  const advantages = parseStringList(p.advantages, 4, 140)
+  const referenceImages = parseHttpsUrls(p.referenceImages, 6)
 
   return {
     ok: true,
@@ -99,6 +101,8 @@ export function parseGeneratorParams(body: unknown): ValidationResult<GeneratorP
       audience: audience || undefined,
       mainAction: mainAction || undefined,
       geography: geography || undefined,
+      advantages,
+      referenceImages,
       facts: parseVerifiedFacts(p.facts, geography),
     },
   }
@@ -126,6 +130,21 @@ function parseStringList(value: unknown, maxItems: number, maxLength: number): s
     .slice(0, maxItems)
 }
 
+function parseHttpsUrls(value: unknown, maxItems: number): string[] {
+  if (!Array.isArray(value)) return []
+  return value
+    .map((item) => sanitizeUserText(item, 1_500))
+    .filter((item) => {
+      try {
+        const url = new URL(item)
+        return url.protocol === "https:" && !url.username && !url.password
+      } catch {
+        return false
+      }
+    })
+    .slice(0, maxItems)
+}
+
 /**
  * Факты от пользователя — единственный источник цифр, гарантий и отзывов
  * на сгенерированной странице. Модель их не производит.
@@ -150,6 +169,23 @@ export function parseVerifiedFacts(
     .slice(0, 3)
 
   const geography = sanitizeUserText(f.geography, 80) || fallbackGeography
+  const caseStudies = (Array.isArray(f.caseStudies) ? f.caseStudies : [])
+    .filter((item): item is Record<string, unknown> => !!item && typeof item === "object")
+    .map((item) => ({
+      title: sanitizeUserText(item.title, 90),
+      summary: sanitizeUserText(item.summary, 360),
+      result: sanitizeUserText(item.result, 100) || undefined,
+    }))
+    .filter((item) => item.title && item.summary)
+    .slice(0, 3)
+  const teamMembers = (Array.isArray(f.teamMembers) ? f.teamMembers : [])
+    .filter((item): item is Record<string, unknown> => !!item && typeof item === "object")
+    .map((item) => ({
+      name: sanitizeUserText(item.name, 60),
+      role: sanitizeUserText(item.role, 90),
+    }))
+    .filter((item) => item.name && item.role)
+    .slice(0, 6)
 
   return {
     yearsInBusiness: parseMetric(f.yearsInBusiness),
@@ -161,6 +197,9 @@ export function parseVerifiedFacts(
     guarantees: parseStringList(f.guarantees, 4, 140),
     certifications: parseStringList(f.certifications, 4, 140),
     testimonials,
+    caseStudies,
+    teamMembers,
+    serviceAreas: parseStringList(f.serviceAreas, 8, 80),
   }
 }
 

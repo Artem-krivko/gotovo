@@ -20,6 +20,11 @@ export interface RenderContent extends Omit<PageContent, "phone" | "email"> {
   email: { href: string; label: string }
   heroImage?: ImageAsset
   gallery: ImageAsset[]
+  roleImages: {
+    service?: ImageAsset
+    process?: ImageAsset
+    proof?: ImageAsset
+  }
 }
 
 export interface RenderContext {
@@ -458,7 +463,7 @@ export function servicesSection({ content: c, spec }: RenderContext): SectionOut
       .map(
         (s, i) => `<div class="svc-arow reveal${i % 2 ? " svc-arow-rev" : ""}">
       <div class="svc-atext"><h3>${s.name}</h3><p class="muted">${s.description}</p>${s.price ? `<p class="svc-price">${s.price}</p>` : ""}</div>
-      <div class="svc-aside" aria-hidden="true"><span>${String(i + 1).padStart(2, "0")}</span></div>
+      <div class="svc-aside" aria-hidden="true">${i === 0 && c.roleImages.service ? `<img src="${c.roleImages.service.url}" alt="" loading="lazy">` : `<span>${String(i + 1).padStart(2, "0")}</span>`}</div>
     </div>`
       )
       .join("")}
@@ -471,6 +476,7 @@ export function servicesSection({ content: c, spec }: RenderContext): SectionOut
 .svc-arow h3{font-size:21px;margin-bottom:10px}
 .svc-arow p{font-size:15px}
 .svc-aside{display:flex;align-items:center;justify-content:center;min-height:120px;border-radius:var(--r-md);background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.svc-aside img{width:100%;height:160px;object-fit:cover;${imageCss(spec)}}
 .svc-aside span{font-family:var(--font-display);font-size:52px;font-weight:800;color:var(--accent);opacity:.75}
 @media(max-width:860px){.svc-arow{grid-template-columns:1fr}.svc-arow-rev .svc-atext{order:0}.svc-aside{display:none}}`,
       }
@@ -506,15 +512,18 @@ export function processSection({ content: c, spec }: RenderContext): SectionOutp
     case "timeline":
       return {
         html: `<section id="process"><div class="wrap">${head}
+  <div class="timeline-layout ${c.roleImages.process ? "has-timeline-photo" : ""}">
   <ol class="timeline">
     ${c.features
       .map(
         (f, i) => `<li class="tl-item reveal"><span class="tl-dot" aria-hidden="true"></span><div><span class="tl-n">Шаг ${i + 1}</span><h3>${f.title}</h3><p class="muted">${f.description}</p></div></li>`
       )
       .join("")}
-  </ol>
+  </ol>${c.roleImages.process ? `<figure class="timeline-photo reveal"><img src="${c.roleImages.process.url}"${c.roleImages.process.srcSet ? ` srcset="${c.roleImages.process.srcSet}"` : ""} alt="${c.roleImages.process.alt}" loading="lazy"></figure>` : ""}
+  </div>
 </div></section>`,
         css: `
+.timeline-layout.has-timeline-photo{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.85fr);gap:clamp(34px,6vw,82px);align-items:start}
 .timeline{list-style:none;position:relative;padding-left:34px}
 .timeline::before{content:'';position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--border)}
 .tl-item{position:relative;padding-bottom:34px}
@@ -522,7 +531,9 @@ export function processSection({ content: c, spec }: RenderContext): SectionOutp
 .tl-dot{position:absolute;left:-34px;top:5px;width:16px;height:16px;border-radius:50%;background:var(--accent);border:3px solid var(--bg)}
 .tl-n{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}
 .tl-item h3{font-size:19px;margin:8px 0}
-.tl-item p{font-size:15px;max-width:62ch}`,
+.tl-item p{font-size:15px;max-width:62ch}
+.timeline-photo{position:sticky;top:90px}.timeline-photo img{width:100%;aspect-ratio:4/5;object-fit:cover;${imageCss(spec)}}
+@media(max-width:760px){.timeline-layout.has-timeline-photo{grid-template-columns:1fr}.timeline-photo{position:static}.timeline-photo img{aspect-ratio:16/10}}`,
       }
 
     case "accordion":
@@ -677,6 +688,85 @@ export function gallerySection({ content: c, spec }: RenderContext): SectionOutp
 .g-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--gap)}
 .g-grid .g-item{margin:0}
 .g-item img{width:100%;aspect-ratio:4/3;object-fit:cover;${imageCss(spec)}}`,
+  }
+}
+
+// ─── Нишевые секции из подтверждённого брифа ─────────────────────────────────
+
+export function advantagesSection({ content: c, spec }: RenderContext): SectionOutput {
+  if (c.advantages.length === 0) return EMPTY
+  return {
+    html: `<section id="advantages"><div class="wrap">${sectionHead("Почему мы", "То, что важно в работе")}
+  <div class="adv-grid">${c.advantages.map((item, index) => `<article class="adv-item reveal"><span>${String(index + 1).padStart(2, "0")}</span><h3>${item}</h3></article>`).join("")}</div>
+</div></section>`,
+    css: `
+.adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--gap)}
+.adv-item{min-height:150px;padding:24px;border-radius:var(--r-lg);display:flex;flex-direction:column;justify-content:space-between;gap:34px;${cardCss(spec)}}
+.adv-item span{font-family:var(--font-display);font-size:12px;letter-spacing:2px;color:var(--accent);font-weight:700}
+.adv-item h3{font-size:clamp(18px,2vw,24px);max-width:18ch}`,
+  }
+}
+
+export function casesSection({ content: c, spec }: RenderContext): SectionOutput {
+  if (c.caseStudies.length === 0) return EMPTY
+  const image = c.roleImages.proof
+  const imageMarkup = image
+    ? `<figure class="case-photo reveal"><img src="${image.url}"${image.srcSet ? ` srcset="${image.srcSet}"` : ""}${image.sizes ? ` sizes="${image.sizes}"` : ""} alt="${image.alt}" loading="lazy"></figure>`
+    : ""
+  return {
+    html: `<section id="cases"><div class="wrap">${sectionHead("Кейсы", "Реальные задачи")}
+  <div class="cases-layout ${image ? "has-case-photo" : ""}">
+    ${imageMarkup}
+    <div class="case-list">${c.caseStudies.map((item, index) => `<article class="case-item reveal"><span class="case-n">${String(index + 1).padStart(2, "0")}</span><div><h3>${item.title}</h3><p class="muted">${item.summary}</p>${item.result ? `<strong>${item.result}</strong>` : ""}</div></article>`).join("")}</div>
+  </div>
+</div></section>`,
+    css: `
+.cases-layout.has-case-photo{display:grid;grid-template-columns:minmax(280px,.85fr) minmax(0,1.15fr);gap:clamp(28px,5vw,72px);align-items:stretch}
+.case-photo{min-height:360px}.case-photo img{width:100%;height:100%;object-fit:cover;${imageCss(spec)}}
+.case-list{border-top:1px solid var(--border)}
+.case-item{display:grid;grid-template-columns:54px 1fr;gap:18px;padding:26px 0;border-bottom:1px solid var(--border)}
+.case-n{font-family:var(--font-display);color:var(--accent);font-weight:700;font-size:13px}
+.case-item h3{font-size:21px;margin-bottom:9px}.case-item p{font-size:15px}.case-item strong{display:block;margin-top:14px;color:var(--accent);font-size:14px}
+@media(max-width:760px){.cases-layout.has-case-photo{grid-template-columns:1fr}.case-photo{min-height:240px}}`,
+  }
+}
+
+export function pricingSection({ content: c, spec }: RenderContext): SectionOutput {
+  const priced = c.services.filter((service) => service.price)
+  if (priced.length === 0) return EMPTY
+  return {
+    html: `<section id="pricing"><div class="wrap">${sectionHead("Стоимость", "Ориентиры по цене")}
+  <div class="price-grid">${priced.map((service) => `<article class="price-card reveal"><h3>${service.name}</h3><strong>${service.price}</strong><p class="muted">Точный расчёт зависит от состава задачи и согласуется до начала работы.</p></article>`).join("")}</div>
+</div></section>`,
+    css: `
+.price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:var(--gap)}
+.price-card{padding:clamp(24px,3vw,36px);border-radius:var(--r-lg);${cardCss(spec)}}
+.price-card h3{font-size:18px}.price-card strong{display:block;font-family:var(--font-display);font-size:clamp(30px,4vw,48px);color:var(--accent);margin:22px 0 14px}.price-card p{font-size:14px}`,
+  }
+}
+
+export function teamSection({ content: c, spec }: RenderContext): SectionOutput {
+  if (c.teamMembers.length === 0) return EMPTY
+  return {
+    html: `<section id="team"><div class="wrap">${sectionHead("Команда", "Кто отвечает за результат")}
+  <div class="team-grid">${c.teamMembers.map((member) => `<article class="team-card reveal"><span class="team-avatar" aria-hidden="true">${member.name.charAt(0)}</span><div><h3>${member.name}</h3><p class="muted">${member.role}</p></div></article>`).join("")}</div>
+</div></section>`,
+    css: `
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:var(--gap)}
+.team-card{display:flex;align-items:center;gap:18px;padding:22px;border-radius:var(--r-lg);${cardCss(spec)}}
+.team-avatar{display:grid;place-items:center;width:56px;height:56px;flex:none;border-radius:50%;background:var(--accent);color:var(--on-accent);font-family:var(--font-display);font-size:22px;font-weight:700}.team-card h3{font-size:18px}.team-card p{font-size:14px;margin-top:3px}`,
+  }
+}
+
+export function areaSection({ content: c, spec }: RenderContext): SectionOutput {
+  const areas = c.serviceAreas.length > 0 ? c.serviceAreas : c.geography ? [c.geography] : []
+  if (areas.length === 0) return EMPTY
+  return {
+    html: `<section id="area"><div class="wrap area-box reveal"><div><p class="s-tag">География</p><h2>Где мы работаем</h2><p class="muted">Уточните адрес — подтвердим возможность выезда или обслуживания.</p></div><div class="area-list">${areas.map((area) => `<span>${area}</span>`).join("")}</div></div></section>`,
+    css: `
+.area-box{display:grid;grid-template-columns:minmax(220px,.75fr) minmax(0,1.25fr);gap:clamp(28px,6vw,80px);align-items:center;padding:clamp(28px,4vw,52px);border-radius:var(--r-lg);${cardCss(spec)}}
+.area-box p.muted{margin-top:14px;max-width:38ch}.area-list{display:flex;flex-wrap:wrap;gap:10px}.area-list span{padding:10px 16px;border:1px solid var(--border);border-radius:999px;font-size:14px;font-weight:600}
+@media(max-width:700px){.area-box{grid-template-columns:1fr}}`,
   }
 }
 

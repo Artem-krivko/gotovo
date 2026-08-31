@@ -208,15 +208,57 @@ export function selectConceptAssets(
 
     // Галерея продолжает выбранный сюжет, но не повторяет hero. При нехватке
     // кадров добираем из соседних релевантных запросов.
-    const gallery = [...preferred, ...candidates]
+    const galleryCandidates = [...preferred, ...candidates]
       .filter((candidate, candidateIndex, all) =>
         candidate.id !== hero.id &&
         all.findIndex((item) => item.id === candidate.id) === candidateIndex
       )
       .slice(0, 5)
-      .map((candidate) => candidate.asset)
+    const gallery = galleryCandidates.map((candidate) => candidate.asset)
 
-    return { hero: hero.asset, gallery }
+    return {
+      hero: hero.asset,
+      gallery,
+      roles: {
+        service: galleryCandidates[0]?.asset,
+        process: galleryCandidates[1]?.asset,
+        proof: galleryCandidates[2]?.asset,
+      },
+    }
+  })
+}
+
+/**
+ * Реальные фотографии владельца имеют приоритет над фотостоком. Порядок
+ * детерминированно поворачивается между концепциями, поэтому один набор фото
+ * поддерживает разные hero-композиции, а не клонирует их.
+ */
+export function applyReferenceImages(
+  concepts: PageAssets[],
+  urls: string[],
+  businessName: string
+): PageAssets[] {
+  if (urls.length === 0) return concepts
+  const references: ImageAsset[] = urls.map((url, index) => ({
+    url,
+    alt: `${businessName}: реальная фотография ${index + 1}`,
+    sizes: "(max-width: 860px) 100vw, 55vw",
+  }))
+
+  return concepts.map((assets, conceptIndex) => {
+    const rotated = references.map((_, index) => references[(index + conceptIndex) % references.length])
+    const gallery = [...rotated.slice(1), ...assets.gallery]
+      .filter((image, index, all) => all.findIndex((item) => item.url === image.url) === index)
+      .slice(0, 6)
+    return {
+      hero: rotated[0],
+      gallery,
+      roles: {
+        service: rotated[1] ?? assets.roles?.service,
+        process: rotated[2] ?? assets.roles?.process,
+        proof: rotated[3] ?? rotated[1] ?? assets.roles?.proof,
+      },
+    }
   })
 }
 

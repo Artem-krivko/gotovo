@@ -9,6 +9,7 @@ import {
 import { getNicheQueries } from "@/lib/templates"
 import {
   fetchPexelsCandidates,
+  applyReferenceImages,
   mergeAndRankPexelsCandidates,
   selectConceptAssets,
 } from "@/lib/design/images/pexels"
@@ -160,6 +161,10 @@ function buildFallbackContent(params: GeneratorParams, facts: VerifiedFacts = {}
     footerTagline: "Черновик концепта",
     geography: facts.geography,
     guarantees: facts.guarantees ?? [],
+    advantages: params.advantages ?? [],
+    caseStudies: facts.caseStudies ?? [],
+    teamMembers: facts.teamMembers ?? [],
+    serviceAreas: facts.serviceAreas ?? [],
   }
 }
 
@@ -400,10 +405,10 @@ async function runStrategist(
       headline: v.headline,
       subheadline: v.subheadline,
       tagline: v.tagline,
-      services: v.services.map((s) => ({
+      services: v.services.map((s, index) => ({
         name: s.name,
         description: s.description,
-        price: facts.priceFrom ? s.price : undefined,
+        price: index === 0 && facts.priceFrom ? facts.priceFrom : undefined,
       })),
       features: v.features.map((f) => ({ title: f.title, description: f.description })),
       stats: buildStats(facts),
@@ -417,6 +422,10 @@ async function runStrategist(
       footerTagline: v.footerTagline,
       geography: facts.geography,
       guarantees: facts.guarantees ?? [],
+      advantages: params.advantages ?? [],
+      caseStudies: facts.caseStudies ?? [],
+      teamMembers: facts.teamMembers ?? [],
+      serviceAreas: facts.serviceAreas ?? [],
     },
     reason: "none",
     provider,
@@ -571,7 +580,11 @@ export async function POST(req: NextRequest) {
     [visualBrief?.query, ...speculativeQueries].filter((query): query is string => Boolean(query)),
     visualBrief?.avoid ?? []
   )
-  assets = selectConceptAssets(imageCandidates, `${params.businessType}:${params.userDescription}`, 1)[0]
+  assets = applyReferenceImages(
+    selectConceptAssets(imageCandidates, `${params.businessType}:${params.userDescription}`, 1),
+    params.referenceImages ?? [],
+    params.businessName || params.businessType
+  )[0]
 
   // Галерею показываем, только если для неё есть изображения.
   if (assets.gallery.length === 0 && spec.galleryVariant !== "none") {
@@ -639,10 +652,14 @@ export async function POST(req: NextRequest) {
     params.businessType,
     params.userDescription
   )
-  const conceptAssets = selectConceptAssets(
-    imageCandidates,
-    `${params.businessType}:${params.userDescription}`,
-    directions.length
+  const conceptAssets = applyReferenceImages(
+    selectConceptAssets(
+      imageCandidates,
+      `${params.businessType}:${params.userDescription}`,
+      directions.length
+    ),
+    params.referenceImages ?? [],
+    params.businessName || params.businessType
   )
   const concepts: GeneratedConcept[] = directions.flatMap((direction, index) => {
     const directionAssets = conceptAssets[index] ?? assets

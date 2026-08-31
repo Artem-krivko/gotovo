@@ -159,6 +159,10 @@ export function buildUserPrompt(params: GeneratorParams): string {
     params.businessName ? `<название>${params.businessName}</название>` : "",
     `<описание>${params.userDescription}</описание>`,
     params.colorPreference ? `<цвет_бренда>${params.colorPreference}</цвет_бренда>` : "",
+    params.audience ? `<аудитория>${params.audience}</аудитория>` : "",
+    params.mainAction ? `<главное_действие>${params.mainAction}</главное_действие>` : "",
+    params.geography ? `<география>${params.geography}</география>` : "",
+    params.advantages?.length ? `<преимущества>${params.advantages.join("; ")}</преимущества>` : "",
   ]
     .filter(Boolean)
     .join("\n")
@@ -167,7 +171,7 @@ export function buildUserPrompt(params: GeneratorParams): string {
     `СТИЛЬ И ТОН: ${styleHints[params.style] ?? styleHints.modern}`,
     `РЕКОМЕНДОВАННЫЕ ЦВЕТА (accentColor): ${colorHints[params.style] ?? colorHints.modern}`,
     `ЯЗЫК КОНТЕНТА: ${params.language === "en" ? "английский" : params.language === "de" ? "немецкий" : "русский"}`,
-    `СТРАНА/РЕГИОН: Беларусь, Минск — используй местные реалии (телефоны +375, местные названия)`,
+    `СТРАНА/РЕГИОН: ${params.geography || "Беларусь"} — не добавляй другие города без данных клиента`,
     `НИШЕВЫЕ ПОДСКАЗКИ (о чём писать, но БЕЗ выдуманных цифр): ${detectNicheHints(params.businessType)}`,
     !params.businessName ? `НАЗВАНИЕ: придумай подходящее для этой ниши` : "",
   ].filter(Boolean)
@@ -228,11 +232,13 @@ export const ART_DIRECTOR_SYSTEM_PROMPT = `Ты — арт-директор. П�
   servicesVariant list
 
 ПОРЯДОК СЕКЦИЙ (sectionOrder):
-Доступны: hero, trust, services, process, proof, gallery, faq, contact
+Доступны: hero, trust, services, process, proof, gallery, advantages, cases, pricing, team, area, faq, contact
 - hero всегда первый, contact всегда последний (проставится автоматически)
 - Включай gallery ТОЛЬКО если для ниши важны визуальные примеры работ
 - Включай trust (полоса метрик) ТОЛЬКО если у бизнеса есть чем их наполнить
 - proof ставь "none", если нет реальных отзывов и гарантий
+- advantages, cases, pricing, team и area являются условными: рендерер покажет
+  их только при наличии подтверждённых данных клиента
 - Порядок остальных секций выбирай под логику принятия решения в нише
 
 ПЕРЕЧИСЛЕНИЯ:
@@ -292,6 +298,10 @@ export function buildArtDirectorPrompt(params: GeneratorParams): string {
     `<тип_бизнеса>${params.businessType}</тип_бизнеса>`,
     `<описание>${params.userDescription}</описание>`,
     params.colorPreference ? `<цвет_бренда>${params.colorPreference}</цвет_бренда>` : "",
+    params.audience ? `<аудитория>${params.audience}</аудитория>` : "",
+    params.mainAction ? `<главное_действие>${params.mainAction}</главное_действие>` : "",
+    params.geography ? `<география>${params.geography}</география>` : "",
+    params.advantages?.length ? `<преимущества>${params.advantages.join("; ")}</преимущества>` : "",
   ]
     .filter(Boolean)
     .join("\n")

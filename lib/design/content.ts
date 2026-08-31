@@ -26,6 +26,9 @@ export interface VerifiedFacts {
   certifications?: string[]
   /** Реальные отзывы. Пустой массив → блок отзывов не рендерится. */
   testimonials?: Array<{ text: string; author: string; role: string }>
+  caseStudies?: Array<{ title: string; summary: string; result?: string }>
+  teamMembers?: Array<{ name: string; role: string }>
+  serviceAreas?: string[]
 }
 
 /** Внутреннее планирование. Никогда не попадает в разметку. */
@@ -77,6 +80,12 @@ export interface ImageAsset {
 export interface PageAssets {
   hero?: ImageAsset
   gallery: ImageAsset[]
+  /** Кадры с разными задачами не должны случайно повторять hero. */
+  roles?: {
+    service?: ImageAsset
+    process?: ImageAsset
+    proof?: ImageAsset
+  }
 }
 
 export interface PageContent {
@@ -97,6 +106,12 @@ export interface PageContent {
   geography?: string
   /** Подтверждённые гарантии — рендерятся, только если они реальны. */
   guarantees: string[]
+  /** Только формулировки, которые ввёл сам владелец. */
+  advantages: string[]
+  /** Только подтверждённые владельцем кейсы и участники команды. */
+  caseStudies: Array<{ title: string; summary: string; result?: string }>
+  teamMembers: Array<{ name: string; role: string }>
+  serviceAreas: string[]
 }
 
 /**

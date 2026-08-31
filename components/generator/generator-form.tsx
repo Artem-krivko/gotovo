@@ -69,6 +69,10 @@ const STYLE_OPTIONS: StyleOption[] = [
   },
 ]
 
+function nonEmptyLines(value: string, limit: number): string[] {
+  return value.split(/\r?\n/).map((line) => line.trim()).filter(Boolean).slice(0, limit)
+}
+
 // ─── Иконки ───────────────────────────────────────────────────────────────────
 
 function SpinnerIcon() {
@@ -124,6 +128,9 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
   const [mainAction, setMainAction] = useState("")
   const [geography, setGeography] = useState("")
   const [brandColor, setBrandColor] = useState("")
+  const [advantages, setAdvantages] = useState("")
+  const [serviceAreas, setServiceAreas] = useState("")
+  const [referenceImages, setReferenceImages] = useState("")
   // Факты — единственный источник цифр и отзывов на странице.
   const [yearsInBusiness, setYearsInBusiness] = useState("")
   const [projectsCompleted, setProjectsCompleted] = useState("")
@@ -131,6 +138,11 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
   const [guarantee, setGuarantee] = useState("")
   const [testimonialText, setTestimonialText] = useState("")
   const [testimonialAuthor, setTestimonialAuthor] = useState("")
+  const [caseTitle, setCaseTitle] = useState("")
+  const [caseSummary, setCaseSummary] = useState("")
+  const [caseResult, setCaseResult] = useState("")
+  const [teamMemberName, setTeamMemberName] = useState("")
+  const [teamMemberRole, setTeamMemberRole] = useState("")
   const [error, setError] = useState("")
   // generator_form_started шлём один раз — на первое реальное касание формы,
   // а не на монтирование: иначе событие срабатывало бы у всех, кто просто
@@ -167,6 +179,8 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
         audience: audience.trim() || undefined,
         mainAction: mainAction.trim() || undefined,
         geography: geography.trim() || undefined,
+        advantages: nonEmptyLines(advantages, 4),
+        referenceImages: nonEmptyLines(referenceImages, 6),
         facts: {
           yearsInBusiness: yearsInBusiness.trim() || undefined,
           projectsCompleted: projectsCompleted.trim() || undefined,
@@ -178,6 +192,15 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
             testimonialText.trim() && testimonialAuthor.trim()
               ? [{ text: testimonialText.trim(), author: testimonialAuthor.trim(), role: "" }]
               : [],
+          caseStudies:
+            caseTitle.trim() && caseSummary.trim()
+              ? [{ title: caseTitle.trim(), summary: caseSummary.trim(), result: caseResult.trim() || undefined }]
+              : [],
+          teamMembers:
+            teamMemberName.trim() && teamMemberRole.trim()
+              ? [{ name: teamMemberName.trim(), role: teamMemberRole.trim() }]
+              : [],
+          serviceAreas: nonEmptyLines(serviceAreas, 8),
         },
       }
 
@@ -225,8 +248,10 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
     [
       businessType, businessName, userDescription, style, language,
       brandColor, audience, mainAction, geography,
+      advantages, serviceAreas, referenceImages,
       yearsInBusiness, projectsCompleted, priceFrom, guarantee,
       testimonialText, testimonialAuthor,
+      caseTitle, caseSummary, caseResult, teamMemberName, teamMemberRole,
       onResult, onLoading,
     ]
   )
@@ -417,6 +442,31 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
               </div>
             </div>
 
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="gen-advantages" className="text-xs font-semibold text-zinc-700">
+                Чем вы реально отличаетесь
+              </label>
+              <textarea
+                id="gen-advantages" rows={3} value={advantages}
+                onChange={(e) => setAdvantages(e.target.value)} disabled={isLoading}
+                placeholder={"Свой парк техники\nРаботаем по договору\nУзкая специализация"}
+                className="resize-none rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 disabled:opacity-50"
+              />
+              <p className="text-xs text-zinc-500">По одному преимуществу в строке.</p>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="gen-areas" className="text-xs font-semibold text-zinc-700">
+                Города и районы работы
+              </label>
+              <textarea
+                id="gen-areas" rows={2} value={serviceAreas}
+                onChange={(e) => setServiceAreas(e.target.value)} disabled={isLoading}
+                placeholder={"Минск\nМинский район"}
+                className="resize-none rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 disabled:opacity-50"
+              />
+            </div>
+
             <div className="grid grid-cols-2 gap-3">
               <div className="flex flex-col gap-1.5">
                 <label htmlFor="gen-years" className="text-xs font-semibold text-zinc-700">
@@ -452,6 +502,56 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
                 placeholder="от 150 $"
                 className="rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 disabled:opacity-50"
               />
+            </div>
+
+            <div className="flex flex-col gap-2 rounded-lg border border-zinc-200 bg-white p-3">
+              <p className="text-xs font-semibold text-zinc-700">Реальный кейс</p>
+              <input
+                type="text" value={caseTitle} onChange={(e) => setCaseTitle(e.target.value)}
+                disabled={isLoading} placeholder="Например: Септик для дома в Могилёве"
+                aria-label="Название кейса"
+                className="rounded-lg border border-zinc-300 px-3 py-2.5 text-sm outline-none focus:border-violet-400"
+              />
+              <textarea
+                rows={2} value={caseSummary} onChange={(e) => setCaseSummary(e.target.value)}
+                disabled={isLoading} placeholder="Что сделали — только реальные сведения"
+                aria-label="Описание кейса"
+                className="resize-none rounded-lg border border-zinc-300 px-3 py-2.5 text-sm outline-none focus:border-violet-400"
+              />
+              <input
+                type="text" value={caseResult} onChange={(e) => setCaseResult(e.target.value)}
+                disabled={isLoading} placeholder="Результат, если его можно подтвердить"
+                aria-label="Результат кейса"
+                className="rounded-lg border border-zinc-300 px-3 py-2.5 text-sm outline-none focus:border-violet-400"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="gen-team-name" className="text-xs font-semibold text-zinc-700">Имя специалиста</label>
+                <input id="gen-team-name" type="text" value={teamMemberName}
+                  onChange={(e) => setTeamMemberName(e.target.value)} disabled={isLoading}
+                  placeholder="Анна" className="rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-violet-400" />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="gen-team-role" className="text-xs font-semibold text-zinc-700">Роль</label>
+                <input id="gen-team-role" type="text" value={teamMemberRole}
+                  onChange={(e) => setTeamMemberRole(e.target.value)} disabled={isLoading}
+                  placeholder="Фотограф" className="rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-violet-400" />
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="gen-photos" className="text-xs font-semibold text-zinc-700">
+                Ссылки на ваши фотографии
+              </label>
+              <textarea
+                id="gen-photos" rows={3} value={referenceImages}
+                onChange={(e) => setReferenceImages(e.target.value)} disabled={isLoading}
+                placeholder={"https://.../photo-1.jpg\nhttps://.../photo-2.jpg"}
+                className="resize-none rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 disabled:opacity-50"
+              />
+              <p className="text-xs text-zinc-500">До 6 прямых HTTPS-ссылок, по одной в строке.</p>
             </div>
 
             <div className="flex flex-col gap-1.5">

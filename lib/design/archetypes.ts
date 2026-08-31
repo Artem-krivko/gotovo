@@ -31,7 +31,7 @@ export const ARCHETYPES: readonly ArchetypePreset[] = [
     styles: ["modern", "minimal", "corporate"],
     apply: (base, style) => finish({
       ...base,
-      sectionOrder: ["hero", "trust", "services", "process", "proof", "faq", "contact"],
+      sectionOrder: ["hero", "trust", "services", "advantages", "area", "process", "cases", "proof", "faq", "contact"],
       heroVariant: "centered",
       layoutVariant: "contained",
       palette: { ...base.palette, mode: "light" },
@@ -57,7 +57,7 @@ export const ARCHETYPES: readonly ArchetypePreset[] = [
     styles: ["modern", "bold", "corporate"],
     apply: (base, style) => finish({
       ...base,
-      sectionOrder: ["hero", "services", "trust", "process", "faq", "contact"],
+      sectionOrder: ["hero", "services", "advantages", "process", "cases", "area", "trust", "faq", "contact"],
       heroVariant: base.heroVariant === "statement" ? "split-image" : "statement",
       layoutVariant: "wide",
       palette: { ...base.palette, mode: "dark" },
@@ -83,7 +83,7 @@ export const ARCHETYPES: readonly ArchetypePreset[] = [
     styles: ["modern", "minimal", "bold"],
     apply: (base, style) => finish({
       ...base,
-      sectionOrder: ["hero", "gallery", "services", "trust", "proof", "process", "faq", "contact"],
+      sectionOrder: ["hero", "gallery", "cases", "services", "advantages", "team", "trust", "proof", "process", "faq", "contact"],
       heroVariant: "editorial",
       layoutVariant: style === "corporate" ? "contained" : "asymmetric",
       palette: { ...base.palette, mode: "light" },
@@ -110,7 +110,7 @@ export const ARCHETYPES: readonly ArchetypePreset[] = [
     styles: ["modern", "bold", "corporate"],
     apply: (base, style) => finish({
       ...base,
-      sectionOrder: ["hero", "trust", "services", "process", "faq", "contact"],
+      sectionOrder: ["hero", "trust", "advantages", "services", "pricing", "cases", "process", "area", "faq", "contact"],
       heroVariant: "centered",
       layoutVariant: "wide",
       palette: { ...base.palette, mode: style === "bold" ? "dark" : base.palette.mode },
@@ -136,7 +136,7 @@ export const ARCHETYPES: readonly ArchetypePreset[] = [
     styles: ["modern", "minimal", "bold"],
     apply: (base, style) => finish({
       ...base,
-      sectionOrder: ["hero", "gallery", "services", "trust", "process", "proof", "faq", "contact"],
+      sectionOrder: ["hero", "gallery", "cases", "services", "advantages", "team", "proof", "process", "trust", "faq", "contact"],
       heroVariant: "full-bleed",
       layoutVariant: "asymmetric",
       palette: { ...base.palette, mode: "dark" },
@@ -163,7 +163,7 @@ export const ARCHETYPES: readonly ArchetypePreset[] = [
     styles: ["modern", "bold"],
     apply: (base, style) => finish({
       ...base,
-      sectionOrder: ["hero", "services", "gallery", "trust", "process", "proof", "faq", "contact"],
+      sectionOrder: ["hero", "services", "gallery", "advantages", "team", "cases", "trust", "process", "proof", "faq", "contact"],
       heroVariant: "full-bleed",
       layoutVariant: "wide",
       palette: { ...base.palette, mode: "dark" },

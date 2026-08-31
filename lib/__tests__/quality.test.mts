@@ -44,6 +44,10 @@ function contentFor(brief: (typeof REFERENCE_BRIEFS)[number]): PageContent {
     email: "info@example.by",
     footerTagline: brief.businessType,
     guarantees: [],
+    advantages: [],
+    caseStudies: [],
+    teamMembers: [],
+    serviceAreas: [],
   }
 }
 
