@@ -1,1 +1,1 @@
-ALTER TABLE "Order" ADD COLUMN "attributionJson" TEXT;
+ALTER TABLE "Order" ADD COLUMN IF NOT EXISTS "attributionJson" TEXT;
