@@ -1,14 +1,16 @@
 import Link from "next/link";
 
 const NAVIGATION = [
-  { href: "/#concepts", label: "Концепции" },
-  { href: "/#services", label: "Услуги" },
-  { href: "/process", label: "Процесс" },
+  { href: "/services", label: "Услуги" },
   { href: "/pricing", label: "Цены" },
+  { href: "/process", label: "Процесс" },
   { href: "/about", label: "О студии" },
+  { href: "/contacts", label: "Контакты" },
 ] as const;
 
 const SEO_LINKS = [
+  { href: "/uslugi", label: "Решения по нишам" },
+  { href: "/goroda", label: "По городам Беларуси" },
   { href: "/razrabotka-sajtov-minsk", label: "Разработка сайтов в Минске" },
   { href: "/lending-minsk", label: "Лендинги для бизнеса" },
   { href: "/sozdanie-sajtov-dlya-biznesa", label: "Сайты для бизнеса" },

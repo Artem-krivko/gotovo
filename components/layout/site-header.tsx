@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const NAV_LINKS = [
-  { href: "/#concepts", label: "Концепции" },
-  { href: "/#services", label: "Услуги" },
-  { href: "/#process", label: "Процесс" },
+  { href: "/services", label: "Услуги" },
   { href: "/pricing", label: "Цены" },
+  { href: "/process", label: "Процесс" },
+  { href: "/about", label: "О нас" },
 ] as const;
 
 function Logo() {
@@ -21,6 +22,7 @@ function Logo() {
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -40,7 +42,12 @@ export function SiteHeader() {
 
         <nav className="hidden items-center gap-1 md:flex" aria-label="Основная навигация">
           {NAV_LINKS.map((link) => (
-            <Link key={link.href} href={link.href} className="px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition-colors hover:text-[#2656d8] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#2656d8]">
+            <Link
+              key={link.href}
+              href={link.href}
+              aria-current={pathname === link.href ? "page" : undefined}
+              className={`border-b px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition-colors hover:text-[#2656d8] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-[#2656d8] ${pathname === link.href ? "border-[#171712] text-[#171712]" : "border-transparent"}`}
+            >
               {link.label}
             </Link>
           ))}
@@ -67,7 +74,13 @@ export function SiteHeader() {
         <div className="fixed inset-x-0 top-16 flex h-[calc(100dvh-4rem)] flex-col bg-[#f2efe7] px-4 pb-7 pt-5 md:hidden">
           <nav className="flex flex-col border-t border-[#171712]" aria-label="Мобильная навигация">
             {NAV_LINKS.map((link, index) => (
-              <Link key={link.href} href={link.href} onClick={() => setOpen(false)} className="flex items-center justify-between border-b border-[#171712]/25 py-5 text-2xl font-semibold tracking-[-0.04em]">
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                aria-current={pathname === link.href ? "page" : undefined}
+                className={`flex items-center justify-between border-b border-[#171712]/25 py-5 text-2xl font-semibold tracking-[-0.04em] ${pathname === link.href ? "text-[#2656d8]" : ""}`}
+              >
                 <span>{link.label}</span><span className="text-xs font-normal">0{index + 1}</span>
               </Link>
             ))}

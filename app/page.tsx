@@ -291,9 +291,12 @@ function Services() {
           ))}
         </div>
 
-        <div className="mt-8 flex flex-col gap-3 text-sm text-ink/60 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-8 flex flex-col gap-4 text-sm text-ink/60 sm:flex-row sm:items-center sm:justify-between">
           <p>Точная цена фиксируется после обсуждения задачи и не меняется без согласования объёма.</p>
-          <Link href="/pricing" className="inline-flex w-fit items-center gap-2 font-semibold text-ink">Что входит в стоимость <Arrow /></Link>
+          <div className="flex flex-wrap gap-x-6 gap-y-3">
+            <Link href="/services" className="inline-flex w-fit items-center gap-2 font-semibold text-ink">Все услуги <Arrow /></Link>
+            <Link href="/pricing" className="inline-flex w-fit items-center gap-2 font-semibold text-ink">Что входит в стоимость <Arrow /></Link>
+          </div>
         </div>
       </div>
     </section>
