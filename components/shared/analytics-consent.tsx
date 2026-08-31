@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { useEffect, useState } from "react"
 import { setConsent } from "@/lib/analytics"
 
@@ -44,27 +45,54 @@ export function AnalyticsConsent() {
     <div
       role="dialog"
       aria-label="Согласие на аналитику"
-      className="fixed inset-x-3 bottom-3 z-[60] mx-auto max-w-lg rounded-2xl border border-white/10 bg-[#13131A] p-4 shadow-2xl sm:inset-x-auto sm:right-4 sm:bottom-4"
+      aria-describedby="analytics-consent-description"
+      className="fixed inset-x-2 bottom-[max(0.5rem,env(safe-area-inset-bottom))] z-[60] mx-auto max-w-[920px] border border-ink bg-paper shadow-[5px_5px_0_#171712] sm:inset-x-4 sm:bottom-[max(1rem,env(safe-area-inset-bottom))] sm:shadow-[7px_7px_0_#171712]"
     >
-      <p className="text-sm text-[#A1A1B5]">
-        Мы используем аналитику, чтобы понимать, какие страницы полезны.
-        Без вашего согласия статистика не собирается.
-      </p>
-      <div className="mt-3 flex gap-2">
-        <button
-          type="button"
-          onClick={() => decide(true)}
-          className="flex-1 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90"
-        >
-          Разрешить
-        </button>
-        <button
-          type="button"
-          onClick={() => decide(false)}
-          className="flex-1 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-medium text-white transition hover:bg-white/10"
-        >
-          Отклонить
-        </button>
+      <div className="h-1 bg-cobalt" aria-hidden="true" />
+      <div className="grid gap-3 p-3 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-center sm:gap-5 sm:p-4">
+        <div className="hidden h-10 w-10 items-center justify-center bg-acid text-xs font-semibold sm:flex" aria-hidden="true">
+          01
+        </div>
+
+        <div className="min-w-0">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-ink/48">
+              Аналитика / ваш выбор
+            </p>
+            <Link
+              href="/privacy"
+              className="shrink-0 text-[0.7rem] font-semibold text-ink/55 underline decoration-ink/30 underline-offset-4 transition hover:text-cobalt focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-cobalt sm:hidden"
+            >
+              Подробнее
+            </Link>
+          </div>
+          <p id="analytics-consent-description" className="mt-1.5 text-xs leading-5 text-ink/68 sm:text-sm sm:leading-6">
+            Обезличенная аналитика помогает улучшать сайт. Без вашего согласия данные не собираются.
+          </p>
+          <Link
+            href="/privacy"
+            className="mt-1 hidden w-fit text-xs font-semibold text-ink/48 underline decoration-ink/25 underline-offset-4 transition hover:text-cobalt focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-cobalt sm:block"
+          >
+            Как используем данные →
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 sm:flex sm:shrink-0">
+          <button
+            type="button"
+            onClick={() => decide(false)}
+            className="inline-flex min-h-11 items-center justify-center border border-ink bg-transparent px-3 text-xs font-semibold text-ink transition hover:bg-acid focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-cobalt sm:px-4 sm:text-sm"
+          >
+            Не разрешать
+          </button>
+          <button
+            type="button"
+            onClick={() => decide(true)}
+            className="inline-flex min-h-11 items-center justify-center bg-ink px-3 text-xs font-semibold text-paper transition hover:bg-cobalt focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-cobalt sm:px-5 sm:text-sm"
+          >
+            Разрешить
+          </button>
+        </div>
       </div>
     </div>
   )
