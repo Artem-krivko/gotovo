@@ -38,8 +38,8 @@ export function SiteFooter() {
               </nav>
             </div>
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#f2efe7]/45">Для поиска</p>
-              <nav className="mt-5 flex flex-col gap-3" aria-label="SEO навигация">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#f2efe7]/45">Решения</p>
+              <nav className="mt-5 flex flex-col gap-3" aria-label="Навигация по решениям">
                 {SEO_LINKS.map((link) => <Link key={link.href} href={link.href} className="text-sm leading-5 text-[#f2efe7]/70 transition hover:text-[#d8ff52]">{link.label}</Link>)}
               </nav>
             </div>

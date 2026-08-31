@@ -20,6 +20,7 @@ jobs:
       - run: npm test
       - run: npm run typecheck
       - run: npm run build
+      - run: npm run check:seo
       - name: Render deterministic reference concepts
         run: npm run render:references
       - name: Check mobile and desktop viewports

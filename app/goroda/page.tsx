@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { CITY_PAGES } from "@/content/seo/cities";
 import { Arrow, EditorialBreadcrumbs, EditorialCta, EditorialHero, EditorialSectionHeader } from "@/components/shared/editorial";
+import { createPageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Создание сайтов по городам Беларуси", description: "Разрабатываем сайты для бизнеса в Минске и областных центрах Беларуси. Работаем удалённо, цены от 1 200 BYN." };
+export const metadata: Metadata = createPageMetadata({ title: "Создание сайтов по городам Беларуси", description: "Разрабатываем сайты для бизнеса в Минске и областных центрах Беларуси. Работаем удалённо, цены от 1 200 BYN.", path: "/goroda" });
 
 export default function GorodaPage() {
   return <main className="bg-paper text-ink">

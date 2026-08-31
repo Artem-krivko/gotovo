@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NICHE_PAGES } from "@/content/seo/niches";
 import { EditorialBreadcrumbs, EditorialCta, EditorialFaq, EditorialHero, EditorialMetrics, EditorialSectionHeader } from "@/components/shared/editorial";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.usegotovo.by";
+import { createPageMetadata, SITE_NAME, SITE_URL } from "@/lib/site";
 export function generateStaticParams() { return NICHE_PAGES.map((page) => ({ slug: page.slug })); }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params; const page = NICHE_PAGES.find((item) => item.slug === slug); if (!page) return {};
-  return { title: { absolute: page.metaTitle }, description: page.metaDescription, alternates: { canonical: `${SITE_URL}/uslugi/${slug}` }, openGraph: { title: page.metaTitle, description: page.metaDescription, url: `${SITE_URL}/uslugi/${slug}`, images: [{url:"/og-redesign.png",width:1731,height:909}] } };
+  return createPageMetadata({ title: page.metaTitle, description: page.metaDescription, path: `/uslugi/${slug}`, absoluteTitle: true });
 }
 
 export default async function NichePage({ params }: { params: Promise<{ slug: string }> }) {
@@ -19,7 +18,7 @@ export default async function NichePage({ params }: { params: Promise<{ slug: st
     {question:"Можно ли редактировать сайт после запуска?",answer:"Да. Способ управления зависит от частоты обновлений: от простой передачи кода до подключения подходящей CMS. Это фиксируем до разработки."},
     {question:"Что делает AI-генератор?",answer:"Собирает первые визуальные гипотезы, чтобы предметно обсудить направление. Он не заменяет исследование, финальный дизайн, разработку и проверку сайта."},
   ];
-  const schema={"@context":"https://schema.org","@type":"Service",name:page.title,description:page.metaDescription,provider:{"@type":"Organization",name:"gotovo",url:SITE_URL},areaServed:{"@type":"Country",name:"Беларусь"},offers:{"@type":"Offer",price:"1200",priceCurrency:"BYN"}};
+  const schema={"@context":"https://schema.org","@type":"Service",name:page.title,description:page.metaDescription,provider:{"@type":"Organization",name:SITE_NAME,url:SITE_URL},areaServed:{"@type":"Country",name:"Беларусь"}};
   return <main className="bg-paper text-ink">
     <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}} />
     <EditorialBreadcrumbs items={[{label:"Главная",href:"/"},{label:"Решения",href:"/uslugi"},{label:page.title}]} />

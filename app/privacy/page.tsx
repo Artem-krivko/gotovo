@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { EditorialBreadcrumbs, EditorialHero, EditorialSectionHeader } from "@/components/shared/editorial";
+import { createPageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Политика конфиденциальности", description: "Как gotovo обрабатывает данные из форм сайта и использует аналитику." };
+export const metadata: Metadata = createPageMetadata({ title: "Политика конфиденциальности", description: "Как gotovo обрабатывает данные из форм сайта и использует аналитику.", path: "/privacy" });
 
 const sections=[
   ["Какие данные собираем","Имя, контакт и описание задачи, которые вы добровольно отправляете через форму. Также после согласия может собираться обезличенная аналитика посещений."],

@@ -1,6 +1,6 @@
 import { createSign } from "node:crypto";
 
-const SITE_URL = process.env.SITE_URL ?? "https://gotovo.studio";
+const SITE_URL = process.env.SITE_URL ?? "https://www.usegotovo.by";
 const KEY_JSON = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
 
 if (!KEY_JSON) {

@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CITY_PAGES } from "@/content/seo/cities";
 import { EditorialBreadcrumbs, EditorialCta, EditorialFaq, EditorialHero, EditorialMetrics, EditorialSectionHeader } from "@/components/shared/editorial";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.usegotovo.by";
+import { createPageMetadata, SITE_NAME, SITE_URL } from "@/lib/site";
 
 export function generateStaticParams() { return CITY_PAGES.map((page) => ({ slug: page.slug })); }
 
@@ -11,7 +10,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const page = CITY_PAGES.find((item) => item.slug === slug);
   if (!page) return {};
-  return { title: { absolute: page.metaTitle }, description: page.metaDescription, alternates: { canonical: `${SITE_URL}/goroda/${slug}` }, openGraph: { title: page.metaTitle, description: page.metaDescription, url: `${SITE_URL}/goroda/${slug}`, images: [{ url: "/og-redesign.png", width: 1731, height: 909 }] } };
+  return createPageMetadata({ title: page.metaTitle, description: page.metaDescription, path: `/goroda/${slug}`, absoluteTitle: true });
 }
 
 export default async function CityPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -24,7 +23,7 @@ export default async function CityPage({ params }: { params: Promise<{ slug: str
     { question: "Что входит в базовое SEO?", answer: `Структура заголовков, метаданные, sitemap, robots и техническая готовность к индексации. Для локального бизнеса учитываем реальные услуги и географию работы в ${page.cityPrepositional}.` },
     { question: "AI-концепция — это готовый сайт?", answer: "Нет. Это бесплатная визуальная гипотеза для начала разговора. Финальный сайт проектируется и разрабатывается отдельно под контент, аудиторию и задачи бизнеса." },
   ];
-  const schema = { "@context": "https://schema.org", "@type": "Service", name: `Разработка сайтов в ${page.cityPrepositional}`, provider: { "@type": "Organization", name: "gotovo", url: SITE_URL }, areaServed: { "@type": "City", name: page.city, addressCountry: "BY" }, offers: { "@type": "AggregateOffer", lowPrice: "1200", priceCurrency: "BYN" } };
+  const schema = { "@context": "https://schema.org", "@type": "Service", name: `Разработка сайтов в ${page.cityPrepositional}`, provider: { "@type": "Organization", name: SITE_NAME, url: SITE_URL }, areaServed: { "@type": "City", name: page.city, addressCountry: "BY" }, offers: { "@type": "AggregateOffer", lowPrice: "1200", priceCurrency: "BYN" } };
   return <main className="bg-paper text-ink">
     <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify(schema)}} />
     <EditorialBreadcrumbs items={[{label:"Главная",href:"/"},{label:"Города",href:"/goroda"},{label:page.city}]} />

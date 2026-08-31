@@ -35,6 +35,15 @@ const nextConfig: NextConfig = {
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
+  async redirects() {
+    return [
+      {
+        source: "/razrabotka-sajtov-ceny",
+        destination: "/pricing",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

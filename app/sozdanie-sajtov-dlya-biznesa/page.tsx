@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { EditorialServicePage } from "@/components/seo/editorial-service-page";
+import { createPageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Создание сайтов для бизнеса", description: "Сайты для малого и среднего бизнеса: структура, дизайн, разработка и запуск. Лендинг от 1 200 BYN, бизнес-сайт от 2 900 BYN." };
+export const metadata: Metadata = createPageMetadata({ title: "Создание сайтов для бизнеса", description: "Сайты для малого и среднего бизнеса: структура, дизайн, разработка и запуск. Лендинг от 1 200 BYN, бизнес-сайт от 2 900 BYN.", path: "/sozdanie-sajtov-dlya-biznesa" });
 
 export default function BusinessSitesPage(){return <EditorialServicePage breadcrumb="Сайты для бизнеса" eyebrow="Малый и средний бизнес" title={<>Сайт, который помогает<br /><span className="editorial-serif font-normal italic text-signal">принять решение.</span></>} intro={<>Не цифровая визитка, а понятный маршрут: увидеть предложение, проверить доверие и сделать следующий шаг.</>} note="Проектируем под реальный цикл выбора"
 metrics={[{value:"от 1 200 BYN",label:"лендинг"},{value:"от 2 900 BYN",label:"бизнес-сайт"},{value:"от 4 900 BYN",label:"индивидуальный проект"}]}

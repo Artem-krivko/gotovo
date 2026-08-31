@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { EditorialBreadcrumbs, EditorialCta, EditorialHero, EditorialSectionHeader, EditorialVisual } from "@/components/shared/editorial";
+import { createPageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
   title: "Процесс разработки сайта",
   description: "Пять понятных этапов разработки сайта: контекст, структура, направление, система и запуск.",
-};
+  path: "/process",
+});
 
 const steps = [
   ["Контекст", "Разбираем продукт, аудиторию, конкурентов, ограничения и бизнес-задачу сайта.", "Короткий бриф и согласованные цели"],

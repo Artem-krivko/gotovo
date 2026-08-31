@@ -80,7 +80,7 @@ function VideoFeaturedCard({ c }: { c: GeneratorCase }) {
               <circle cx="4" cy="4" r="3" stroke="currentColor" strokeOpacity="0.5"/>
               <path d="M2.5 4h3M4 2.5v3" stroke="currentColor" strokeOpacity="0.5"/>
             </svg>
-            gotovo.studio / generator
+            usegotovo.by / generator
           </div>
           {/* Live-бейдж */}
           <div className="flex shrink-0 items-center gap-1 rounded-lg border border-violet-500/30 bg-violet-500/10 px-2 py-1 text-[9px] font-semibold text-violet-400">
@@ -165,7 +165,7 @@ function CaseCard({ c, priority }: { c: GeneratorCase; priority: boolean }) {
                 <span className="h-2 w-2 rounded-full bg-green-500/80"/>
               </div>
               <div className="mx-auto flex min-w-0 items-center gap-1 rounded bg-white/[0.06] px-2 py-0.5 text-[9px] text-[#6B6B80]">
-                gotovo.studio / generator
+                usegotovo.by / generator
               </div>
               <div className="flex shrink-0 items-center gap-1 rounded border border-violet-500/30 bg-violet-500/10 px-1.5 py-0.5 text-[8px] font-semibold text-violet-400">
                 <span className="h-1 w-1 animate-pulse rounded-full bg-violet-400" aria-hidden="true"/>

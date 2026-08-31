@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Arrow, EditorialBreadcrumbs, EditorialCta, EditorialFaq, EditorialHero, EditorialSectionHeader } from "@/components/shared/editorial";
+import { createPageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
   title: "Стоимость разработки сайта",
   description: "Прозрачные цены в BYN: лендинг от 1 200, бизнес-сайт от 2 900, индивидуальная разработка от 4 900. Оплата 30/40/30.",
-};
+  path: "/pricing",
+});
 
 const plans = [
   { n: "01", name: "Лендинг", price: "1 200", suffix: "BYN · от", term: "7–10 рабочих дней", description: "Одна услуга, запуск или рекламная кампания.", features: ["До 7–9 смысловых секций", "Структура и визуальное направление", "Адаптивная разработка", "Форма заявки и аналитика", "Базовое техническое SEO", "2 круга правок"] },

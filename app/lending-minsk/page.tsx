@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { EditorialServicePage } from "@/components/seo/editorial-service-page";
+import { createPageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Создание лендинга в Минске — от 1 200 BYN", description: "Лендинг для бизнеса в Минске: структура, индивидуальный дизайн, адаптив, форма заявки и базовое SEO. От 1 200 BYN, 7–10 дней." };
+export const metadata: Metadata = createPageMetadata({ title: "Создание лендинга в Минске — от 1 200 BYN", description: "Лендинг для бизнеса в Минске: структура, индивидуальный дизайн, адаптив, форма заявки и базовое SEO. От 1 200 BYN, 7–10 дней.", path: "/lending-minsk" });
 
 export default function LandingMinskPage(){return <EditorialServicePage
   breadcrumb="Лендинг в Минске" eyebrow="Лендинг / Минск" title={<>Одна страница.<br /><span className="editorial-serif font-normal italic text-signal">Одна ясная цель.</span></>} intro={<>Проектируем лендинги для услуги, продукта или рекламной кампании. Без перегруженной навигации и случайных блоков.</>} note="От 1 200 BYN · 7–10 рабочих дней"

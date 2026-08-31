@@ -6,8 +6,7 @@ import { AnalyticsConsent } from "@/components/shared/analytics-consent";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { MotionController } from "@/components/shared/motion-controller";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.usegotovo.by";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin", "latin-ext"],
@@ -35,7 +34,6 @@ export const metadata: Metadata = {
     "gotovo",
   ],
   authors: [{ name: "gotovo" }],
-  alternates: { canonical: SITE_URL },
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
@@ -44,21 +42,6 @@ export const metadata: Metadata = {
     ],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
     other: [{ rel: "manifest", url: "/site.webmanifest" }],
-  },
-  openGraph: {
-    type: "website",
-    locale: "ru_RU",
-    url: SITE_URL,
-    siteName: "gotovo",
-    title: "gotovo — сайты, с которыми бизнес выглядит убедительно",
-    description: "Структура, дизайн, разработка и запуск. Начните с разговора или бесплатной AI-концепции.",
-    images: [{ url: "/og-redesign.png", width: 1731, height: 909, alt: "gotovo — сайты, с которыми бизнес выглядит убедительно" }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "gotovo — разработка сайтов для бизнеса",
-    description: "Структура, дизайн, разработка и запуск. Бесплатная AI-концепция помогает увидеть первое направление.",
-    images: ["/og-redesign.png"],
   },
   robots: {
     index: true,
@@ -70,7 +53,7 @@ export const metadata: Metadata = {
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
-  name: "gotovo",
+  name: SITE_NAME,
   description: "Независимая веб-студия: структура, дизайн, разработка и запуск сайтов для бизнеса.",
   url: SITE_URL,
   serviceType: "Web Development",

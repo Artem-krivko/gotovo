@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ContactForm } from "@/components/sections/contact-form";
 import { Arrow, EditorialBreadcrumbs, EditorialHero, EditorialSectionHeader } from "@/components/shared/editorial";
+import { createPageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
   title: "Обсудить проект",
   description: "Расскажите о задаче сайта. Ответим в течение рабочего дня и предложим подходящий формат работы.",
-};
+  path: "/contacts",
+});
 
 export default function ContactsPage() {
   return (

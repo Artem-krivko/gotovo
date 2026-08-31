@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { EditorialBreadcrumbs, EditorialCta, EditorialHero, EditorialSectionHeader, EditorialVisual } from "@/components/shared/editorial";
+import { createPageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
   title: "О студии",
   description: "gotovo — независимая веб-студия из Беларуси. Проектируем структуру, дизайн и разработку сайтов для бизнеса.",
-};
+  path: "/about",
+});
 
 const principles = [
   ["Смысл раньше декора", "Начинаем не с цвета кнопки, а с задачи бизнеса, аудитории и решения, которое должен принять посетитель."],
