@@ -52,6 +52,7 @@ function content(overrides: Partial<PageContent> = {}): PageContent {
     caseStudies: [],
     teamMembers: [],
     serviceAreas: [],
+    beforeAfter: false,
     ...overrides,
   }
 }
@@ -66,7 +67,7 @@ function layoutFingerprint(html: string): string {
     "contact-banner", "contact-split", "contact-box",
     "faq-acc", "faq-cols",
     "g-story", "g-grid", "g-masonry", "g-carousel",
-    "adv-grid", "cases-layout", "price-grid", "team-grid", "area-box",
+    "adv-grid", "cases-layout", "price-grid", "team-grid", "area-box", "ba-grid",
   ].filter((cls) => html.includes(`class="${cls}"`) || html.includes(` ${cls}"`))
   return `${sections.join(">")}|${layoutClasses.join(",")}`
 }
@@ -273,6 +274,24 @@ describe("нишевые секции из расширенного брифа",
     for (const section of ["cases", "pricing", "team", "area"] as const) {
       assert.ok(!renderedSections.includes(section), `${section} не должен быть выдуман`)
     }
+  })
+
+  test("показывает «до/после» только после явного подтверждения", () => {
+    const spec = {
+      ...baseSpecFor("minimal"),
+      sectionOrder: ["hero", "beforeAfter", "services", "contact"],
+    } as DesignSpec
+    const assets = {
+      gallery: [],
+      roles: {
+        before: { url: "https://cdn.example.com/before.jpg", alt: "До работ" },
+        after: { url: "https://cdn.example.com/after.jpg", alt: "После работ" },
+      },
+    }
+    assert.ok(!composePage(content(), spec, assets).renderedSections.includes("beforeAfter"))
+    const rendered = composePage(content({ beforeAfter: true }), spec, assets)
+    assert.ok(rendered.renderedSections.includes("beforeAfter"))
+    assert.match(rendered.html, /До и после/)
   })
 })
 

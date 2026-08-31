@@ -48,6 +48,7 @@ function contentFor(brief: (typeof REFERENCE_BRIEFS)[number]): PageContent {
     caseStudies: [],
     teamMembers: [],
     serviceAreas: [],
+    beforeAfter: false,
   }
 }
 

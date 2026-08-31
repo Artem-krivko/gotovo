@@ -123,6 +123,8 @@ describe("concept assets", () => {
     assert.equal(enriched[1].hero?.url, references[1])
     assert.equal(enriched[0].roles?.service?.url, references[1])
     assert.equal(enriched[0].roles?.process?.url, references[2])
+    assert.equal(enriched[0].roles?.before?.url, references[0])
+    assert.equal(enriched[0].roles?.after?.url, references[1])
   })
 })
 

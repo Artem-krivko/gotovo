@@ -165,6 +165,7 @@ function buildFallbackContent(params: GeneratorParams, facts: VerifiedFacts = {}
     caseStudies: facts.caseStudies ?? [],
     teamMembers: facts.teamMembers ?? [],
     serviceAreas: facts.serviceAreas ?? [],
+    beforeAfter: Boolean(params.beforeAfter),
   }
 }
 
@@ -426,6 +427,7 @@ async function runStrategist(
       caseStudies: facts.caseStudies ?? [],
       teamMembers: facts.teamMembers ?? [],
       serviceAreas: facts.serviceAreas ?? [],
+      beforeAfter: Boolean(params.beforeAfter),
     },
     reason: "none",
     provider,

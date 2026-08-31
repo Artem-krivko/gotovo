@@ -131,6 +131,7 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
   const [advantages, setAdvantages] = useState("")
   const [serviceAreas, setServiceAreas] = useState("")
   const [referenceImages, setReferenceImages] = useState("")
+  const [beforeAfter, setBeforeAfter] = useState(false)
   // Факты — единственный источник цифр и отзывов на странице.
   const [yearsInBusiness, setYearsInBusiness] = useState("")
   const [projectsCompleted, setProjectsCompleted] = useState("")
@@ -181,6 +182,7 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
         geography: geography.trim() || undefined,
         advantages: nonEmptyLines(advantages, 4),
         referenceImages: nonEmptyLines(referenceImages, 6),
+        beforeAfter,
         facts: {
           yearsInBusiness: yearsInBusiness.trim() || undefined,
           projectsCompleted: projectsCompleted.trim() || undefined,
@@ -248,7 +250,7 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
     [
       businessType, businessName, userDescription, style, language,
       brandColor, audience, mainAction, geography,
-      advantages, serviceAreas, referenceImages,
+      advantages, serviceAreas, referenceImages, beforeAfter,
       yearsInBusiness, projectsCompleted, priceFrom, guarantee,
       testimonialText, testimonialAuthor,
       caseTitle, caseSummary, caseResult, teamMemberName, teamMemberRole,
@@ -552,6 +554,14 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
                 className="resize-none rounded-lg border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 disabled:opacity-50"
               />
               <p className="text-xs text-zinc-500">До 6 прямых HTTPS-ссылок, по одной в строке.</p>
+              <label className="mt-1 flex items-start gap-2 rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-xs text-zinc-700">
+                <input
+                  type="checkbox" checked={beforeAfter}
+                  onChange={(e) => setBeforeAfter(e.target.checked)} disabled={isLoading}
+                  className="mt-0.5 h-4 w-4 accent-violet-600"
+                />
+                <span><strong>Первые два фото — «до» и «после».</strong><br />Включайте только если это действительно одна работа.</span>
+              </label>
             </div>
 
             <div className="flex flex-col gap-1.5">

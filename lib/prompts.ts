@@ -232,13 +232,14 @@ export const ART_DIRECTOR_SYSTEM_PROMPT = `Ты — арт-директор. П�
   servicesVariant list
 
 ПОРЯДОК СЕКЦИЙ (sectionOrder):
-Доступны: hero, trust, services, process, proof, gallery, advantages, cases, pricing, team, area, faq, contact
+Доступны: hero, trust, services, process, proof, gallery, advantages, cases, pricing, team, area, beforeAfter, faq, contact
 - hero всегда первый, contact всегда последний (проставится автоматически)
 - Включай gallery ТОЛЬКО если для ниши важны визуальные примеры работ
 - Включай trust (полоса метрик) ТОЛЬКО если у бизнеса есть чем их наполнить
 - proof ставь "none", если нет реальных отзывов и гарантий
-- advantages, cases, pricing, team и area являются условными: рендерер покажет
+- advantages, cases, pricing, team, area и beforeAfter являются условными: рендерер покажет
   их только при наличии подтверждённых данных клиента
+- beforeAfter используй только когда клиент явно подтвердил пару фотографий «до/после»
 - Порядок остальных секций выбирай под логику принятия решения в нише
 
 ПЕРЕЧИСЛЕНИЯ:

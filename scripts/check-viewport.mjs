@@ -172,6 +172,10 @@ async function checkFile(client, sessionId, fileUrl) {
         { expression: `document.querySelectorAll('.reveal').forEach((el) => el.classList.add('in'))` },
         sessionId
       )
+      // Дожидаемся завершения reveal-перехода. Без этого full-page снимок
+      // фиксировал первый кадр анимации: секции казались пустыми, хотя layout
+      // был корректен.
+      await new Promise((r) => setTimeout(r, 750))
       const { contentSize } = await client.send("Page.getLayoutMetrics", {}, sessionId)
       const shot = await client.send(
         "Page.captureScreenshot",

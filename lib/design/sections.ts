@@ -24,6 +24,8 @@ export interface RenderContent extends Omit<PageContent, "phone" | "email"> {
     service?: ImageAsset
     process?: ImageAsset
     proof?: ImageAsset
+    before?: ImageAsset
+    after?: ImageAsset
   }
 }
 
@@ -767,6 +769,26 @@ export function areaSection({ content: c, spec }: RenderContext): SectionOutput 
 .area-box{display:grid;grid-template-columns:minmax(220px,.75fr) minmax(0,1.25fr);gap:clamp(28px,6vw,80px);align-items:center;padding:clamp(28px,4vw,52px);border-radius:var(--r-lg);${cardCss(spec)}}
 .area-box p.muted{margin-top:14px;max-width:38ch}.area-list{display:flex;flex-wrap:wrap;gap:10px}.area-list span{padding:10px 16px;border:1px solid var(--border);border-radius:999px;font-size:14px;font-weight:600}
 @media(max-width:700px){.area-box{grid-template-columns:1fr}}`,
+  }
+}
+
+export function beforeAfterSection({ content: c, spec }: RenderContext): SectionOutput {
+  const before = c.roleImages.before
+  const after = c.roleImages.after
+  if (!c.beforeAfter || !before || !after) return EMPTY
+  const image = (asset: ImageAsset, label: string) => `
+    <figure class="ba-card reveal">
+      <div class="ba-label">${label}</div>
+      <img src="${asset.url}"${asset.srcSet ? ` srcset="${asset.srcSet}"` : ""}${asset.sizes ? ` sizes="${asset.sizes}"` : ""} alt="${asset.alt}" loading="lazy">
+    </figure>`
+  return {
+    html: `<section id="before-after"><div class="wrap">${sectionHead("Результат", "До и после")}<div class="ba-grid">${image(before, "До")}${image(after, "После")}</div></div></section>`,
+    css: `
+.ba-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap)}
+.ba-card{position:relative;overflow:hidden;border-radius:var(--r-lg);${cardCss(spec)}}
+.ba-card img{width:100%;aspect-ratio:4/3;object-fit:cover;${imageCss(spec)}}
+.ba-label{position:absolute;z-index:1;top:16px;left:16px;padding:8px 13px;border-radius:999px;background:var(--bg);color:var(--text);border:1px solid var(--border);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px}
+@media(max-width:640px){.ba-grid{grid-template-columns:1fr}}`,
   }
 }
 

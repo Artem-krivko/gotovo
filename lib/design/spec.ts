@@ -32,6 +32,7 @@ export const SECTION_IDS = [
   "pricing",
   "team",
   "area",
+  "beforeAfter",
   "faq",
   "contact",
 ] as const

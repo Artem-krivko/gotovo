@@ -103,6 +103,7 @@ export function parseGeneratorParams(body: unknown): ValidationResult<GeneratorP
       geography: geography || undefined,
       advantages,
       referenceImages,
+      beforeAfter: p.beforeAfter === true && referenceImages.length >= 2,
       facts: parseVerifiedFacts(p.facts, geography),
     },
   }

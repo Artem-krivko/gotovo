@@ -223,6 +223,8 @@ export function selectConceptAssets(
         service: galleryCandidates[0]?.asset,
         process: galleryCandidates[1]?.asset,
         proof: galleryCandidates[2]?.asset,
+        before: undefined,
+        after: undefined,
       },
     }
   })
@@ -257,6 +259,8 @@ export function applyReferenceImages(
         service: rotated[1] ?? assets.roles?.service,
         process: rotated[2] ?? assets.roles?.process,
         proof: rotated[3] ?? rotated[1] ?? assets.roles?.proof,
+        before: references[0],
+        after: references[1],
       },
     }
   })

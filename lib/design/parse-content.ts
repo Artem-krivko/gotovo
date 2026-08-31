@@ -47,6 +47,8 @@ export function parsePageAssets(raw: unknown): PageAssets | null {
       service: parseImage(roles.service),
       process: parseImage(roles.process),
       proof: parseImage(roles.proof),
+      before: parseImage(roles.before),
+      after: parseImage(roles.after),
     },
   }
 }
@@ -134,5 +136,6 @@ export function parsePageContent(raw: unknown): PageContent | null {
       .filter((item) => item.name && item.role).slice(0, 6),
     serviceAreas: (Array.isArray(c.serviceAreas) ? c.serviceAreas : [])
       .map((item) => str(item, 80)).filter(Boolean).slice(0, 8),
+    beforeAfter: c.beforeAfter === true,
   }
 }

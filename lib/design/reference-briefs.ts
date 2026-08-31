@@ -16,6 +16,15 @@ export interface ReferenceBrief {
   style: GeneratorStyle
   /** Ниши, с которыми результат НЕ должен совпадать по композиции. */
   contrastWith?: string[]
+  audience?: string
+  mainAction?: string
+  geography?: string
+  advantages?: string[]
+  serviceAreas?: string[]
+  priceFrom?: string
+  caseStudy?: { title: string; summary: string; result?: string }
+  teamMember?: { name: string; role: string }
+  beforeAfter?: boolean
 }
 
 export const REFERENCE_BRIEFS: ReferenceBrief[] = [
@@ -85,6 +94,19 @@ export const REFERENCE_BRIEFS: ReferenceBrief[] = [
     businessName: "Деколюкс",
     userDescription: "Монтаж септиков и бурение скважин для частных домов в Могилёвской области.",
     style: "corporate",
+    audience: "Семьи, которые строят загородный дом",
+    mainAction: "Получить расчёт и согласовать выезд",
+    geography: "Могилёвская область",
+    advantages: ["Свой монтажный инструмент", "Работа по договору", "Один подрядчик на обе системы"],
+    serviceAreas: ["Могилёв", "Могилёвский район", "Шклов", "Быхов"],
+    priceFrom: "от 2 500 BYN",
+    caseStudy: {
+      title: "Автономные коммуникации для дома",
+      summary: "Смонтировали септик и подготовили скважину на одном участке.",
+      result: "Обе системы сданы после проверки герметичности",
+    },
+    teamMember: { name: "Алексей", role: "Инженер проекта" },
+    beforeAfter: true,
     contrastWith: ["beauty-salon", "wedding-photo"],
   },
   {
@@ -116,6 +138,16 @@ export const REFERENCE_BRIEFS: ReferenceBrief[] = [
     businessType: "Фотограф / видеограф",
     userDescription: "Свадебная фотография и видеосъёмка, love story, репортажная манера, выездные съёмки.",
     style: "minimal",
+    audience: "Пары, которые ценят живой репортаж без постановки",
+    mainAction: "Проверить свободную дату",
+    geography: "Беларусь и выездные съёмки",
+    advantages: ["Один стиль фото и видео", "Сроки фиксируются в договоре", "Помощь с таймингом дня"],
+    caseStudy: {
+      title: "Камерная свадьба за городом",
+      summary: "Фотосъёмка, короткий фильм и вечерний репортаж одной командой.",
+      result: "Полная история дня в единой цветокоррекции",
+    },
+    teamMember: { name: "Анна", role: "Фотограф и арт-директор" },
     contrastWith: ["dental", "construction", "logistics"],
   },
   {

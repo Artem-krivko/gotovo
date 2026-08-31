@@ -25,6 +25,7 @@ import {
   pricingSection,
   teamSection,
   areaSection,
+  beforeAfterSection,
   faqSection,
   gallerySection,
   heroSection,
@@ -136,6 +137,8 @@ function toRenderContent(c: PageContent, assets: PageAssets): RenderContent {
       service: sanitizeImage(assets.roles?.service, businessName),
       process: sanitizeImage(assets.roles?.process, businessName),
       proof: sanitizeImage(assets.roles?.proof, businessName),
+      before: sanitizeImage(assets.roles?.before, businessName),
+      after: sanitizeImage(assets.roles?.after, businessName),
     },
     guarantees: c.guarantees.slice(0, 4).map((g) => escapeClamped(g, 140)),
     advantages: c.advantages.slice(0, 4).map((item) => escapeClamped(item, 140)),
@@ -149,6 +152,7 @@ function toRenderContent(c: PageContent, assets: PageAssets): RenderContent {
       role: escapeClamped(item.role, 90),
     })),
     serviceAreas: c.serviceAreas.slice(0, 8).map((item) => escapeClamped(item, 80)),
+    beforeAfter: Boolean(c.beforeAfter),
   }
 }
 
@@ -226,6 +230,8 @@ function renderSection(id: SectionId, ctx: RenderContext, faq: Array<{ q: string
       return teamSection(ctx)
     case "area":
       return areaSection(ctx)
+    case "beforeAfter":
+      return beforeAfterSection(ctx)
     case "faq":
       return faqSection(ctx, faq)
     case "contact":

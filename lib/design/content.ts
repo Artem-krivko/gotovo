@@ -85,6 +85,8 @@ export interface PageAssets {
     service?: ImageAsset
     process?: ImageAsset
     proof?: ImageAsset
+    before?: ImageAsset
+    after?: ImageAsset
   }
 }
 
@@ -112,6 +114,8 @@ export interface PageContent {
   caseStudies: Array<{ title: string; summary: string; result?: string }>
   teamMembers: Array<{ name: string; role: string }>
   serviceAreas: string[]
+  /** Рендерится только после явного подтверждения владельца. */
+  beforeAfter: boolean
 }
 
 /**

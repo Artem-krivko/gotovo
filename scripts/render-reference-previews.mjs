@@ -2,7 +2,7 @@
 // avoids AI and external image APIs: the goal is to exercise every composition
 // with stable copy before a release.
 
-import { mkdir, writeFile } from "node:fs/promises"
+import { mkdir, readFile, writeFile } from "node:fs/promises"
 import { resolve } from "node:path"
 
 import { composePage } from "../lib/design/compose.ts"
@@ -17,18 +17,29 @@ const selectedIds = new Set(
     : ["dental", "septic-installation", "gym", "wedding-photo"]
 )
 
-const PIXELS = [
-  "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFElEQVR4nGP4z8DAwMDAxAADCBYAG10CAa5Wl5sAAAAASUVORK5CYII=",
-  "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFElEQVR4nGP4z8DAwMDAxAADCBYAG10CAa5Wl5sAAAAASUVORK5CYII=",
-  "iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFElEQVR4nGP4z8DAwMDAxAADCBYAG10CAa5Wl5sAAAAASUVORK5CYII=",
+const fixtureFiles = [
+  "public/images/generator/dentist-preview.png",
+  "public/images/generator/gym-preview.png",
+  "public/images/generator/coffee-preview.png",
+  "public/templates/t1.png",
 ]
+const PIXELS = await Promise.all(fixtureFiles.map(async (file) =>
+  (await readFile(resolve(file))).toString("base64")
+))
 
 function assetsFor(brief) {
+  const gallery = PIXELS.map((pixel, index) => ({
+    url: `data:image/png;base64,${pixel}`,
+    alt: `${brief.businessType}: визуальный пример ${index + 1}`,
+  }))
   return {
-    gallery: PIXELS.map((pixel, index) => ({
-      url: `data:image/png;base64,${pixel}`,
-      alt: `${brief.businessType}: визуальный пример ${index + 1}`,
-    })),
+    hero: gallery[0],
+    gallery: gallery.slice(1),
+    roles: {
+      service: gallery[1], process: gallery[2], proof: gallery[3],
+      before: brief.beforeAfter ? gallery[1] : undefined,
+      after: brief.beforeAfter ? gallery[2] : undefined,
+    },
   }
 }
 
@@ -39,7 +50,7 @@ function contentFor(brief) {
     subheadline: brief.userDescription,
     tagline: brief.businessType,
     services: [
-      { name: "Основная услуга", description: "Понятный состав работ и ожидаемый результат для клиента." },
+      { name: "Основная услуга", description: "Понятный состав работ и ожидаемый результат для клиента.", price: brief.priceFrom },
       { name: "Второе направление", description: "Дополнительная услуга, которая дополняет основное предложение." },
       { name: "Консультация", description: "Уточняем задачу и предлагаем подходящий формат работы." },
     ],
@@ -62,6 +73,12 @@ function contentFor(brief) {
     email: "info@example.by",
     footerTagline: "Черновик концепта",
     guarantees: [],
+    geography: brief.geography,
+    advantages: brief.advantages ?? [],
+    caseStudies: brief.caseStudy ? [brief.caseStudy] : [],
+    teamMembers: brief.teamMember ? [brief.teamMember] : [],
+    serviceAreas: brief.serviceAreas ?? [],
+    beforeAfter: brief.beforeAfter === true,
   }
 }
 
