@@ -310,30 +310,64 @@ export function heroSection({ content: c, spec }: RenderContext): SectionOutput 
 
 // ─── Trust (полоса метрик) ────────────────────────────────────────────────────
 
-export function trustSection({ content: c }: RenderContext): SectionOutput {
+export function trustSection({ content: c, spec }: RenderContext): SectionOutput {
   const verified = c.stats.filter((stat) => stat.verified)
   if (verified.length < 2) return EMPTY
 
-  return {
-    html: `<section class="trust"><div class="wrap trust-row">
-  ${verified
+  const items = (className: string) => verified
     .map(
-      (s) => `<div class="trust-item reveal">
-    <div class="trust-val${s.verified ? "" : " trust-val-empty"}"${s.verified ? " data-count" : ""}>${s.value}</div>
-    <div class="trust-lbl">${s.label}</div>
+      (stat) => `<div class="${className} reveal">
+    <div class="trust-val" data-count>${stat.value}</div>
+    <div class="trust-lbl">${stat.label}</div>
   </div>`
     )
-    .join("")}
+    .join("")
+
+  switch (spec.trustVariant) {
+    case "bar":
+      return {
+        html: `<section class="trust trust-bar"><div class="wrap trust-row">
+  ${items("trust-item")}
 </div></section>`,
-    css: `
-.trust{padding:calc(var(--pad) * .55) 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+        css: `
+.trust-bar{padding:calc(var(--pad) * .48) 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
 .trust-row{display:grid;grid-template-columns:repeat(${verified.length},1fr);gap:var(--gap)}
 .trust-item{text-align:center}
-.trust-val{font-family:var(--font-display);font-size:clamp(28px,4vw,44px);font-weight:700;color:var(--accent);line-height:1}
-/* Неподтверждённая метрика видна как пустое место под цифру, а не как факт. */
-.trust-val-empty{color:var(--text-muted);opacity:.55}
+.trust-val{font-family:var(--font-display);font-size:clamp(30px,4vw,46px);font-weight:700;color:var(--accent);line-height:1}
 .trust-lbl{font-size:13px;color:var(--text-muted);margin-top:8px}
 @media(max-width:640px){.trust-row{grid-template-columns:1fr;gap:24px}}`,
+      }
+
+    case "cards":
+      return {
+        html: `<section class="trust trust-cards"><div class="wrap">
+  <div class="trust-cards-grid">${items("trust-card")}</div>
+</div></section>`,
+        css: `
+.trust-cards{padding:calc(var(--pad) * .58) 0}
+.trust-cards-grid{display:grid;grid-template-columns:repeat(${verified.length},1fr);gap:var(--gap)}
+.trust-card{padding:clamp(22px,3vw,34px);border-radius:var(--r-lg);${cardCss(spec)}}
+.trust-card .trust-val{font-family:var(--font-display);font-size:clamp(34px,5vw,58px);font-weight:700;color:var(--accent);line-height:.95}
+.trust-card .trust-lbl{max-width:22ch;margin-top:14px;color:var(--text-muted);font-size:14px}
+@media(max-width:720px){.trust-cards-grid{grid-template-columns:1fr}.trust-card{display:flex;align-items:baseline;justify-content:space-between;gap:20px}.trust-card .trust-lbl{text-align:right}}`,
+      }
+
+    case "editorial":
+      return {
+        html: `<section class="trust trust-editorial"><div class="wrap trust-editorial-grid">
+  <div class="trust-intro reveal"><p class="s-tag">Факты</p><h2>Результаты, которые говорят за нас</h2></div>
+  <div class="trust-editorial-list">${items("trust-editorial-item")}</div>
+</div></section>`,
+        css: `
+.trust-editorial{padding:calc(var(--pad) * .72) 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.trust-editorial-grid{display:grid;grid-template-columns:minmax(220px,.8fr) minmax(0,1.6fr);gap:clamp(36px,7vw,96px);align-items:end}
+.trust-intro h2{max-width:12ch}
+.trust-editorial-list{display:grid;grid-template-columns:repeat(${verified.length},1fr);gap:clamp(20px,4vw,52px)}
+.trust-editorial-item{border-top:2px solid var(--accent);padding-top:18px}
+.trust-editorial-item .trust-val{font-family:var(--font-display);font-size:clamp(38px,6vw,72px);font-weight:600;letter-spacing:-.04em;line-height:.95}
+.trust-editorial-item .trust-lbl{margin-top:12px;color:var(--text-muted);font-size:14px}
+@media(max-width:760px){.trust-editorial-grid{grid-template-columns:1fr}.trust-editorial-list{grid-template-columns:1fr}.trust-editorial-item{display:flex;align-items:baseline;justify-content:space-between;gap:20px}.trust-editorial-item .trust-lbl{text-align:right}}`,
+      }
   }
 }
 

@@ -33,7 +33,13 @@ function contentFor(brief) {
       { title: "Предлагаем решение", description: "Подбираем структуру работ под конкретные условия." },
       { title: "Проверяем результат", description: "Контролируем качество на ключевых этапах." },
     ],
-    stats: [],
+    // Подтверждённые тестовые метрики нужны, чтобы viewport-проверка
+    // действительно проходила по всем вариантам trust-секции.
+    stats: [
+      { value: "12", label: "лет опыта", verified: true },
+      { value: "240", label: "выполненных проектов", verified: true },
+      { value: "18", label: "специалистов", verified: true },
+    ],
     testimonial: null,
     ctaHeadline: "Обсудить задачу",
     ctaSubtext: "Расскажите о проекте — предложим следующий шаг.",

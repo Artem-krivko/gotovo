@@ -53,6 +53,12 @@ export const SERVICES_VARIANTS = [
   "alternating", // чередование текст/изображение
 ] as const
 
+export const TRUST_VARIANTS = [
+  "bar", // компактная полоса с цифрами
+  "cards", // самостоятельные карточки подтверждённых показателей
+  "editorial", // крупная типографическая подача с поясняющим заголовком
+] as const
+
 export const PROOF_VARIANTS = [
   "stats-bar", // полоса метрик
   "quote", // отзыв (только если он реальный)
@@ -81,6 +87,7 @@ export const CTA_VARIANTS = ["gradient", "solid", "outline", "underline"] as con
 
 export type HeroVariant = (typeof HERO_VARIANTS)[number]
 export type ServicesVariant = (typeof SERVICES_VARIANTS)[number]
+export type TrustVariant = (typeof TRUST_VARIANTS)[number]
 export type ProofVariant = (typeof PROOF_VARIANTS)[number]
 export type ProcessVariant = (typeof PROCESS_VARIANTS)[number]
 export type GalleryVariant = (typeof GALLERY_VARIANTS)[number]
@@ -141,6 +148,7 @@ export interface DesignSpec {
   imageTreatment: ImageTreatment
   backgroundTreatment: BackgroundTreatment
   ctaVariant: CtaVariant
+  trustVariant: TrustVariant
   servicesVariant: ServicesVariant
   proofVariant: ProofVariant
   processVariant: ProcessVariant
@@ -224,6 +232,7 @@ export function parseDesignSpec(raw: unknown, fallback: DesignSpec): DesignSpec 
       fallback.backgroundTreatment
     ),
     ctaVariant: pick(d.ctaVariant, CTA_VARIANTS, fallback.ctaVariant),
+    trustVariant: pick(d.trustVariant, TRUST_VARIANTS, fallback.trustVariant),
     servicesVariant: pick(d.servicesVariant, SERVICES_VARIANTS, fallback.servicesVariant),
     proofVariant: pick(d.proofVariant, PROOF_VARIANTS, fallback.proofVariant),
     processVariant: pick(d.processVariant, PROCESS_VARIANTS, fallback.processVariant),
@@ -253,6 +262,7 @@ export const BASE_SPECS: Record<string, DesignSpec> = {
     imageTreatment: "overlay",
     backgroundTreatment: "aurora",
     ctaVariant: "gradient",
+    trustVariant: "cards",
     servicesVariant: "cards",
     proofVariant: "stats-bar",
     processVariant: "steps-row",
@@ -272,6 +282,7 @@ export const BASE_SPECS: Record<string, DesignSpec> = {
     imageTreatment: "rounded",
     backgroundTreatment: "plain",
     ctaVariant: "underline",
+    trustVariant: "editorial",
     servicesVariant: "list",
     proofVariant: "stats-bar",
     processVariant: "timeline",
@@ -291,6 +302,7 @@ export const BASE_SPECS: Record<string, DesignSpec> = {
     imageTreatment: "duotone",
     backgroundTreatment: "bands",
     ctaVariant: "solid",
+    trustVariant: "bar",
     servicesVariant: "numbered",
     proofVariant: "stats-bar",
     processVariant: "steps-row",
@@ -310,6 +322,7 @@ export const BASE_SPECS: Record<string, DesignSpec> = {
     imageTreatment: "rounded",
     backgroundTreatment: "grid",
     ctaVariant: "solid",
+    trustVariant: "cards",
     servicesVariant: "cards",
     proofVariant: "stats-bar",
     processVariant: "timeline",
@@ -431,6 +444,7 @@ export function adjustSpec(spec: DesignSpec, adjustment: SpecAdjustment): Design
       return {
         ...spec,
         sectionOrder: ["hero", ...rotated, "contact"],
+        trustVariant: rotate(TRUST_VARIANTS, spec.trustVariant),
         servicesVariant: rotate(SERVICES_VARIANTS, spec.servicesVariant),
         processVariant: rotate(PROCESS_VARIANTS, spec.processVariant),
         contactVariant: rotate(CONTACT_VARIANTS, spec.contactVariant),

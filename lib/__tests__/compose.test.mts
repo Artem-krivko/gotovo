@@ -118,7 +118,7 @@ describe("разнообразие композиции", () => {
     })
     const { html } = composePage(withMetrics, { ...spec, sectionOrder: [...spec.sectionOrder] })
     assert.equal(
-      (html.match(/class="trust"/g) ?? []).length,
+      (html.match(/<section class="trust(?:\s|\")/g) ?? []).length,
       1,
       "Полоса метрик отрисовалась дважды"
     )
@@ -158,6 +158,25 @@ describe("разнообразие композиции", () => {
       )
     )
     assert.equal(seen.size, variants.length, "Некоторые варианты услуг отрисовались одинаково")
+  })
+
+  test("каждый trustVariant даёт свою вёрстку только для подтверждённых метрик", () => {
+    const base = baseSpecFor("modern")
+    const withMetrics = content({
+      stats: [
+        { value: "12", label: "лет на рынке", verified: true },
+        { value: "240", label: "проектов", verified: true },
+        { value: "18", label: "специалистов", verified: true },
+      ],
+    })
+    const variants: DesignSpec["trustVariant"][] = ["bar", "cards", "editorial"]
+    const seen = new Set(
+      variants.map((trustVariant) =>
+        layoutFingerprint(composePage(withMetrics, { ...base, trustVariant }).html)
+      )
+    )
+
+    assert.equal(seen.size, variants.length, "Некоторые варианты доверия совпали")
   })
 })
 

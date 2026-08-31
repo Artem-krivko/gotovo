@@ -249,6 +249,7 @@ imageTreatment: plain | rounded | overlay | duotone
 backgroundTreatment: plain | aurora | grid | noise | bands
 ctaVariant: gradient | solid | outline | underline
 servicesVariant: cards | list | numbered | alternating
+trustVariant: bar | cards | editorial
 proofVariant: stats-bar | quote | logos | none
 processVariant: steps-row | timeline | accordion
 galleryVariant: grid | masonry | carousel | none
@@ -273,6 +274,7 @@ VISUAL BRIEF:
   "imageTreatment": "...",
   "backgroundTreatment": "...",
   "ctaVariant": "...",
+  "trustVariant": "...",
   "servicesVariant": "...",
   "proofVariant": "...",
   "processVariant": "...",

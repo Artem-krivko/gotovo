@@ -257,6 +257,7 @@ export function specFingerprint(spec: DesignSpec): string {
   return [
     spec.sectionOrder.join(">"),
     spec.heroVariant,
+    spec.trustVariant,
     spec.servicesVariant,
     spec.processVariant,
     spec.contactVariant,
@@ -278,6 +279,7 @@ export function specDistance(a: DesignSpec, b: DesignSpec): number {
   if (a.typography.preset !== b.typography.preset) distance += 3
   if (a.palette.mode !== b.palette.mode) distance += 3
   if (a.servicesVariant !== b.servicesVariant) distance += 2
+  if (a.trustVariant !== b.trustVariant) distance += 1
   if (a.density !== b.density) distance += 2
   if (a.cardStyle !== b.cardStyle) distance += 2
   if (a.backgroundTreatment !== b.backgroundTreatment) distance += 2
