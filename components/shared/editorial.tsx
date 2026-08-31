@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
 
 export function Arrow({ diagonal = false }: { diagonal?: boolean }) {
@@ -23,7 +24,7 @@ export function EditorialHero({
   return (
     <section className="editorial-hero border-b border-ink/20 px-4 py-12 sm:px-6 sm:py-16 lg:py-24">
       <div className="mx-auto grid max-w-[1440px] gap-10 lg:grid-cols-12 lg:gap-6">
-        <div className="min-w-0 lg:col-span-8">
+        <div className="min-w-0 lg:col-span-8" data-reveal>
           <p className="section-index flex items-center gap-3 text-ink/55">
             <span className="h-2.5 w-2.5 bg-signal" aria-hidden="true" />
             {eyebrow}
@@ -32,7 +33,7 @@ export function EditorialHero({
             {title}
           </h1>
         </div>
-        <aside className="flex min-w-0 flex-col justify-end border-t border-ink/20 pt-6 lg:col-span-4 lg:border-l lg:border-t-0 lg:pl-7 lg:pt-0">
+        <aside className="flex min-w-0 flex-col justify-end border-t border-ink/20 pt-6 lg:col-span-4 lg:border-l lg:border-t-0 lg:pl-7 lg:pt-0" data-reveal>
           <div className="max-w-md text-lg leading-7 text-ink/75 sm:text-xl sm:leading-8">{intro}</div>
           {(primary || secondary) && (
             <div className="mt-8 flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
@@ -43,6 +44,34 @@ export function EditorialHero({
           {note && <p className="mt-5 text-xs leading-5 text-ink/50">{note}</p>}
         </aside>
       </div>
+    </section>
+  );
+}
+
+export function EditorialVisual({
+  src,
+  alt,
+  label,
+  caption,
+  priority = false,
+}: {
+  src: string;
+  alt: string;
+  label: string;
+  caption: string;
+  priority?: boolean;
+}) {
+  return (
+    <section className="px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
+      <figure className="editorial-visual mx-auto max-w-[1440px] overflow-hidden" data-reveal="image">
+        <div className="relative aspect-[16/9] overflow-hidden bg-ink/10">
+          <Image src={src} alt={alt} fill priority={priority} sizes="(max-width: 1536px) 100vw, 1440px" className="object-cover" />
+        </div>
+        <figcaption className="grid gap-3 border-b border-ink/25 py-4 text-sm sm:grid-cols-12 sm:items-start">
+          <p className="section-index text-ink/45 sm:col-span-3">{label}</p>
+          <p className="max-w-2xl leading-6 text-ink/62 sm:col-span-7">{caption}</p>
+        </figcaption>
+      </figure>
     </section>
   );
 }
@@ -61,7 +90,7 @@ export function EditorialSectionHeader({
   light?: boolean;
 }) {
   return (
-    <div className={`grid gap-7 border-b pb-8 lg:grid-cols-12 ${light ? "border-paper/20" : "border-ink/20"}`}>
+    <div className={`grid gap-7 border-b pb-8 lg:grid-cols-12 ${light ? "border-paper/20" : "border-ink/20"}`} data-reveal>
       <p className={`section-index lg:col-span-3 ${light ? "text-paper/50" : "text-ink/55"}`}>{index} / {label}</p>
       <div className="lg:col-span-9 lg:flex lg:items-end lg:justify-between lg:gap-10">
         <h2 className="max-w-4xl text-[clamp(2.35rem,4.8vw,5rem)] font-medium leading-[0.98] tracking-[-0.055em]">{title}</h2>
@@ -76,7 +105,7 @@ export function EditorialMetrics({ items, light = false }: { items: { value: str
   return (
     <div className={`grid border-y ${columns} ${light ? "border-paper/20" : "border-ink/20"}`}>
       {items.map((item) => (
-        <div key={`${item.value}-${item.label}`} className={`border-b p-5 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0 lg:p-7 ${light ? "border-paper/20" : "border-ink/20"}`}>
+        <div key={`${item.value}-${item.label}`} className={`border-b p-5 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0 lg:p-7 ${light ? "border-paper/20" : "border-ink/20"}`} data-reveal>
           <p className="text-2xl font-semibold tracking-[-0.04em] sm:text-3xl">{item.value}</p>
           <p className={`mt-2 text-xs leading-5 ${light ? "text-paper/55" : "text-ink/55"}`}>{item.label}</p>
         </div>
@@ -89,7 +118,7 @@ export function EditorialFaq({ items, startIndex = 1 }: { items: { question: str
   return (
     <div className="border-t border-ink">
       {items.map((item, index) => (
-        <details key={item.question} className="group border-b border-ink/25">
+        <details key={item.question} className="group border-b border-ink/25" data-reveal>
           <summary className="flex min-h-20 cursor-pointer list-none items-center gap-4 py-5 text-left focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-cobalt">
             <span className="w-8 shrink-0 text-xs text-ink/45">{String(index + startIndex).padStart(2, "0")}</span>
             <span className="flex-1 text-lg font-semibold tracking-[-0.02em] sm:text-xl">{item.question}</span>
@@ -113,7 +142,7 @@ export function EditorialCta({
 }) {
   return (
     <section className="bg-signal px-4 py-16 text-ink sm:px-6 sm:py-24 lg:py-28">
-      <div className="mx-auto grid max-w-[1440px] gap-10 lg:grid-cols-12">
+      <div className="mx-auto grid max-w-[1440px] gap-10 lg:grid-cols-12" data-reveal>
         <p className="section-index lg:col-span-3">{eyebrow}</p>
         <div className="lg:col-span-9">
           <h2 className="max-w-4xl text-[clamp(2.7rem,5.8vw,6rem)] font-semibold leading-[0.9] tracking-[-0.065em]">{title}</h2>

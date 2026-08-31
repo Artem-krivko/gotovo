@@ -5,6 +5,7 @@ import "./globals.css";
 import { AnalyticsConsent } from "@/components/shared/analytics-consent";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { MotionController } from "@/components/shared/motion-controller";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.usegotovo.by";
 
@@ -107,6 +108,7 @@ gtag('js',new Date());gtag('config','G-MSXLMK8X5K',{anonymize_ip:true});`}
         style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}
         suppressHydrationWarning
       >
+        <MotionController />
         <SiteHeader />
         <div className="h-16" aria-hidden="true" />
         {/* Обёртки <main> здесь быть не должно: каждая страница рендерит

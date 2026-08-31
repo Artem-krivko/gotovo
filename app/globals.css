@@ -359,6 +359,43 @@ main summary:focus-visible {
 .editorial-generator-form button[type="submit"] { background: #171712 !important; }
 .editorial-generator-form button[type="submit"]:hover { background: #2656d8 !important; }
 
+/* ── Editorial motion system ─────────────────────────────────────────────── */
+.motion-ready [data-reveal]:not([data-reveal-visible="true"]) {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+}
+
+.motion-ready [data-reveal="fade"]:not([data-reveal-visible="true"]) {
+  transform: none;
+}
+
+[data-reveal] {
+  transition:
+    opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+[data-reveal-visible="true"] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.editorial-visual img {
+  transform: scale(1.035);
+  transition: transform 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.editorial-visual[data-reveal-visible="true"] img {
+  transform: scale(1);
+}
+
+@media (hover: hover) {
+  .editorial-visual[data-reveal-visible="true"]:hover img {
+    transform: scale(1.015);
+  }
+}
+
 /* ── 1. Gradient reveal для акцентных слов в H1 ─────────────────────────── */
 @keyframes gradient-reveal {
   0%   { background-position: 200% center; opacity: 0.6; }
@@ -418,5 +455,16 @@ main summary:focus-visible {
   .gradient-reveal { animation: none; opacity: 1; background-position: 0% center; }
   [data-glow] > .glow-orb { opacity: 1; transition: none; }
   .parallax-mockup { transition: none; }
+  .motion-ready [data-reveal],
+  .motion-ready [data-reveal="image"] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .editorial-visual img,
+  .editorial-visual:hover img {
+    transform: none;
+    transition: none;
+  }
   html { scroll-behavior: auto; }
 }

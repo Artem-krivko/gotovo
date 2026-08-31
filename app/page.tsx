@@ -116,11 +116,11 @@ function Hero() {
       <div className="mx-auto max-w-[1440px]">
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-6">
           <div className="lg:col-span-8">
-            <div className="mb-8 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink/60 sm:mb-12">
+            <div className="mb-8 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink/60 sm:mb-12" data-reveal="fade">
               <span className="inline-block h-2.5 w-2.5 bg-signal" aria-hidden="true" />
               Независимая веб-студия · Минск / удалённо
             </div>
-            <h1 className="max-w-[1040px] text-[clamp(3.5rem,6vw,6rem)] font-semibold leading-[0.88] tracking-[-0.07em] text-ink">
+            <h1 className="max-w-[1040px] text-[clamp(3.5rem,6vw,6rem)] font-semibold leading-[0.88] tracking-[-0.07em] text-ink" data-reveal>
               <span className="block">Сайты, с которыми</span>
               <span className="block">бизнес выглядит</span>
               <span className="editorial-serif block font-normal italic tracking-[-0.055em] text-signal">
@@ -129,7 +129,7 @@ function Hero() {
             </h1>
           </div>
 
-          <aside className="flex flex-col justify-end border-t border-ink/20 pt-5 lg:col-span-4 lg:border-l lg:border-t-0 lg:pl-7 lg:pt-0">
+          <aside className="flex flex-col justify-end border-t border-ink/20 pt-5 lg:col-span-4 lg:border-l lg:border-t-0 lg:pl-7 lg:pt-0" data-reveal>
             <p className="max-w-md text-lg leading-7 text-ink/78 sm:text-xl sm:leading-8">
               Исследуем задачу, проектируем структуру, создаём дизайн и запускаем сайт. AI помогает быстрее увидеть первое направление — решения принимает человек.
             </p>
@@ -145,7 +145,7 @@ function Hero() {
         </div>
 
         <div className="mt-12 grid gap-3 sm:grid-cols-12 lg:mt-20">
-          <div className="relative min-h-[290px] overflow-hidden bg-[#222] sm:col-span-8 sm:min-h-[430px] lg:min-h-[540px]">
+          <div className="editorial-visual relative min-h-[290px] overflow-hidden bg-[#222] sm:col-span-8 sm:min-h-[430px] lg:min-h-[540px]" data-reveal="image">
             <Image
               src="/images/hero-process-v2.jpg"
               alt="Печатные вайрфреймы, модульные сетки и цветовые пробы сайта"
@@ -159,7 +159,7 @@ function Hero() {
               Не подгоняем бизнес под готовый шаблон. Сначала находим смысл и только потом форму.
             </p>
           </div>
-          <div className="flex min-h-[290px] flex-col justify-between bg-cobalt p-5 text-white sm:col-span-4 sm:p-7 lg:min-h-[540px]">
+          <div className="flex min-h-[290px] flex-col justify-between bg-cobalt p-5 text-white sm:col-span-4 sm:p-7 lg:min-h-[540px]" data-reveal>
             <div className="flex items-start justify-between text-xs uppercase tracking-[0.16em] text-white/70">
               <span>Первый шаг</span>
               <span>30–60 сек</span>
@@ -188,7 +188,7 @@ function Statement() {
           <p className="section-index text-paper/55">01 / Подход</p>
         </div>
         <div className="lg:col-span-9">
-          <h2 className="max-w-5xl text-[clamp(2.4rem,5vw,5.4rem)] font-medium leading-[0.98] tracking-[-0.055em]">
+          <h2 className="max-w-5xl text-[clamp(2.4rem,5vw,5.4rem)] font-medium leading-[0.98] tracking-[-0.055em]" data-reveal>
             AI ускоряет поиск, но не заменяет
             <span className="editorial-serif font-normal italic text-acid"> вкус, ответственность и диалог.</span>
           </h2>
@@ -198,7 +198,7 @@ function Statement() {
               ["Одна цельная система", "Тексты, сетка, изображения и motion работают как части одного решения."],
               ["Запуск — не финал картинки", "Проверяем мобильный UX, формы, аналитику, SEO и скорость."],
             ].map(([title, text], index) => (
-              <div key={title}>
+              <div key={title} data-reveal>
                 <span className="text-xs text-paper/45">0{index + 1}</span>
                 <h3 className="mt-4 text-lg font-semibold">{title}</h3>
                 <p className="mt-3 text-sm leading-6 text-paper/62">{text}</p>
@@ -215,7 +215,7 @@ function ConceptLab() {
   return (
     <section id="concepts" className="scroll-mt-20 bg-paper px-4 py-16 sm:px-6 sm:py-24 lg:py-32">
       <div className="mx-auto max-w-[1440px]">
-        <div className="grid gap-8 border-b border-ink/20 pb-8 lg:grid-cols-12 lg:items-end">
+        <div className="grid gap-8 border-b border-ink/20 pb-8 lg:grid-cols-12 lg:items-end" data-reveal>
           <p className="section-index lg:col-span-3">02 / Концепт-лаборатория</p>
           <div className="lg:col-span-9 lg:flex lg:items-end lg:justify-between lg:gap-10">
             <h2 className="text-[clamp(2.7rem,6vw,6.4rem)] font-semibold leading-[0.9] tracking-[-0.065em]">Не портфолио.<br />Проверка идей.</h2>
@@ -227,7 +227,7 @@ function ConceptLab() {
 
         <div className="divide-y divide-ink/20">
           {conceptItems.map((item, index) => (
-            <article key={item.number} className="grid gap-6 py-8 sm:py-12 lg:grid-cols-12 lg:gap-8 lg:py-16">
+            <article key={item.number} className="grid gap-6 py-8 sm:py-12 lg:grid-cols-12 lg:gap-8 lg:py-16" data-reveal>
               <div className="flex justify-between lg:col-span-3 lg:block">
                 <p className="text-xs font-semibold tracking-[0.16em]">{item.number}</p>
                 <p className="mt-0 text-xs uppercase tracking-[0.14em] text-ink/50 lg:mt-8">{item.category}</p>
@@ -262,7 +262,7 @@ function Services() {
   return (
     <section id="services" className="scroll-mt-20 bg-[#e6e2d8] px-4 py-16 sm:px-6 sm:py-24 lg:py-32">
       <div className="mx-auto max-w-[1440px]">
-        <div className="grid gap-8 lg:grid-cols-12">
+        <div className="grid gap-8 lg:grid-cols-12" data-reveal>
           <p className="section-index lg:col-span-3">03 / Форматы работы</p>
           <div className="lg:col-span-9">
             <h2 className="max-w-4xl text-[clamp(2.7rem,6vw,6.4rem)] font-semibold leading-[0.9] tracking-[-0.065em]">
@@ -273,7 +273,7 @@ function Services() {
 
         <div className="mt-14 border-t border-ink sm:mt-20">
           {services.map((service) => (
-            <article key={service.number} className="group grid gap-4 border-b border-ink/30 py-7 transition-colors hover:bg-paper/40 sm:py-9 lg:grid-cols-12 lg:items-start">
+            <article key={service.number} className="group grid gap-4 border-b border-ink/30 py-7 transition-colors hover:bg-paper/40 sm:py-9 lg:grid-cols-12 lg:items-start" data-reveal>
               <p className="text-xs font-semibold lg:col-span-1">{service.number}</p>
               <h3 className="text-3xl font-semibold tracking-[-0.045em] sm:text-4xl lg:col-span-3">{service.title}</h3>
               <div className="lg:col-span-4">
@@ -307,7 +307,7 @@ function GeneratorStory() {
   return (
     <section id="generator-story" className="scroll-mt-20 overflow-hidden bg-cobalt px-4 py-16 text-white sm:px-6 sm:py-24 lg:py-32">
       <div className="mx-auto max-w-[1440px]">
-        <div className="grid gap-12 lg:grid-cols-12">
+        <div className="grid gap-12 lg:grid-cols-12" data-reveal>
           <div className="lg:col-span-7">
             <p className="section-index text-white/60">04 / AI-концепция</p>
             <h2 className="mt-9 text-[clamp(3rem,7vw,7.2rem)] font-semibold leading-[0.86] tracking-[-0.07em]">
@@ -333,7 +333,7 @@ function GeneratorStory() {
             ["Результат", "Смотрите концепцию как первую гипотезу — ценную, но открытую для профессиональной доработки."],
             ["После", "Обсудите идею с дизайнером, уточните задачу и получите предложение по полноценной разработке."],
           ].map(([title, text], index) => (
-            <div key={title} className="border-b border-white/30 py-7 sm:border-b-0 sm:border-r sm:px-6 sm:first:pl-0 sm:last:border-r-0">
+            <div key={title} className="border-b border-white/30 py-7 sm:border-b-0 sm:border-r sm:px-6 sm:first:pl-0 sm:last:border-r-0" data-reveal>
               <p className="text-xs text-white/45">0{index + 1}</p>
               <h3 className="mt-5 text-2xl font-semibold">{title}</h3>
               <p className="mt-4 max-w-sm text-sm leading-6 text-white/62">{text}</p>
@@ -349,7 +349,7 @@ function Process() {
   return (
     <section id="process" className="scroll-mt-20 bg-paper px-4 py-16 sm:px-6 sm:py-24 lg:py-32">
       <div className="mx-auto max-w-[1440px]">
-        <div className="grid gap-8 lg:grid-cols-12">
+        <div className="grid gap-8 lg:grid-cols-12" data-reveal>
           <p className="section-index lg:col-span-3">05 / Процесс</p>
           <div className="lg:col-span-9">
             <h2 className="text-[clamp(2.7rem,6vw,6.4rem)] font-semibold leading-[0.9] tracking-[-0.065em]">Понятно, что происходит дальше.</h2>
@@ -357,7 +357,7 @@ function Process() {
         </div>
         <ol className="mt-14 grid border-t border-ink lg:mt-20 lg:grid-cols-5">
           {processSteps.map(([title, text], index) => (
-            <li key={title} className="relative border-b border-ink/30 py-7 lg:min-h-[310px] lg:border-b-0 lg:border-r lg:px-5 lg:first:pl-0 lg:last:border-r-0">
+            <li key={title} className="relative border-b border-ink/30 py-7 lg:min-h-[310px] lg:border-b-0 lg:border-r lg:px-5 lg:first:pl-0 lg:last:border-r-0" data-reveal>
               <span className="text-xs">0{index + 1}</span>
               <div className="mt-12 lg:mt-28">
                 <h3 className="text-2xl font-semibold">{title}</h3>
@@ -378,13 +378,13 @@ function Trust() {
   return (
     <section className="bg-acid px-4 py-16 text-ink sm:px-6 sm:py-24 lg:py-28">
       <div className="mx-auto grid max-w-[1440px] gap-12 lg:grid-cols-12">
-        <div className="lg:col-span-5">
+        <div className="lg:col-span-5" data-reveal>
           <p className="section-index">06 / Без театра масштаба</p>
           <h2 className="mt-9 text-[clamp(2.8rem,5.6vw,6rem)] font-semibold leading-[0.9] tracking-[-0.065em]">
             Новая студия.<br />Взрослый процесс.
           </h2>
         </div>
-        <div className="grid gap-8 border-t border-ink pt-7 sm:grid-cols-2 lg:col-span-7">
+        <div className="grid gap-8 border-t border-ink pt-7 sm:grid-cols-2 lg:col-span-7" data-reveal>
           {[
             ["Не придумываем кейсы", "Концепции называем концепциями. Реальные проекты появятся здесь только с разрешения клиентов."],
             ["Фиксируем договорённости", "До старта понятны объём, стоимость, этапы, сроки и количество итераций."],
@@ -406,11 +406,11 @@ function Faq() {
   return (
     <section className="bg-paper px-4 py-16 sm:px-6 sm:py-24 lg:py-32">
       <div className="mx-auto grid max-w-[1440px] gap-12 lg:grid-cols-12">
-        <div className="lg:col-span-4">
+        <div className="lg:col-span-4" data-reveal>
           <p className="section-index">07 / Коротко о важном</p>
           <h2 className="mt-8 text-5xl font-semibold leading-[0.92] tracking-[-0.055em] sm:text-6xl">Вопросы<br />до старта.</h2>
         </div>
-        <div className="border-t border-ink lg:col-span-8">
+        <div className="border-t border-ink lg:col-span-8" data-reveal>
           {faqs.map((item, index) => (
             <details key={item.q} className="group border-b border-ink/30 py-1">
               <summary className="flex cursor-pointer list-none items-start justify-between gap-5 py-6 text-left text-lg font-semibold sm:text-xl">
@@ -431,7 +431,7 @@ function FinalCta() {
     <section className="bg-signal px-4 py-16 text-ink sm:px-6 sm:py-24 lg:py-28">
       <div className="mx-auto max-w-[1440px]">
         <p className="section-index">08 / Начать проект</p>
-        <div className="mt-10 grid gap-10 lg:grid-cols-12 lg:items-end">
+        <div className="mt-10 grid gap-10 lg:grid-cols-12 lg:items-end" data-reveal>
           <h2 className="text-[clamp(3.2rem,8vw,8rem)] font-semibold leading-[0.84] tracking-[-0.075em] lg:col-span-9">
             Есть задача?<br />Давайте сделаем
             <span className="editorial-serif font-normal italic text-paper"> хорошо.</span>
