@@ -6,133 +6,44 @@ import { GENERATOR_CASES, type GeneratorCase } from "@/content/generator-cases"
 import type { GeneratorStyle } from "@/lib/types"
 import { track } from "@/lib/analytics"
 
-export interface GalleryPreset {
-  businessType: string
-  style: GeneratorStyle
-  description: string
-}
+export interface GalleryPreset { businessType: string; style: GeneratorStyle; description: string }
 
 const CASE_PRESETS: Record<number, GalleryPreset> = {
-  1: { businessType: "Медицинская клиника", style: "minimal",   description: "Современная стоматологическая клиника. Акцент на доверие, технологии и заботу о пациентах. Услуги: лечение, имплантация, отбеливание." },
-  2: { businessType: "Салон красоты",       style: "bold",      description: "Авторский тату-салон с тёмной эстетикой. Портфолио мастеров, стили татуировок, онлайн-запись." },
-  3: { businessType: "Фитнес-клуб",         style: "bold",      description: "Премиум фитнес-клуб. Акцент на энергию и результат. Абонементы, расписание групповых, тренеры." },
-  4: { businessType: "Кофейня / кафе",      style: "modern",    description: "Уютная кофейня со specialty кофе и авторскими десертами. Тёплая атмосфера, меню, адрес и часы работы." },
-  5: { businessType: "Юридические услуги",  style: "corporate", description: "Юридическая компания для бизнеса. Строгий авторитетный стиль. Услуги, команда адвокатов, кейсы, контакты." },
-  6: { businessType: "IT-агентство",        style: "minimal",   description: "IT стартап с SaaS продуктом. Минималистичный технологичный стиль. Функции, тарифы, форма регистрации." },
+  1: { businessType: "Медицинская клиника", style: "minimal", description: "Современная стоматологическая клиника. Акцент на доверие, технологии и заботу о пациентах. Услуги: лечение, имплантация, отбеливание." },
+  2: { businessType: "Салон красоты", style: "bold", description: "Авторский тату-салон с тёмной эстетикой. Портфолио мастеров, стили татуировок, онлайн-запись." },
+  3: { businessType: "Фитнес-клуб", style: "bold", description: "Премиум фитнес-клуб. Акцент на энергию и результат. Абонементы, расписание групповых, тренеры." },
+  4: { businessType: "Кофейня / кафе", style: "modern", description: "Уютная кофейня со specialty кофе и авторскими десертами. Тёплая атмосфера, меню, адрес и часы работы." },
+  5: { businessType: "Юридические услуги", style: "corporate", description: "Юридическая компания для бизнеса. Строгий авторитетный стиль. Услуги, команда, подтверждённые кейсы, контакты." },
+  6: { businessType: "IT-агентство", style: "minimal", description: "IT-стартап с SaaS-продуктом. Минималистичный технологичный стиль. Функции, тарифы, форма регистрации." },
 }
 
-interface GalleryCardProps {
-  c: GeneratorCase
-  onSelect: (preset: GalleryPreset | null) => void
-}
-
-function GalleryCard({ c, onSelect }: GalleryCardProps) {
+function GalleryCard({ c, onSelect }: { c: GeneratorCase; onSelect: (preset: GalleryPreset | null) => void }) {
   return (
-    <button
-      type="button"
-      onClick={() => onSelect(CASE_PRESETS[c.id] ?? null)}
-      className={`group relative w-full overflow-hidden rounded-2xl border bg-[#13131A] text-left transition-all duration-200 hover:-translate-y-1 hover:shadow-xl ${c.accent.border} ${c.accent.glow}`}
-    >
-      <div className="relative h-44 w-full overflow-hidden bg-[#1C1C28]">
-        {c.video ? (
-          <video
-            src={c.video}
-            autoPlay muted loop playsInline
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : c.image ? (
-          <Image
-            src={c.image}
-            alt={c.label}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            sizes="(max-width: 768px) 78vw, (max-width: 1024px) 50vw, 33vw"
-          />
-        ) : (
-          <div className={`h-full w-full bg-gradient-to-br ${c.fallbackGradient}`} />
-        )}
-        <span className={`absolute left-3 top-3 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${c.accent.badge}`}>
-          {c.category}
-        </span>
+    <button type="button" onClick={() => onSelect(CASE_PRESETS[c.id] ?? null)} className="group w-full border border-ink/25 bg-paper text-left transition hover:-translate-y-1 hover:bg-acid focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-cobalt">
+      <div className="relative h-48 overflow-hidden bg-ink/10 sm:h-56">
+        {c.video ? <video src={c.video} autoPlay muted loop playsInline className="h-full w-full object-cover transition duration-500 group-hover:scale-105" /> : c.image ? <Image src={c.image} alt={c.label} fill className="object-cover transition duration-500 group-hover:scale-105" sizes="(max-width: 768px) 82vw, 33vw" /> : <div className={`h-full w-full bg-gradient-to-br ${c.fallbackGradient}`} />}
+        <span className="absolute left-3 top-3 bg-paper px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-ink">{c.category}</span>
       </div>
-
-      <div className="p-4">
-        <div className="flex items-center justify-between gap-2">
-          <div>
-            <p className="font-semibold text-white">{c.label}</p>
-            <p className="mt-0.5 text-xs text-[#6B6B80]">{c.styleTag}</p>
-          </div>
-          <span className={`h-2 w-2 shrink-0 rounded-full ${c.accent.dot}`} />
-        </div>
-        <div className="mt-3 flex items-center gap-1 text-xs font-medium text-[#A1A1B5] transition-colors group-hover:text-white">
-          Хочу такой стиль
-          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" className="transition-transform group-hover:translate-x-0.5" aria-hidden="true">
-            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </div>
+      <div className="p-5">
+        <div className="flex items-start justify-between gap-4"><div><p className="text-lg font-semibold tracking-[-0.03em]">{c.label}</p><p className="mt-1 text-xs text-ink/48">{c.styleTag}</p></div><span className="text-lg transition-transform group-hover:translate-x-1" aria-hidden="true">→</span></div>
+        <p className="mt-5 border-t border-ink/20 pt-4 text-xs font-semibold uppercase tracking-[0.12em]">Взять как отправную точку</p>
       </div>
     </button>
   )
 }
 
-interface GeneratorGalleryProps {
-  onSelect: (preset: GalleryPreset | null) => void
-}
-
-export function GeneratorGallery({ onSelect }: GeneratorGalleryProps) {
-  // Первый шаг воронки: без этого события невозможно посчитать конверсию
-  // «посмотрел примеры → начал заполнять бриф».
-  useEffect(() => {
-    track("generator_gallery_view")
-  }, [])
-
+export function GeneratorGallery({ onSelect }: { onSelect: (preset: GalleryPreset | null) => void }) {
+  useEffect(() => { track("generator_gallery_view") }, [])
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-[#0A0A0F] px-4 py-12 sm:px-6">
-      <div className="mx-auto max-w-5xl">
-
-        <div className="mb-10 text-center">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-xs font-medium text-violet-400">
-            ✦ Как мы работаем
-          </div>
-          <h1 className="text-3xl font-bold text-white sm:text-4xl">
-            ИИ ускоряет процесс — сайт делаем мы
-          </h1>
-          <p className="mt-3 text-[#A1A1B5]">
-            Ниже — примеры стилей и направлений. Опишите свой бизнес — получите первую AI-концепцию, а финальный сайт дорабатываем вручную: дизайн, анимации и SEO.
-          </p>
+    <div className="min-h-[calc(100vh-64px)] bg-paper px-4 py-12 text-ink sm:px-6 sm:py-16 lg:py-20">
+      <div className="mx-auto max-w-[1440px]">
+        <div className="grid gap-8 border-b border-ink/20 pb-9 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-8"><p className="section-index text-ink/50">AI-концепт-лаборатория</p><h1 className="mt-7 text-[clamp(3.2rem,6vw,6rem)] font-semibold leading-[0.9] tracking-[-0.065em]">Выберите характер.<br /><span className="editorial-serif font-normal italic text-signal">Не шаблон.</span></h1></div>
+          <div className="lg:col-span-4 lg:border-l lg:border-ink/20 lg:pl-7"><p className="text-lg leading-7 text-ink/68">Примеры ниже — демонстрационные направления. Выберите близкое или начните с чистого листа: AI соберёт три возможные концепции для вашего бизнеса.</p><p className="mt-4 text-xs leading-5 text-ink/45">Это не финальный сайт и не клиентское портфолио.</p></div>
         </div>
-
-        {/* Mobile: horizontal snap scroll */}
-        <div className="-mx-4 overflow-x-auto px-4 md:hidden">
-          <div className="flex gap-4 pb-4" style={{ scrollSnapType: "x mandatory" }}>
-            {GENERATOR_CASES.map((c) => (
-              <div key={c.id} style={{ scrollSnapAlign: "start" }} className="w-[78vw] max-w-[300px] shrink-0">
-                <GalleryCard c={c} onSelect={onSelect} />
-              </div>
-            ))}
-            <div className="w-4 shrink-0" aria-hidden="true" />
-          </div>
-        </div>
-
-        {/* Desktop: grid */}
-        <div className="hidden md:grid md:grid-cols-2 md:gap-5 lg:grid-cols-3">
-          {GENERATOR_CASES.map((c) => (
-            <GalleryCard key={c.id} c={c} onSelect={onSelect} />
-          ))}
-        </div>
-
-        <div className="mt-12 flex flex-col items-center gap-3 text-center">
-          <p className="text-sm text-[#6B6B80]">Не нашли свою нишу?</p>
-          <button
-            type="button"
-            onClick={() => onSelect(null)}
-            className="rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:-translate-y-0.5 hover:opacity-90"
-          >
-            ✦ Описать свой бизнес →
-          </button>
-          <p className="text-xs text-[#6B6B80]">Бесплатно · Без регистрации · ~30 секунд</p>
-        </div>
-
+        <div className="-mx-4 mt-10 overflow-x-auto px-4 md:hidden"><div className="flex gap-4 pb-4" style={{ scrollSnapType: "x mandatory" }}>{GENERATOR_CASES.map((c)=><div key={c.id} className="w-[82vw] max-w-[330px] shrink-0" style={{scrollSnapAlign:"start"}}><GalleryCard c={c} onSelect={onSelect}/></div>)}</div></div>
+        <div className="mt-10 hidden grid-cols-2 gap-5 md:grid lg:grid-cols-3">{GENERATOR_CASES.map((c)=><GalleryCard key={c.id} c={c} onSelect={onSelect}/>)}</div>
+        <div className="mt-12 flex flex-col gap-5 border-t border-ink/20 pt-7 sm:flex-row sm:items-center sm:justify-between"><div><p className="font-semibold">Ни одно направление не подходит?</p><p className="mt-1 text-sm text-ink/52">Опишите бизнес своими словами — генератор начнёт с контекста.</p></div><button type="button" onClick={() => onSelect(null)} className="editorial-button editorial-button--dark">Начать с чистого листа <span aria-hidden="true">→</span></button></div>
       </div>
     </div>
   )

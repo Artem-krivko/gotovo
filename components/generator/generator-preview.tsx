@@ -73,7 +73,7 @@ export function GeneratorSkeleton() {
           <span className="h-2 w-2 animate-bounce rounded-full bg-violet-500 [animation-delay:300ms]" aria-hidden="true" />
         </div>
         <p className="text-sm text-zinc-500">ИИ создаёт дизайн вашего сайта...</p>
-        <p className="text-xs text-zinc-400">Обычно 15–30 секунд</p>
+        <p className="text-xs text-zinc-400">Обычно до минуты</p>
       </div>
     </div>
   )

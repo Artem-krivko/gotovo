@@ -1,50 +1,6 @@
-import type { Metadata } from "next"
-import Link from "next/link"
+import type { Metadata } from "next";
+import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "Заявка отправлена | gotovo",
-  description: "Спасибо за заявку. Свяжемся с вами в течение нескольких часов.",
-}
+export const metadata: Metadata = { title: "Заявка отправлена", robots: { index: false, follow: false } };
 
-export default function ThankYouPage() {
-  return (
-    <main className="flex min-h-[calc(100vh-64px)] items-center justify-center px-4 py-16">
-      <div className="mx-auto max-w-md text-center">
-
-        {/* Иконка успеха */}
-        <div className="mx-auto mb-6 inline-flex h-20 w-20 items-center justify-center rounded-3xl bg-emerald-100">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-            <path d="M10 21l7 7 13-14"
-              stroke="#10b981" strokeWidth="3"
-              strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </div>
-
-        <h1 className="text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">
-          Заявка отправлена!
-        </h1>
-
-        <p className="mt-4 text-base leading-7 text-zinc-500">
-          Получили вашу заявку и свяжемся в течение нескольких часов.
-          Пока можете попробовать генератор — он бесплатный.
-        </p>
-
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <Link
-            href="/generator"
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-zinc-950 px-6 py-3.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-zinc-800"
-          >
-            Попробовать генератор
-          </Link>
-          <Link
-            href="/"
-            className="inline-flex items-center justify-center rounded-xl border border-zinc-300 bg-white px-6 py-3.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50"
-          >
-            На главную
-          </Link>
-        </div>
-
-      </div>
-    </main>
-  )
-}
+export default function ThankYouPage(){return <main className="flex min-h-[calc(100vh-64px)] items-center bg-acid px-4 py-16 text-ink sm:px-6"><div className="mx-auto w-full max-w-[1000px] border border-ink bg-paper p-7 shadow-[10px_10px_0_#171712] sm:p-12"><p className="section-index text-ink/45">Заявка отправлена</p><h1 className="mt-8 text-[clamp(3rem,7vw,6.5rem)] font-semibold leading-[0.9] tracking-[-0.065em]">Спасибо.<br /><span className="editorial-serif font-normal italic text-signal">Контекст уже у нас.</span></h1><p className="mt-8 max-w-xl text-lg leading-8 text-ink/65">Ответим в течение рабочего дня. Если вопрос срочный, можно написать напрямую в Telegram.</p><div className="mt-10 flex flex-col gap-3 sm:flex-row"><Link href="/" className="editorial-button editorial-button--dark">На главную →</Link><a href="https://t.me/Artem_k_r" target="_blank" rel="noopener noreferrer" className="editorial-button editorial-button--line">Telegram ↗</a></div></div></main>}

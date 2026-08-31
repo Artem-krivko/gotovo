@@ -259,7 +259,7 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
   )
 
   return (
-    <form onSubmit={handleSubmit} noValidate onFocusCapture={handleFirstInteraction} className="flex flex-col gap-6">
+    <form onSubmit={handleSubmit} noValidate onFocusCapture={handleFirstInteraction} className="editorial-generator-form flex flex-col gap-6">
 
       {/* Тип бизнеса */}
       <div className="flex flex-col gap-2">
@@ -617,7 +617,7 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
         {isLoading ? (
           <>
             <SpinnerIcon />
-            Генерирую дизайн...
+            Собираю концепции...
           </>
         ) : (
           <>
@@ -625,13 +625,13 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
               <path d="M8 2l1.5 3.5L13 7l-3.5 1.5L8 12l-1.5-3.5L3 7l3.5-1.5L8 2z"
                 stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
             </svg>
-            Сгенерировать дизайн
+            Создать три концепции
           </>
         )}
       </button>
 
       <p className="text-center text-xs text-zinc-400">
-        Бесплатно · Без регистрации · ~30 секунд
+        Бесплатно · Без регистрации · обычно до минуты
       </p>
     </form>
   )

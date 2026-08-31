@@ -23,20 +23,20 @@ function SpinnerIcon() {
 function SuccessState() {
   return (
     <div className="flex flex-col items-center justify-center gap-4 py-10 text-center">
-      <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400" aria-hidden="true">
+      <span className="inline-flex h-14 w-14 items-center justify-center bg-acid text-ink" aria-hidden="true">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
           <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </span>
       <div>
-        <p className="text-lg font-semibold text-white">Заявка отправлена</p>
-        <p className="mt-1 text-sm text-[#6B6B80]">Отвечу в течение нескольких часов</p>
+        <p className="text-lg font-semibold text-ink">Заявка отправлена</p>
+        <p className="mt-1 text-sm text-ink/55">Ответим в течение рабочего дня</p>
       </div>
     </div>
   );
 }
 
-const inputClass = "rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-[#6B6B80] outline-none transition focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20 disabled:opacity-50";
+const inputClass = "min-h-13 border border-ink/30 bg-paper px-4 py-3 text-sm text-ink placeholder:text-ink/38 outline-none transition focus:border-cobalt focus:ring-2 focus:ring-cobalt/20 disabled:opacity-50";
 
 export function ContactForm() {
   const [fields, setFields] = useState<FormFields>({ name: "", contact: "", message: "" });
@@ -75,21 +75,21 @@ export function ContactForm() {
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="contact-name" className="text-sm font-medium text-[#A1A1B5]">Имя</label>
+        <label htmlFor="contact-name" className="text-sm font-semibold text-ink/70">Имя</label>
         <input id="contact-name" name="name" type="text" required
           placeholder="Как вас зовут" value={fields.name}
           onChange={handleChange} disabled={isLoading} className={inputClass} />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="contact-contact" className="text-sm font-medium text-[#A1A1B5]">Email или Telegram</label>
+        <label htmlFor="contact-contact" className="text-sm font-semibold text-ink/70">Email или Telegram</label>
         <input id="contact-contact" name="contact" type="text" required
           placeholder="Как с вами связаться" value={fields.contact}
           onChange={handleChange} disabled={isLoading} className={inputClass} />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="contact-message" className="text-sm font-medium text-[#A1A1B5]">Задача</label>
+        <label htmlFor="contact-message" className="text-sm font-semibold text-ink/70">Задача</label>
         <textarea id="contact-message" name="message" required rows={4}
           placeholder="Коротко о бизнесе и что нужно сделать"
           value={fields.message} onChange={handleChange} disabled={isLoading}
@@ -97,17 +97,17 @@ export function ContactForm() {
       </div>
 
       {status === "error" && (
-        <p role="alert" className="rounded-xl bg-red-500/10 px-4 py-3 text-sm text-red-400">{errorMessage}</p>
+        <p role="alert" className="border border-red-700 bg-red-50 px-4 py-3 text-sm text-red-800">{errorMessage}</p>
       )}
 
       <button
         type="submit" disabled={isLoading}
-        className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:opacity-90 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+        className="inline-flex min-h-13 items-center justify-center gap-2 bg-ink px-6 py-3.5 text-sm font-semibold text-paper transition hover:-translate-y-0.5 hover:bg-cobalt disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isLoading ? <><SpinnerIcon /> Отправляю...</> : "Отправить заявку"}
       </button>
 
-      <p className="text-center text-xs text-[#6B6B80]">Обычно отвечаю в течение нескольких часов</p>
+      <p className="text-center text-xs text-ink/45">Ответим в течение рабочего дня</p>
     </form>
   );
 }

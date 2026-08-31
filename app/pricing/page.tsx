@@ -1,303 +1,52 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Faq } from "@/components/sections/faq";
-import { Cta } from "@/components/sections/cta";
-import { ScrollGlow } from "@/components/shared/scroll-glow";
-import { PRICING_PLANS, VALUE_ITEMS, CHOOSE_ITEMS, PRICING_FAQ } from "@/content/pricing";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
+import { Arrow, EditorialBreadcrumbs, EditorialCta, EditorialFaq, EditorialHero, EditorialSectionHeader } from "@/components/shared/editorial";
 
 export const metadata: Metadata = {
-  title: "Стоимость разработки сайта — от 1 200 BYN",
-  description: "Прозрачные пакеты: лендинг от 1 200 BYN, бизнес-сайт от 2 900 BYN. Фиксируем объём, этапы и смету до старта.",
-  alternates: { canonical: `${SITE_URL}/pricing` },
-  openGraph: { url: `${SITE_URL}/pricing`, images: [{ url: "/og-image.png", width: 1200, height: 630 }] },
+  title: "Стоимость разработки сайта",
+  description: "Прозрачные цены в BYN: лендинг от 1 200, бизнес-сайт от 2 900, индивидуальная разработка от 4 900. Оплата 30/40/30.",
 };
 
-/** Первое число из строки вида «от 1 200 BYN» или «1 200–1 800 BYN». */
-function extractPrice(raw: string): string {
-  return raw.replace(/\s/g, "").match(/\d+/)?.[0] ?? "0"
-}
+const plans = [
+  { n: "01", name: "Лендинг", price: "1 200", suffix: "BYN · от", term: "7–10 рабочих дней", description: "Одна услуга, запуск или рекламная кампания.", features: ["До 7–9 смысловых секций", "Структура и визуальное направление", "Адаптивная разработка", "Форма заявки и аналитика", "Базовое техническое SEO", "2 круга правок"] },
+  { n: "02", name: "Бизнес-сайт", price: "2 900", suffix: "BYN · от", term: "от 14 рабочих дней", description: "Компания с несколькими услугами и точками доверия.", features: ["5–7 ключевых страниц", "Прототип и дизайн-система", "Адаптивная разработка", "Формы и базовые интеграции", "Аналитика и техническое SEO", "2–3 круга правок"] },
+  { n: "03", name: "Индивидуальный", price: "4 900", suffix: "BYN · от", term: "после оценки", description: "Нестандартная логика, каталог или продуктовый интерфейс.", features: ["Исследование и архитектура", "Уникальные сценарии", "Компонентная дизайн-система", "Сложные интеграции", "Расширенный QA", "План развития"] },
+] as const;
 
-const pricingSchema = {
-  "@context": "https://schema.org",
-  "@type": "ItemList",
-  name: "Пакеты разработки gotovo",
-  itemListElement: PRICING_PLANS.map((plan, i) => ({
-    "@type": "ListItem",
-    position: i + 1,
-    item: { "@type": "Service", name: plan.name, description: plan.description,
-      offers: {
-        "@type": "Offer",
-        priceCurrency: "USD",
-        // Прежняя версия делала .split("").find(Boolean) и брала ПЕРВЫЙ СИМВОЛ:
-        // Число с пробелами не должно обрезаться до первой цифры.
-        price: extractPrice(plan.price),
-        ...(plan.price.includes("–") ? { priceSpecification: { "@type": "PriceSpecification", minPrice: extractPrice(plan.price) } } : {}),
-      } },
-  })),
-};
-
-function CheckIcon() {
-  return (
-    <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-      <path d="M2.5 7l3.5 3.5 5.5-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function ArrowRight() {
-  return (
-    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
+const faq = [
+  { question: "Почему цена указана «от»?", answer: "На стоимость влияют объём контента, число уникальных страниц, интеграции и сложность поведения. После короткого брифа фиксируем точную смету и не меняем её без согласованного изменения объёма." },
+  { question: "Что входит в базовое SEO?", answer: "Семантическая структура, метаданные, Open Graph, sitemap, robots и техническая готовность к индексации. Исследование семантики и контентное продвижение — отдельная услуга от 600 BYN." },
+  { question: "Как происходит оплата?", answer: "30% после фиксации задачи и состава, 40% после согласования структуры и визуального направления, 30% перед публикацией проверенной разработки." },
+  { question: "Что оплачивается отдельно?", answer: "Платные сервисы, лицензии, большой объём копирайтинга, профессиональная съёмка и функциональность за пределами согласованного состава. Такие расходы обсуждаем заранее." },
+] as const;
 
 export default function PricingPage() {
   return (
-    <main>
-      <script type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(pricingSchema) }} />
-
-      {/* ── Hero ────────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-[#0A0A0F] px-4 pb-16 pt-12 sm:px-6 sm:pb-28 sm:pt-24">
-        <div className="pointer-events-none absolute inset-0" aria-hidden="true"
-          style={{ background: "radial-gradient(ellipse 60% 50% at 20% -5%, rgba(59,130,246,0.2), transparent 60%)" }} />
-        <div className="grid-overlay pointer-events-none absolute inset-0" aria-hidden="true" />
-
-        <div className="relative mx-auto max-w-5xl text-center">
-          <span className="reveal-up inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-1.5 text-sm font-medium text-blue-400">
-            Прозрачные цены
-          </span>
-
-            <h1 className="reveal-up delay-1 mt-6 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-6xl lg:text-7xl">
-              Фиксированная стоимость —{" "}
-              <span className="bg-gradient-to-r from-blue-400 via-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
-                без сюрпризов
-              </span>
-          </h1>
-
-          <p className="reveal-up delay-2 mt-6 mx-auto max-w-xl text-lg leading-7 text-[#A1A1B5]">
-            Знаете цену до начала работы. Никаких расплывчатых оценок «посмотрим по ходу».
-          </p>
-
-          <div className="reveal-up delay-3 mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-            <Link href="/contacts"
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/30 transition hover:opacity-90 hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500">
-              Обсудить проект →
-            </Link>
-            <a href="#pricing-cards"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 text-sm font-medium text-white transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/40">
-              Смотреть пакеты
-            </a>
-          </div>
-
-          {/* Метрики */}
-          <div className="reveal-up delay-4 mt-12 grid max-w-lg mx-auto grid-cols-3 gap-3">
-            {[
-              { value: "от 1 200 BYN", label: "лендинг", border: "border-violet-500/40", glow: "shadow-lg shadow-violet-500/20" },
-              { value: "7–14 дней", label: "типичный срок", border: "border-blue-500/40", glow: "shadow-lg shadow-blue-500/20" },
-              { value: "После", label: "результата — оплата", border: "border-emerald-500/40", glow: "shadow-lg shadow-emerald-500/20" },
-            ].map((m) => (
-              <div key={m.label} className={`rounded-2xl border ${m.border} bg-[#13131A] p-4 text-center shadow-lg ${m.glow}`}>
-                <p className="text-base font-bold text-white sm:text-xl">{m.value}</p>
-                <p className="mt-1 text-xs leading-4 text-[#6B6B80]">{m.label}</p>
-              </div>
+    <main className="bg-paper text-ink">
+      <EditorialBreadcrumbs items={[{ label: "Главная", href: "/" }, { label: "Цены" }]} />
+      <EditorialHero eyebrow="Цены" title={<>Понятный масштаб.<br /><span className="editorial-serif font-normal italic text-cobalt">Понятные деньги.</span></>} intro={<>Ориентиры нужны до созвона. Показываем стартовую стоимость и объясняем, что влияет на итоговую смету.</>} secondary={null} />
+      <section className="px-4 py-16 sm:px-6 sm:py-24 lg:py-32">
+        <div className="mx-auto max-w-[1440px]">
+          <EditorialSectionHeader index="01" label="Пакеты" title={<>Выберите не тариф,<br /><span className="editorial-serif font-normal italic text-signal">а подходящий объём.</span></>} />
+          <div className="mt-10 grid border-l border-t border-ink/25 lg:grid-cols-3">
+            {plans.map((plan, index) => (
+              <article key={plan.name} className={`flex min-h-[620px] flex-col border-b border-r border-ink/25 p-6 sm:p-8 ${index === 1 ? "bg-acid" : ""}`}>
+                <div className="flex items-start justify-between"><p className="section-index">{plan.n}</p><p className="text-xs uppercase tracking-[0.14em]">{plan.term}</p></div>
+                <h2 className="mt-12 text-3xl font-semibold tracking-[-0.05em]">{plan.name}</h2><p className="mt-3 min-h-12 text-sm leading-6 text-ink/62">{plan.description}</p>
+                <div className="mt-8 border-y border-ink/25 py-6"><p className="text-xs uppercase tracking-[0.14em] text-ink/45">{plan.suffix}</p><p className="mt-1 text-5xl font-semibold tracking-[-0.06em]">{plan.price}</p></div>
+                <ul className="mt-7 space-y-3 text-sm text-ink/70">{plan.features.map((feature)=><li key={feature}>— {feature}</li>)}</ul>
+                <Link href="/contacts" className="editorial-button editorial-button--dark mt-auto">Обсудить проект <Arrow diagonal /></Link>
+              </article>
             ))}
           </div>
+          <p className="mt-5 max-w-3xl text-sm leading-6 text-ink/52">Базовое техническое SEO входит в разработку. Расширенная SEO-подготовка — от 600 BYN. Домен, хостинг и платные сервисы оплачиваются напрямую поставщикам.</p>
         </div>
       </section>
-
-      {/* ── Карточки пакетов ────────────────────────────────────────────────── */}
-      <div className="relative px-6" aria-hidden="true">
-        <div className="h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
-      </div>
-      <ScrollGlow className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24" id="pricing-cards">
-        <div className="glow-orb -top-20 -left-20 h-[400px] w-[400px]" aria-hidden="true"
-          style={{ background: "radial-gradient(circle, rgba(124,58,237,0.16), transparent 65%)" }} />
-        <div className="mx-auto max-w-6xl">
-          <div className="reveal-up text-center">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Пакеты</p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-              Выберите формат
-            </h2>
-          </div>
-
-          {/* Мобилка: вертикальные карточки */}
-          <div className="mt-8 flex flex-col gap-4 sm:hidden">
-            {PRICING_PLANS.map((plan) => (
-              <div key={plan.name}
-                className={`flex flex-col rounded-2xl border p-5 ${
-                  plan.featured ? "border-violet-500/40 bg-gradient-to-br from-violet-500/10 to-blue-500/5" : "border-white/10 bg-[#13131A]"
-                }`}>
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <span className={`inline-flex rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest border ${
-                      plan.featured ? "border-violet-500/30 bg-violet-500/10 text-violet-400" : "border-white/10 bg-white/5 text-[#6B6B80]"
-                    }`}>{plan.badge}</span>
-                    <h2 className="mt-2 text-lg font-bold text-white">{plan.name}</h2>
-                    <div className="mt-1 flex items-baseline gap-1.5">
-                      <span className="text-2xl font-bold text-white">{plan.price}</span>
-                      <span className="text-xs text-[#6B6B80]">{plan.duration}</span>
-                    </div>
-                  </div>
-                </div>
-                <p className="mt-2 text-xs leading-5 text-[#A1A1B5]">{plan.description}</p>
-                <ul className="mt-4 flex flex-col gap-2">
-                  {plan.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-xs text-[#A1A1B5]">
-                      <span className={`mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-white ${
-                        plan.featured ? "bg-violet-600" : "bg-[#1C1C28]"
-                      }`}><CheckIcon /></span>{f}
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/contacts"
-                  className={`mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
-                    plan.featured
-                      ? "bg-gradient-to-r from-violet-600 to-blue-600 text-white shadow-lg shadow-violet-500/25 focus-visible:outline-violet-500"
-                      : "border border-white/10 bg-white/5 text-white focus-visible:outline-white/40"
-                  }`}>
-                  Обсудить проект <ArrowRight />
-                </Link>
-              </div>
-            ))}
-          </div>
-
-          {/* Десктоп: grid */}
-          <div className="mt-10 hidden gap-5 sm:grid sm:grid-cols-3">
-            {PRICING_PLANS.map((plan, i) => {
-              const delay = i === 0 ? "delay-1" : i === 1 ? "delay-2" : "delay-3";
-              return (
-                <div key={plan.name}
-                  className={`reveal-up flex flex-col rounded-2xl border p-7 transition ${delay} ${
-                    plan.featured
-                      ? "border-violet-500/40 bg-gradient-to-br from-violet-500/10 to-blue-500/5 sm:-translate-y-2"
-                      : "border-white/10 bg-[#13131A] hover:border-white/20"
-                  }`}>
-                  <span className={`inline-flex w-fit rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-widest ${
-                    plan.featured ? "border border-violet-500/30 bg-violet-500/10 text-violet-400" : "border border-white/10 bg-white/5 text-[#6B6B80]"
-                  }`}>
-                    {plan.badge}
-                  </span>
-                  <h2 className="mt-5 text-2xl font-bold tracking-tight text-white sm:text-3xl">{plan.name}</h2>
-                  <div className="mt-2 flex items-baseline gap-2">
-                    <span className="text-4xl font-bold text-white">{plan.price}</span>
-                    <span className="text-sm text-[#6B6B80]">{plan.duration}</span>
-                  </div>
-                  <p className="mt-3 flex-1 text-sm leading-6 text-[#A1A1B5]">{plan.description}</p>
-                  <ul className="mt-6 flex flex-col gap-2.5">
-                    {plan.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2.5 text-sm text-[#A1A1B5]">
-                        <span className={`mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-white ${plan.featured ? "bg-violet-600" : "bg-[#1C1C28]"}`}>
-                          <CheckIcon />
-                        </span>{f}
-                      </li>
-                    ))}
-                  </ul>
-                  <Link href="/contacts"
-                    className={`mt-7 inline-flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
-                      plan.featured
-                        ? "bg-gradient-to-r from-violet-600 to-blue-600 text-white shadow-lg shadow-violet-500/25 hover:opacity-90 focus-visible:outline-violet-500"
-                        : "border border-white/10 bg-white/5 text-white hover:bg-white/10 focus-visible:outline-white/40"
-                    }`}>
-                    Обсудить проект <ArrowRight />
-                  </Link>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Подсказка под карточками */}
-          <p className="mt-6 text-center text-sm text-[#6B6B80]">
-            Не уверены в формате?{" "}
-            <Link href="/generator" className="text-[#A1A1B5] transition-colors hover:text-white underline underline-offset-2">
-              Попробуйте генератор бесплатно →
-            </Link>
-          </p>
-        </div>
-      </ScrollGlow>
-
-      {/* ── Что входит ──────────────────────────────────────────────────────── */}
-      <section className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
-        <div className="mx-auto max-w-6xl">
-          <div className="reveal-up text-center">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Состав</p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">Что входит в стоимость</h2>
-            <p className="mt-3 text-[#A1A1B5]">Платите не за экраны — за рабочий инструмент с логикой и запуском</p>
-          </div>
-          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" role="list">
-            {VALUE_ITEMS.map((item, i) => (
-              <li key={item.title}
-                className={`reveal-up flex gap-4 rounded-2xl border border-white/10 bg-[#13131A] p-5 transition hover:border-white/20 ${i < 2 ? "delay-1" : i < 4 ? "delay-2" : "delay-3"}`}>
-                <span className={`mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-white ${item.accent}`} aria-hidden="true">
-                  <CheckIcon />
-                </span>
-                <div>
-                  <p className="font-semibold text-white">{item.title}</p>
-                  <p className="mt-1 text-sm leading-6 text-[#6B6B80]">{item.description}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
+      <section className="bg-ink px-4 py-16 text-paper sm:px-6 sm:py-24 lg:py-28">
+        <div className="mx-auto max-w-[1440px]"><EditorialSectionHeader index="02" label="График" light title={<>30 / 40 / 30.<br /><span className="editorial-serif font-normal italic text-acid">После видимого прогресса.</span></>} /><p className="mt-9 max-w-2xl text-lg leading-8 text-paper/65">Каждый платёж связан с согласованным результатом этапа. Вы не оплачиваете весь проект вперёд и не ждёте финала вслепую.</p></div>
       </section>
-
-      {/* ── Как выбрать ─────────────────────────────────────────────────────── */}
-      <div className="relative px-6" aria-hidden="true">
-        <div className="h-px bg-gradient-to-r from-transparent via-blue-500/15 to-transparent" />
-      </div>
-      <ScrollGlow className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
-        <div className="glow-orb top-1/2 -right-20 h-[350px] w-[350px]" aria-hidden="true"
-          style={{ background: "radial-gradient(circle, rgba(59,130,246,0.13), transparent 65%)" }} />
-        <div className="mx-auto max-w-6xl">
-          <div className="reveal-up text-center">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Выбор</p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">Как понять, что подходит</h2>
-          </div>
-
-          {/* Мобилка */}
-          <div className="-mx-4 mt-10 sm:hidden">
-            <div className="niches-scroll overflow-x-auto px-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
-              <ul className="flex gap-4" style={{ scrollSnapType: "x mandatory" }}>
-              {CHOOSE_ITEMS.map((item) => (
-                <li key={item.scenario}
-                  className="flex w-[80vw] max-w-[300px] shrink-0 flex-col rounded-2xl border border-white/10 bg-[#13131A] p-5"
-                  style={{ scrollSnapAlign: "start" }}>
-                  <h3 className="font-semibold text-white">{item.scenario}</h3>
-                  <p className="mt-2 flex-1 text-sm leading-6 text-[#A1A1B5]">{item.description}</p>
-                  <span className={`mt-4 inline-flex w-fit rounded-xl border px-3 py-1.5 text-sm font-semibold ${item.resultColor}`}>{item.result}</span>
-                </li>
-              ))}
-              <li className="w-4 shrink-0" aria-hidden="true" />
-              </ul>
-            </div>
-          </div>
-
-          {/* Десктоп */}
-          <ul className="mt-10 hidden gap-5 sm:grid sm:grid-cols-3" role="list">
-            {CHOOSE_ITEMS.map((item, i) => (
-              <li key={item.scenario}
-                className={`reveal-up flex flex-col rounded-2xl border border-white/10 bg-[#13131A] p-6 transition hover:border-white/20 sm:p-7 ${i === 0 ? "delay-1" : i === 1 ? "delay-2" : "delay-3"}`}>
-                <h3 className="text-lg font-semibold text-white">{item.scenario}</h3>
-                <p className="mt-3 flex-1 text-sm leading-6 text-[#A1A1B5]">{item.description}</p>
-                <span className={`mt-5 inline-flex w-fit rounded-xl border px-3 py-1.5 text-sm font-semibold ${item.resultColor}`}>{item.result}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </ScrollGlow>
-
-      <Faq title="Вопросы по стоимости" subtitle="Отвечаем до старта — без обязательств" items={PRICING_FAQ} />
-      <Cta title="Готовы обсудить проект?" subtitle="Опишите задачу — ответим в течение нескольких часов. Или сначала попробуйте генератор бесплатно." button="Обсудить проект" href="/contacts" />
-
-      <section className="bg-[#0A0A0F] px-4 py-8 sm:px-6">
-        <p className="text-center text-sm text-[#6B6B80]">
-          Хотите разобраться в форматах?{" "}
-          <Link href="/services" className="text-[#A1A1B5] transition-colors hover:text-white">Смотрите страницу услуг →</Link>
-        </p>
-      </section>
+      <section className="px-4 py-16 sm:px-6 sm:py-24 lg:py-28"><div className="mx-auto max-w-[1100px]"><EditorialSectionHeader index="03" label="Вопросы" title={<>До того как <span className="editorial-serif font-normal italic text-cobalt">считать смету.</span></>} /><div className="mt-10"><EditorialFaq items={[...faq]} /></div></div></section>
+      <EditorialCta title="Посчитаем ваш объём." text="Пришлите краткое описание задачи. Вернёмся с форматом, вилкой и вопросами, которые действительно влияют на цену." />
     </main>
   );
 }

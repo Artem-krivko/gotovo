@@ -19,20 +19,17 @@ import { readApiResponse } from "@/lib/api-response"
 function EmptyPreview() {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center">
-      <div className="relative">
-        <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-violet-100 to-blue-100" aria-hidden="true" />
-        <span className="absolute inset-0 flex items-center justify-center text-3xl" aria-hidden="true">✦</span>
-      </div>
+      <div className="flex h-20 w-20 items-center justify-center bg-acid text-3xl" aria-hidden="true">✦</div>
       <div>
-        <p className="font-semibold text-zinc-800">Здесь появится ваш сайт</p>
-        <p className="mt-1 text-sm text-zinc-400">
-          Заполните форму слева и нажмите «Сгенерировать»
+        <p className="font-semibold text-ink">Здесь появятся три направления</p>
+        <p className="mt-1 text-sm text-ink/45">
+          Заполните форму и нажмите «Создать три концепции»
         </p>
       </div>
-      <div className="mt-2 flex flex-col gap-2 text-xs text-zinc-300">
-        <span>⚡ Генерация занимает ~30 секунд</span>
-        <span>🎨 Реальный HTML который можно открыть в браузере</span>
-        <span>🆓 Бесплатно и без регистрации</span>
+      <div className="mt-2 flex flex-col gap-2 text-xs text-ink/35">
+        <span>Три визуально разных гипотезы</span>
+        <span>Живой HTML для просмотра в браузере</span>
+        <span>Бесплатно и без регистрации</span>
       </div>
     </div>
   )
@@ -190,26 +187,26 @@ export default function GeneratorPage() {
 
   // ── Шаг 2+: форма + превью ──────────────────────────────────────────────────
   return (
-    <main className="flex h-[calc(100vh-64px)] flex-col lg:flex-row">
+    <main className="flex h-[calc(100vh-64px)] flex-col bg-paper text-ink lg:flex-row">
 
       {/* ── Левая панель: форма ───────────────────────────────────────────── */}
-      <div className={`w-full shrink-0 flex-col border-b border-zinc-200 bg-white lg:w-[400px] lg:border-b-0 lg:border-r ${hasResult ? "hidden lg:flex" : "flex"}`}>
-        <div className="border-b border-zinc-100 px-5 py-4">
+      <div className={`w-full shrink-0 flex-col border-b border-ink/20 bg-paper lg:w-[420px] lg:border-b-0 lg:border-r ${hasResult ? "hidden lg:flex" : "flex"}`}>
+        <div className="border-b border-ink/20 px-5 py-4">
           <button
             type="button"
             onClick={() => setStep("gallery")}
-            className="mb-3 flex items-center gap-1.5 text-xs text-zinc-400 transition hover:text-zinc-700"
+            className="mb-3 flex items-center gap-1.5 text-xs text-ink/45 transition hover:text-cobalt"
           >
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             К примерам
           </button>
-          <h1 className="text-base font-semibold text-zinc-950">
-            AI Design Generator
+          <h1 className="text-base font-semibold text-ink">
+            AI-концепт-лаборатория
           </h1>
-          <p className="text-xs text-zinc-400">
-            Опишите бизнес — получите AI-концепцию
+          <p className="text-xs text-ink/45">
+            Три направления для предметного разговора
           </p>
         </div>
 
@@ -225,7 +222,7 @@ export default function GeneratorPage() {
       </div>
 
       {/* ── Правая панель: превью ─────────────────────────────────────────── */}
-      <div className="flex flex-1 flex-col overflow-hidden bg-zinc-50">
+      <div className="flex flex-1 flex-col overflow-hidden bg-[#e8e4da]">
         {isLoading ? (
           <GeneratorSkeleton />
         ) : hasResult ? (

@@ -45,14 +45,6 @@ h1, h2, h3, h4, h5, h6 {
   line-height: 1.1;
 }
 
-/* Мобильная шкала — компактнее, воздушнее */
-@media (max-width: 639px) {
-  h1 { font-size: clamp(1.75rem, 8vw, 2.25rem); letter-spacing: -0.025em; }
-  h2 { font-size: clamp(1.35rem, 6vw, 1.75rem); letter-spacing: -0.02em; }
-  h3 { font-size: clamp(1rem, 4vw, 1.2rem); letter-spacing: -0.01em; }
-  p, li { letter-spacing: 0.008em; }
-}
-
 ::selection {
   background: #2656d8;
   color: #fff;
@@ -350,6 +342,22 @@ main summary:focus-visible {
   outline: 3px solid #2656d8;
   outline-offset: 4px;
 }
+
+.editorial-generator-form :is(input:not([type="checkbox"]), select, textarea) {
+  border-radius: 0 !important;
+  border-color: rgba(23, 23, 18, 0.28) !important;
+  background: rgba(255, 255, 255, 0.32) !important;
+  color: #171712 !important;
+}
+
+.editorial-generator-form :is(input:not([type="checkbox"]), select, textarea):focus {
+  border-color: #2656d8 !important;
+  box-shadow: 0 0 0 2px rgba(38, 86, 216, 0.16) !important;
+}
+
+.editorial-generator-form button { border-radius: 0 !important; }
+.editorial-generator-form button[type="submit"] { background: #171712 !important; }
+.editorial-generator-form button[type="submit"]:hover { background: #2656d8 !important; }
 
 /* ── 1. Gradient reveal для акцентных слов в H1 ─────────────────────────── */
 @keyframes gradient-reveal {

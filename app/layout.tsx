@@ -120,7 +120,7 @@ gtag('js',new Date());gtag('config','G-MSXLMK8X5K',{anonymize_ip:true});`}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Написать в Telegram"
-          className="fixed bottom-4 right-4 z-40 flex h-12 w-12 items-center justify-center bg-[#171712] text-white shadow-[4px_4px_0_#ff6542] transition-transform duration-200 hover:-translate-y-1 sm:bottom-5 sm:right-5"
+          className="fixed bottom-5 right-5 z-40 hidden h-12 w-12 items-center justify-center bg-[#171712] text-white shadow-[4px_4px_0_#ff6542] transition-transform duration-200 hover:-translate-y-1 sm:flex"
         >
           <svg width="26" height="26" viewBox="0 0 24 24" fill="white" aria-hidden="true">
             <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.14 14.5l-2.95-.924c-.64-.203-.654-.64.136-.954l11.527-4.448c.537-.194 1.006.131.71.074z"/>

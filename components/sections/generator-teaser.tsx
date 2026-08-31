@@ -94,7 +94,7 @@ export function GeneratorTeaser() {
           </h2>
 
           <p className="mt-4 text-base leading-7 text-zinc-600">
-            Опишите свой бизнес — ИИ создаст дизайн за 30 секунд.
+            Опишите свой бизнес — ИИ предложит три первые визуальные концепции.
             Понравится — оформим заявку на разработку.
           </p>
         </div>
@@ -135,7 +135,7 @@ export function GeneratorTeaser() {
             <PlayIcon />
             Попробовать генератор
           </Link>
-          <p className="text-sm text-zinc-400">Бесплатно · Без регистрации · 30 секунд</p>
+          <p className="text-sm text-zinc-400">Бесплатно · Без регистрации · обычно до минуты</p>
         </div>
 
       </div>

@@ -63,9 +63,9 @@ function PeriodSwitch({ isYearly, onSwitch }: PeriodSwitchProps) {
 }
 
 const DISCOUNT_PRICES: Record<string, string> = {
-  "€500–700": "€425–595",
-  "€800–1200": "€680–1020",
-  "€150–250": "€127–212",
+  "от 1 200 BYN": "от 1 020 BYN",
+  "от 2 900 BYN": "от 2 465 BYN",
+  "от 600 BYN": "от 510 BYN",
 };
 
 interface PlanCardProps {
