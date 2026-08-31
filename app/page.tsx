@@ -1,22 +1,18 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { createPageMetadata } from "@/lib/site";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.usegotovo.by";
-
-export const metadata: Metadata = {
-  title: { absolute: "gotovo — разработка сайтов для бизнеса" },
+export const metadata: Metadata = createPageMetadata({
+  title: "gotovo — разработка сайтов для бизнеса",
   description:
     "Проектируем и разрабатываем выразительные сайты для бизнеса. Бесплатная AI-концепция помогает увидеть первое направление до начала проекта.",
-  alternates: { canonical: SITE_URL },
-  openGraph: {
-    url: SITE_URL,
-    title: "gotovo — сайты, с которыми бизнес выглядит убедительно",
-    description:
-      "Структура, дизайн, разработка и запуск. Начните с разговора или бесплатной AI-концепции.",
-    images: [{ url: "/og-redesign.png", width: 1731, height: 909 }],
-  },
-};
+  path: "/",
+  absoluteTitle: true,
+  openGraphTitle: "gotovo — сайты, с которыми бизнес выглядит убедительно",
+  openGraphDescription:
+    "Структура, дизайн, разработка и запуск. Начните с разговора или бесплатной AI-концепции.",
+});
 
 const conceptItems = [
   {

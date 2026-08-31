@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { EditorialServicePage } from "@/components/seo/editorial-service-page";
+import { createPageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Разработка сайтов в Минске — от 1 200 BYN", description: "Разработка сайтов для бизнеса в Минске: лендинги от 1 200 BYN, бизнес-сайты от 2 900 BYN. Структура, дизайн, код и запуск." };
+export const metadata: Metadata = createPageMetadata({ title: "Разработка сайтов в Минске — от 1 200 BYN", description: "Разработка сайтов для бизнеса в Минске: лендинги от 1 200 BYN, бизнес-сайты от 2 900 BYN. Структура, дизайн, код и запуск.", path: "/razrabotka-sajtov-minsk" });
 
 export default function MinskPage(){return <EditorialServicePage breadcrumb="Разработка сайтов в Минске" eyebrow="Веб-студия / Минск" title={<>Сайты для бизнеса<br /><span className="editorial-serif font-normal italic text-signal">в Минске.</span></>} intro={<>Создаём выразительные и понятные сайты для услуг и компаний. Работаем удалённо, но учитываем локальный рынок и географию клиента.</>} note="Лендинг от 1 200 BYN · бизнес-сайт от 2 900 BYN"
 metrics={[{value:"от 1 200 BYN",label:"лендинг"},{value:"от 2 900 BYN",label:"бизнес-сайт"},{value:"30/40/30",label:"поэтапная оплата"}]}

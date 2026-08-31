@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { NICHE_PAGES } from "@/content/seo/niches";
 import { Arrow, EditorialBreadcrumbs, EditorialCta, EditorialHero, EditorialSectionHeader } from "@/components/shared/editorial";
+import { createPageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = { title: "Сайты для разных ниш бизнеса", description: "Структура и функции сайта под стоматологию, салон, ресторан, фитнес, юридическую компанию и клинику. От 1 200 BYN." };
+export const metadata: Metadata = createPageMetadata({ title: "Сайты для разных ниш бизнеса", description: "Структура и функции сайта под стоматологию, салон, ресторан, фитнес, юридическую компанию и клинику. От 1 200 BYN.", path: "/uslugi" });
 
 export default function UslugiPage() {
   return <main className="bg-paper text-ink">

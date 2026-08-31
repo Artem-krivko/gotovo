@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Arrow, EditorialBreadcrumbs, EditorialCta, EditorialHero, EditorialSectionHeader, EditorialVisual } from "@/components/shared/editorial";
+import { createPageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
   title: "Разработка сайтов для бизнеса",
   description: "Лендинги от 1 200 BYN, бизнес-сайты от 2 900 BYN и индивидуальная разработка. Структура, дизайн, код и запуск.",
-};
+  path: "/services",
+});
 
 const formats = [
   { n: "01", title: "Лендинг", price: "от 1 200 BYN", term: "7–10 дней", forWhom: "Одна услуга, продукт, эксперт или рекламная кампания", includes: ["Структура и прототип", "Уникальный визуальный язык", "Адаптивная разработка", "Форма и аналитика", "Базовое техническое SEO"] },

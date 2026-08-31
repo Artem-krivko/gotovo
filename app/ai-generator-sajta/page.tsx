@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { EditorialServicePage } from "@/components/seo/editorial-service-page";
+import { createPageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = { title: "AI-генератор концепций сайта", description: "Бесплатный AI-генератор создаёт три первые визуальные концепции сайта. Это начало разговора о дизайне, а не обещание готового проекта." };
+export const metadata: Metadata = createPageMetadata({ title: "AI-генератор концепций сайта", description: "Бесплатный AI-генератор создаёт три первые визуальные концепции сайта. Это начало разговора о дизайне, а не обещание готового проекта.", path: "/ai-generator-sajta" });
 
 const conceptExamples = [
   { src: "/images/generator/dentist-preview.png", label: "Стоматология", tone: "bg-[#d9e7ff]" },

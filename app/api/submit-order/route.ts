@@ -6,8 +6,7 @@ import { sanitizeUserText } from "@/lib/validation"
 import { clientIp, rateLimit } from "@/lib/rate-limit"
 import { normalizeAttribution } from "@/lib/attribution"
 import type { AttributionData } from "@/lib/attribution"
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+import { SITE_URL } from "@/lib/site"
 
 const RATE_LIMIT = { limit: 5, windowMs: 10 * 60 * 1000 }
 
