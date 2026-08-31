@@ -28,6 +28,12 @@ import { classifyProviderHttpFailure } from "@/lib/generation-diagnostics"
 import { parseGeneratorParams, parseAiContent } from "@/lib/validation"
 import { clientIp, rateLimit } from "@/lib/rate-limit"
 import { db } from "@/lib/db"
+import {
+  GENERATION_QUOTA_COOKIE,
+  GENERATION_QUOTA_LIMIT,
+  readGenerationQuota,
+  writeGenerationQuota,
+} from "@/lib/generation-quota"
 
 export const maxDuration = 60
 
@@ -487,6 +493,30 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  // session_id — техническая cookie, не персональный идентификатор. Квота
+  // хранится в подписанной cookie, поэтому очистка/подмена счётчика без
+  // смены сессии не позволяет просто увеличить число генераций.
+  let sessionId = req.cookies.get(SESSION_COOKIE)?.value
+  let isNewSession = false
+  if (!sessionId || !/^[\w-]{8,64}$/.test(sessionId)) {
+    sessionId = randomUUID()
+    isNewSession = true
+  }
+
+  const quota = readGenerationQuota(
+    req.cookies.get(GENERATION_QUOTA_COOKIE)?.value,
+    sessionId,
+  )
+  if (quota.count >= GENERATION_QUOTA_LIMIT) {
+    return NextResponse.json(
+      {
+        error: "Лимит на сегодня исчерпан. Если хотите обсудить платный сайт — напишите студии.",
+        code: "generation_limit_reached",
+      },
+      { status: 429 },
+    )
+  }
+
   let body: unknown
   try {
     body = await req.json()
@@ -503,13 +533,6 @@ export async function POST(req: NextRequest) {
   // session_id раньше только читался и всегда был "anonymous" — куку никто
   // не выставлял. Теперь заводим её здесь, чтобы связывать генерации одного
   // посетителя между собой.
-  let sessionId = req.cookies.get(SESSION_COOKIE)?.value
-  let isNewSession = false
-  if (!sessionId || !/^[\w-]{8,64}$/.test(sessionId)) {
-    sessionId = randomUUID()
-    isNewSession = true
-  }
-
   const speculativeQueries = getNicheQueries(params.businessType, params.userDescription).slice(0, 2)
   const speculativeImages = Promise.all(
     speculativeQueries.map((query) => fetchPexelsCandidates(query))
@@ -773,6 +796,17 @@ export async function POST(req: NextRequest) {
       maxAge: SESSION_MAX_AGE,
     })
   }
+
+  response.cookies.set(GENERATION_QUOTA_COOKIE, writeGenerationQuota({
+    date: quota.date,
+    count: quota.count + 1,
+  }, sessionId), {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 48,
+  })
 
   return response
 }

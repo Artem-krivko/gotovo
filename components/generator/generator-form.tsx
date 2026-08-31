@@ -145,6 +145,7 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
   const [teamMemberName, setTeamMemberName] = useState("")
   const [teamMemberRole, setTeamMemberRole] = useState("")
   const [error, setError] = useState("")
+  const [limitReached, setLimitReached] = useState(false)
   // generator_form_started шлём один раз — на первое реальное касание формы,
   // а не на монтирование: иначе событие срабатывало бы у всех, кто просто
   // пролистал страницу.
@@ -160,6 +161,7 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
       setError("")
+      setLimitReached(false)
 
       if (!businessType) {
         setError("Выберите тип бизнеса")
@@ -224,6 +226,9 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
         const data = await readApiResponse<GenerateApiResponse>(res, "Ошибка генерации")
 
         if (!res.ok || !data.html || !data.content || !data.spec || !data.assets) {
+          if (res.status === 429 && "code" in data && data.code === "generation_limit_reached") {
+            setLimitReached(true)
+          }
           throw new Error(data.error ?? "Ошибка генерации")
         }
 
@@ -603,9 +608,14 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
 
       {/* Ошибка */}
       {error && (
-        <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">
+        <div role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">
           {error}
-        </p>
+          {limitReached && (
+            <a href="/contacts" className="mt-2 block font-semibold text-violet-700 underline underline-offset-2">
+              Обсудить сайт со студией →
+            </a>
+          )}
+        </div>
       )}
 
       {/* Кнопка */}
