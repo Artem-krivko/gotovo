@@ -6,13 +6,13 @@ import { Cta } from "@/components/sections/cta";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
 
 export const metadata: Metadata = {
-  title: "Создание лендинга в Минске — от 500$ за 7 дней | gotovo",
+  title: "Создание лендинга в Минске — от 1 200 BYN",
   description:
-    "Разработка лендингов для бизнеса в Минске. От 500$, срок 7–10 дней. AI покажет дизайн до оплаты за 30 сек. Адаптив, форма заявки, SEO в комплекте.",
+    "Разработка лендингов для бизнеса в Минске от 1 200 BYN. Срок 7–10 дней. Адаптив, форма заявки и базовое SEO входят в стоимость.",
   alternates: { canonical: `${SITE_URL}/lending-minsk` },
   openGraph: {
-    title: "Создание лендинга в Минске — от 500$ | gotovo",
-    description: "Лендинги от 500$ за 7–10 дней. AI-превью бесплатно. Адаптив и SEO в комплекте.",
+    title: "Создание лендинга в Минске — от 1 200 BYN",
+    description: "Лендинги от 1 200 BYN за 7–10 дней. Бесплатная AI-концепция, адаптив и базовое SEO.",
     url: `${SITE_URL}/lending-minsk`,
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
@@ -31,8 +31,8 @@ const schemaLanding = {
   areaServed: { "@type": "City", name: "Минск", addressCountry: "BY" },
   offers: {
     "@type": "Offer",
-    price: "500",
-    priceCurrency: "USD",
+    price: "1200",
+    priceCurrency: "BYN",
     description: "Лендинг под ключ за 7–10 рабочих дней",
   },
 };
@@ -46,7 +46,7 @@ const faqSchema = {
       name: "Сколько стоит заказать лендинг в Минске?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Лендинг (одностраничный сайт) стоит от 500$. Цена фиксированная и включает дизайн, верстку, форму заявки и базовую SEO-оптимизацию. Никаких скрытых доплат.",
+        text: "Лендинг стоит от 1 200 BYN. В цену входят дизайн, адаптивная верстка, форма заявки и базовая SEO-оптимизация. Точную смету фиксируем после брифа.",
       },
     },
     {
@@ -103,7 +103,7 @@ const WHEN_LANDING = [
 const FAQ_ITEMS = [
   {
     question: "Сколько стоит заказать лендинг в Минске?",
-    answer: "Лендинг (одностраничный сайт) стоит от 500$. Цена фиксированная и включает дизайн, верстку, форму заявки и базовую SEO-оптимизацию. Никаких скрытых доплат.",
+    answer: "Лендинг стоит от 1 200 BYN. В цену входят дизайн, адаптивная верстка, форма заявки и базовая SEO-оптимизация. Точную смету фиксируем после брифа.",
   },
   {
     question: "За сколько дней сделают лендинг?",
@@ -123,7 +123,7 @@ const FAQ_ITEMS = [
   },
   {
     question: "Как оплатить?",
-    answer: "Без предоплаты: вы платите после того, как увидели и одобрили результат. Способ оплаты — удобный вам.",
+    answer: "Поэтапно 30/40/30. Каждый платёж привязан к согласованному результату этапа.",
   },
 ];
 
@@ -171,7 +171,7 @@ export default function LendingMinskPage() {
 
           <div className="flex flex-col items-center text-center">
             <span className="reveal-up inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-1.5 text-sm font-medium text-blue-400">
-              Лендинги · Минск · от 500$
+              Лендинги · Минск · от 1 200 BYN
             </span>
 
             <h1 className="reveal-up delay-1 mt-6 text-4xl font-bold leading-[1.1] tracking-tight text-white sm:text-5xl lg:text-6xl">
@@ -183,17 +183,17 @@ export default function LendingMinskPage() {
 
             <p className="reveal-up delay-2 mt-5 max-w-2xl text-lg leading-7 text-[#A1A1B5]">
               Разрабатываем продающие одностраничные сайты для бизнеса в Минске.{" "}
-              <strong className="text-white">От 500$, срок 7–10 дней.</strong>{" "}
-              AI-генератор покажет дизайн до оплаты — бесплатно за 30 секунд.
+              <strong className="text-white">От 1 200 BYN, срок 7–10 дней.</strong>{" "}
+              AI-генератор бесплатно покажет первую визуальную концепцию.
             </p>
 
             {/* Метрики */}
             <div className="reveal-up delay-3 mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
               {[
-                { value: "от 500$", label: "стоимость" },
+                { value: "от 1 200 BYN", label: "стоимость" },
                 { value: "7–10 дней", label: "срок" },
-                { value: "30 сек", label: "превью дизайна" },
-                { value: "После", label: "оплата" },
+                { value: "≈ 30 сек", label: "AI-концепция" },
+                { value: "30/40/30", label: "оплата" },
               ].map((m) => (
                 <div key={m.label} className="rounded-2xl border border-white/10 bg-[#13131A] px-4 py-4 text-center">
                   <p className="text-lg font-bold text-white">{m.value}</p>

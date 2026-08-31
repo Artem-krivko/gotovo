@@ -9,7 +9,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
 
 export const metadata: Metadata = {
   title: "Услуги — разработка сайтов для бизнеса | gotovo",
-  description: "Лендинги до 300 $, бизнес-сайты до 1000 $. AI-генератор покажет дизайн до оплаты за 30 секунд. Кастомная разработка без шаблонов.",
+  description: "Лендинги от 1 200 BYN, бизнес-сайты от 2 900 BYN. AI-генератор помогает быстро проверить визуальное направление до старта.",
   alternates: { canonical: `${SITE_URL}/services` },
   openGraph: { url: `${SITE_URL}/services`, images: [{ url: "/og-image.png", width: 1200, height: 630 }] },
 };

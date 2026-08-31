@@ -1,108 +1,65 @@
 import Link from "next/link";
 
-const NAV_LINKS = [
-  { href: "/services", label: "Услуги" },
+const NAVIGATION = [
+  { href: "/#concepts", label: "Концепции" },
+  { href: "/#services", label: "Услуги" },
   { href: "/process", label: "Процесс" },
   { href: "/pricing", label: "Цены" },
-  { href: "/about", label: "О нас" },
-  { href: "/contacts", label: "Контакты" },
+  { href: "/about", label: "О студии" },
 ] as const;
 
 const SEO_LINKS = [
   { href: "/razrabotka-sajtov-minsk", label: "Разработка сайтов в Минске" },
-  { href: "/lending-minsk", label: "Лендинги в Минске" },
+  { href: "/lending-minsk", label: "Лендинги для бизнеса" },
   { href: "/sozdanie-sajtov-dlya-biznesa", label: "Сайты для бизнеса" },
-  { href: "/razrabotka-sajtov-ceny", label: "Цены на разработку" },
-  { href: "/ai-generator-sajta", label: "AI генератор сайтов" },
+  { href: "/ai-generator-sajta", label: "AI-концепция сайта" },
 ] as const;
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-white/[0.06] bg-[#0A0A0F]">
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:py-16">
-        <div className="grid gap-10 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
-
-          {/* Brand */}
-          <div>
-            <Link href="/" className="group inline-flex items-center gap-2">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-blue-600 text-sm font-bold text-white">g</span>
-              <span className="text-base font-bold text-white">gotovo</span>
+    <footer className="bg-[#171712] px-4 py-12 text-[#f2efe7] sm:px-6 sm:py-16">
+      <div className="mx-auto max-w-[1440px]">
+        <div className="grid gap-12 border-b border-[#f2efe7]/20 pb-14 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <Link href="/" className="inline-flex items-center gap-2.5">
+              <span className="flex h-9 w-9 items-center justify-center bg-[#f2efe7] text-sm font-bold text-[#171712]">g</span>
+              <span className="text-lg font-bold tracking-[-0.04em]">gotovo</span>
             </Link>
-            <p className="mt-4 max-w-xs text-sm leading-6 text-[#6B6B80]">
-              AI-агентство по разработке сайтов. Генератор дизайна — бесплатно за 30 секунд.
+            <p className="mt-7 max-w-md text-3xl font-medium leading-[1.05] tracking-[-0.04em] sm:text-4xl">
+              Проектируем и запускаем сайты, которыми бизнес может уверенно представляться.
             </p>
-            <Link href="/generator"
-              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:opacity-90 hover:-translate-y-0.5">
-              <span aria-hidden="true">✦</span>
-              Попробовать бесплатно
-            </Link>
           </div>
 
-          {/* Навигация */}
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">
-              Навигация
-            </p>
-            <nav className="mt-4 flex flex-col gap-2.5" aria-label="Навигация в футере">
-              {NAV_LINKS.map((link) => (
-                <Link key={link.href} href={link.href}
-                  className="text-sm text-[#A1A1B5] transition-colors hover:text-white">
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-          </div>
-
-          {/* SEO-ссылки */}
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">
-              Услуги
-            </p>
-            <nav className="mt-4 flex flex-col gap-2.5" aria-label="SEO навигация">
-              {SEO_LINKS.map((link) => (
-                <Link key={link.href} href={link.href}
-                  className="text-sm text-[#A1A1B5] transition-colors hover:text-white">
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-          </div>
-
-          {/* Контакты */}
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">
-              Контакты
-            </p>
-            <div className="mt-4 flex flex-col gap-2.5 text-sm text-[#A1A1B5]">
-              <a href="mailto:info@usegotovo.by" className="transition-colors hover:text-white">
-                info@usegotovo.by
-              </a>
-              <a href="tel:+375296333337" className="transition-colors hover:text-white">
-                +375 29 633-33-37
-              </a>
+          <div className="grid gap-9 sm:grid-cols-3 lg:col-span-7">
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#f2efe7]/45">Навигация</p>
+              <nav className="mt-5 flex flex-col gap-3" aria-label="Навигация в футере">
+                {NAVIGATION.map((link) => <Link key={link.href} href={link.href} className="text-sm text-[#f2efe7]/70 transition hover:text-[#d8ff52]">{link.label}</Link>)}
+              </nav>
             </div>
-            <div className="mt-6 grid grid-cols-2 gap-3">
-              {[
-                { value: "30 сек", label: "генерация" },
-                { value: "300$", label: "до" },
-              ].map((m) => (
-                <div key={m.label} className="rounded-xl border border-white/10 bg-[#13131A] p-3 text-center">
-                  <p className="text-base font-bold text-white">{m.value}</p>
-                  <p className="text-xs text-[#6B6B80]">{m.label}</p>
-                </div>
-              ))}
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#f2efe7]/45">Для поиска</p>
+              <nav className="mt-5 flex flex-col gap-3" aria-label="SEO навигация">
+                {SEO_LINKS.map((link) => <Link key={link.href} href={link.href} className="text-sm leading-5 text-[#f2efe7]/70 transition hover:text-[#d8ff52]">{link.label}</Link>)}
+              </nav>
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#f2efe7]/45">Связаться</p>
+              <div className="mt-5 flex flex-col gap-3 text-sm">
+                <a href="mailto:info@usegotovo.by" className="text-[#f2efe7]/70 transition hover:text-[#d8ff52]">info@usegotovo.by</a>
+                <a href="tel:+375296333337" className="text-[#f2efe7]/70 transition hover:text-[#d8ff52]">+375 29 633-33-37</a>
+                <a href="https://t.me/Artem_k_r" target="_blank" rel="noopener noreferrer" className="text-[#f2efe7]/70 transition hover:text-[#d8ff52]">Telegram ↗</a>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col gap-3 border-t border-white/[0.06] pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-xs text-[#6B6B80]">
-            © {new Date().getFullYear()} gotovo. Все права защищены.
-          </p>
-          <Link href="/privacy"
-            className="text-xs text-[#6B6B80] transition-colors hover:text-[#A1A1B5]">
-            Политика конфиденциальности
-          </Link>
+        <div className="flex flex-col gap-3 pt-6 text-xs text-[#f2efe7]/45 sm:flex-row sm:items-center sm:justify-between">
+          <p>© {new Date().getFullYear()} gotovo · Независимая веб-студия</p>
+          <div className="flex items-center gap-5">
+            <Link href="/privacy" className="hover:text-[#f2efe7]">Политика конфиденциальности</Link>
+            <span>Минск / удалённо</span>
+          </div>
         </div>
       </div>
     </footer>

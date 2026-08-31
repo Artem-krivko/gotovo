@@ -96,7 +96,7 @@ export default function GorodaPage() {
               <div className="text-center">
                 <p className="text-5xl font-black text-white">МСК</p>
                 <p className="mt-2 text-sm text-[#6B6B80]">Минск</p>
-                <p className="mt-1 text-xs text-violet-400">от 500 $</p>
+                <p className="mt-1 text-xs text-violet-400">от 1 200 BYN</p>
               </div>
             </div>
           </Link>
@@ -183,7 +183,7 @@ export default function GorodaPage() {
 
       <Cta
         title="Откуда бы вы ни были — мы сделаем сайт"
-        subtitle="Работаем по всей Беларуси. AI генератор покажет дизайн за 30 секунд — попробуйте прямо сейчас."
+        subtitle="Работаем по всей Беларуси. AI-генератор бесплатно покажет первую визуальную концепцию."
         button="Сгенерировать дизайн бесплатно"
       />
     </main>

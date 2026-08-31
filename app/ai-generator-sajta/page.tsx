@@ -166,7 +166,7 @@ export default function AiGeneratorPage() {
           </div>
 
           <p className="mt-4 text-sm text-[#6B6B80]">
-            AI генерирует на базе <strong className="text-[#A1A1B5]">Claude (Anthropic)</strong> — одной из лучших языковых моделей в мире
+            AI-концепция собирается на базе <strong className="text-[#A1A1B5]">Gemini</strong>, а финальные решения проверяет и дорабатывает дизайнер
           </p>
         </div>
       </section>

@@ -1,194 +1,339 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { Faq } from "@/components/sections/faq";
-import { GeneratorExamplesFilter } from "@/components/sections/generator-examples-filter";
-import { ScrollGlow } from "@/components/shared/scroll-glow";
-import { homeContent } from "@/content/pages/home";
-import { PricingPreview } from "@/components/sections/pricing-preview";
-import { QuickContact } from "@/components/sections/quick-contact";
-import { GENERATOR_CASES } from "@/content/generator-cases";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.usegotovo.by";
 
 export const metadata: Metadata = {
-  title: "gotovo — концепт сайта за 30 секунд, готовый сайт за 7–14 дней",
+  title: { absolute: "gotovo — разработка сайтов для бизнеса" },
   description:
-    "Опишите бизнес — ИИ соберёт персональный концепт сайта за 30 секунд, бесплатно. Подходит направление — доведём до готового сайта. Лендинги до 300 $, бизнес-сайты до 1000 $.",
+    "Проектируем и разрабатываем выразительные сайты для бизнеса. Бесплатная AI-концепция помогает увидеть первое направление до начала проекта.",
   alternates: { canonical: SITE_URL },
-  openGraph: { url: SITE_URL, images: [{ url: "/og-image.png", width: 1200, height: 630 }] },
+  openGraph: {
+    url: SITE_URL,
+    title: "gotovo — сайты, с которыми бизнес выглядит убедительно",
+    description:
+      "Структура, дизайн, разработка и запуск. Начните с разговора или бесплатной AI-концепции.",
+    images: [{ url: "/og-redesign.png", width: 1731, height: 909 }],
+  },
 };
 
-// ─── Иконки ───────────────────────────────────────────────────────────────────
+const conceptItems = [
+  {
+    number: "01",
+    title: "Спокойная уверенность",
+    category: "Концепция для стоматологии",
+    description:
+      "Чистая композиция, человеческая фотография и ясная иерархия — чтобы медицинский сайт вызывал доверие, а не тревогу.",
+    image: "/images/generator/dentist-preview.png",
+    tone: "bg-[#d9e7ff]",
+  },
+  {
+    number: "02",
+    title: "Характер без клише",
+    category: "Концепция для тату-студии",
+    description:
+      "Контрастная типографика и плотный визуальный ритм превращают портфолио мастеров в самостоятельное высказывание.",
+    image: "/images/generator/tattoo-preview.png",
+    tone: "bg-[#ff653c]",
+  },
+  {
+    number: "03",
+    title: "Тёплый цифровой сервис",
+    category: "Концепция для кофейни",
+    description:
+      "Атмосфера места, меню и повод зайти собраны в короткий путь — от первого впечатления до визита.",
+    image: "/images/generator/coffee-preview.png",
+    tone: "bg-[#d7ff52]",
+  },
+] as const;
 
-function PlayIcon() {
+const services = [
+  {
+    number: "01",
+    title: "Лендинг",
+    audience: "Для одной услуги, запуска или рекламной кампании",
+    price: "от 1 200 BYN",
+    terms: "7–10 рабочих дней",
+    features: "Структура · дизайн · адаптив · форма заявки · аналитика · техническое SEO",
+  },
+  {
+    number: "02",
+    title: "Сайт для бизнеса",
+    audience: "Для компании с несколькими услугами и точками принятия решения",
+    price: "от 2 900 BYN",
+    terms: "от 14 рабочих дней",
+    features: "5–7 страниц · дизайн-система · интеграции · аналитика · запуск",
+  },
+  {
+    number: "03",
+    title: "Индивидуальный проект",
+    audience: "Для каталога, сложной логики, анимации или нестандартного продукта",
+    price: "от 4 900 BYN",
+    terms: "после оценки",
+    features: "Исследование · прототип · кастомный интерфейс · разработка · QA",
+  },
+] as const;
+
+const processSteps = [
+  ["Контекст", "Разбираемся в бизнесе, аудитории и задаче сайта."],
+  ["Структура", "Собираем путь пользователя и прототип до визуального дизайна."],
+  ["Направление", "Показываем ключевой экран и фиксируем характер будущего сайта."],
+  ["Система", "Проектируем страницы, состояния и адаптивное поведение."],
+  ["Запуск", "Разрабатываем, тестируем, подключаем аналитику и публикуем."],
+] as const;
+
+const faqs = [
+  {
+    q: "AI-концепция — это готовый сайт?",
+    a: "Нет. Это первая визуальная гипотеза: возможная структура, настроение и подача. Финальный сайт проектируется отдельно — под реальные цели, контент, аудиторию и технические требования бизнеса.",
+  },
+  {
+    q: "Обязательно развивать результат генератора?",
+    a: "Нет. Мы можем развить выбранное направление, объединить решения из нескольких концепций или полностью отказаться от результата и создать дизайн с нуля.",
+  },
+  {
+    q: "Почему цена указана «от»?",
+    a: "На стоимость влияют объём контента, количество уникальных страниц, интеграции и сложность анимации. После короткого разговора мы фиксируем точный состав, цену и этапы до начала разработки.",
+  },
+  {
+    q: "Как устроена оплата?",
+    a: "Сначала вы видите направление. Затем проект оплачивается по этапам после согласованных результатов: структура и направление, полный дизайн, готовая разработка перед публикацией.",
+  },
+] as const;
+
+function Arrow({ diagonal = false }: { diagonal?: boolean }) {
   return (
-    <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-      <path d="M3 2.5l8 4.5-8 4.5V2.5z" fill="currentColor" />
-    </svg>
+    <span aria-hidden="true" className="text-lg leading-none">
+      {diagonal ? "↗" : "→"}
+    </span>
   );
 }
-
-function BoltIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path d="M13 2L4.5 13.5H11L11 22L19.5 10.5H13L13 2Z"
-        stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" fill="rgba(167,139,250,0.15)" />
-    </svg>
-  );
-}
-
-function CalendarIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M3 9h18M8 2v4M16 2v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function CheckCircleIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M8 12l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-// ─── Мокап с видео ────────────────────────────────────────────────────────────
-
-// ─── FLOATING TEMPLATES ───────────────────────────────────────────────────────
-
-function FloatingTemplates() {
-  type CardPos = { src: string; width: number; rotate: number; opacity: number; top?: string; bottom?: string; left?: string; right?: string }
-  const cards: CardPos[] = [
-    // ─── ЛЕВАЯ КОЛОНКА ────────────────────────────────────────────────────────
-    { src: "/templates/t1.png",  top:  "2%",    left: "-4%",  width: 252, rotate:  -8, opacity: 0.88 },
-    { src: "/templates/t2.png",  top:  "38%",   left: "-6%",  width: 244, rotate:   7, opacity: 0.84 },
-    { src: "/templates/t9.png",  bottom: "-4%", left: "-4%",  width: 250, rotate: -10, opacity: 0.86 },
-    // ─── СРЕДНИЙ РЯД — ближе к центру ────────────────────────────────────────
-    { src: "/templates/t13.png", top:  "23%",   left:  "9%",  width: 215, rotate:  -4, opacity: 0.65 },
-    { src: "/templates/t15.png", top:  "23%",   right:  "9%", width: 212, rotate:   5, opacity: 0.65 },
-    // нижний левый (закрываем пустой угол)
-    { src: "/templates/t17.png", bottom: "2%",  left:  "8%",  width: 200, rotate:   6, opacity: 0.58 },
-    // ─── ВЕРХ ЦЕНТР — над текстом ────────────────────────────────────────────
-    { src: "/templates/t4.png",  top: "-6%",    left: "18%",  width: 232, rotate:   5, opacity: 0.76 },
-    { src: "/templates/t22.png", top: "-6%",    left: "40%",  width: 215, rotate:  -6, opacity: 0.70 },
-    { src: "/templates/t19.png", top: "-6%",    left: "62%",  width: 225, rotate:   4, opacity: 0.76 },
-    // ─── ПРАВАЯ КОЛОНКА (разные от левой) ────────────────────────────────────
-    { src: "/templates/t23.png", top:  "2%",    right: "-4%", width: 256, rotate:   9, opacity: 0.88 },
-    { src: "/templates/t25.png", top:  "37%",   right: "-6%", width: 246, rotate:  -5, opacity: 0.84 },
-    { src: "/templates/t27.png", bottom: "-4%", right: "-4%", width: 252, rotate:  11, opacity: 0.86 },
-  ]
-
-  return (
-    <div className="pointer-events-none absolute inset-0 hidden overflow-hidden sm:block" aria-hidden="true">
-      {cards.map((card, i) => (
-        <div
-          key={i}
-          className="absolute overflow-hidden rounded-xl border border-white/[0.08] shadow-2xl shadow-black/60"
-          style={{
-            top: card.top,
-            left: card.left,
-            right: card.right,
-            bottom: card.bottom,
-            width: card.width,
-            transform: `rotate(${card.rotate}deg)`,
-            opacity: card.opacity,
-          }}
-        >
-          <Image
-              src={card.src}
-              alt=""
-              width={card.width}
-              height={Math.round(card.width * 0.667)}
-              sizes="220px"
-              className="block w-full"
-              loading="lazy"
-            />
-        </div>
-      ))}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: [
-            // тёмный центр под текст, прозрачные края — карточки видны
-            "radial-gradient(ellipse 58% 72% at 50% 44%, rgba(10,10,15,0.92) 0%, rgba(10,10,15,0.65) 40%, rgba(10,10,15,0.15) 72%, transparent 100%)",
-            // затемнение верха и сильное низа (защита метрик)
-            "linear-gradient(to bottom, rgba(10,10,15,0.30) 0%, transparent 16%, transparent 68%, rgba(10,10,15,0.96) 88%, rgba(10,10,15,1.00) 100%)",
-          ].join(", "),
-        }}
-      />
-    </div>
-  )
-}
-
-// ─── HERO ─────────────────────────────────────────────────────────────────────
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden bg-[#0A0A0F] px-4 pb-0 pt-12 sm:px-6 sm:pt-16">
-      <div className="pointer-events-none absolute left-0 top-0 h-[500px] w-[500px] -translate-x-1/4 -translate-y-1/4" aria-hidden="true"
-        style={{ background: "radial-gradient(circle, rgba(124,58,237,0.22), transparent 70%)", filter: "blur(60px)" }} />
-      <div className="pointer-events-none absolute right-0 top-1/3 h-[400px] w-[400px] translate-x-1/3" aria-hidden="true"
-        style={{ background: "radial-gradient(circle, rgba(236,72,153,0.16), transparent 70%)", filter: "blur(70px)" }} />
-      <FloatingTemplates />
-      <div className="grid-overlay pointer-events-none absolute inset-0" aria-hidden="true" />
-
-      <div className="relative mx-auto max-w-6xl">
-        <div className="flex flex-col items-center pt-8 pb-4 text-center">
-          <div className="reveal-up badge-animated inline-flex items-center gap-2 rounded-full border border-violet-500/25 bg-[#0A0A0F]/70 px-4 py-1.5 text-sm font-medium text-violet-300 backdrop-blur-md">
-            <span className="pulse-glow h-1.5 w-1.5 rounded-full bg-violet-400" aria-hidden="true" />
-            AI-генератор дизайна сайтов
+    <section className="editorial-hero border-b border-ink/20 px-4 pb-10 pt-10 sm:px-6 sm:pb-14 sm:pt-14 lg:pb-20 lg:pt-20">
+      <div className="mx-auto max-w-[1440px]">
+        <div className="grid gap-10 lg:grid-cols-12 lg:gap-6">
+          <div className="lg:col-span-8">
+            <div className="mb-8 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink/60 sm:mb-12">
+              <span className="inline-block h-2.5 w-2.5 bg-signal" aria-hidden="true" />
+              Независимая веб-студия · Минск / удалённо
+            </div>
+            <h1 className="max-w-[1040px] text-[clamp(3.5rem,6vw,6rem)] font-semibold leading-[0.88] tracking-[-0.07em] text-ink">
+              <span className="block">Сайты, с которыми</span>
+              <span className="block">бизнес выглядит</span>
+              <span className="editorial-serif block font-normal italic tracking-[-0.055em] text-signal">
+                убедительно.
+              </span>
+            </h1>
           </div>
 
-          <h1 className="reveal-up delay-1 mt-5 text-5xl font-bold leading-[1.08] tracking-tight text-white sm:text-6xl lg:text-7xl">
-            Опишите бизнес —<br />
-            получите сайт<br />
-            <span className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-blue-400 bg-clip-text text-transparent">
-              за 30 секунд
-            </span>
-          </h1>
+          <aside className="flex flex-col justify-end border-t border-ink/20 pt-5 lg:col-span-4 lg:border-l lg:border-t-0 lg:pl-7 lg:pt-0">
+            <p className="max-w-md text-lg leading-7 text-ink/78 sm:text-xl sm:leading-8">
+              Исследуем задачу, проектируем структуру, создаём дизайн и запускаем сайт. AI помогает быстрее увидеть первое направление — решения принимает человек.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
+              <Link className="editorial-button editorial-button--dark" href="/contacts">
+                Обсудить проект <Arrow />
+              </Link>
+              <Link className="editorial-button editorial-button--line" href="/generator">
+                AI-концепция <Arrow diagonal />
+              </Link>
+            </div>
+          </aside>
+        </div>
 
-          <p className="reveal-up delay-2 mt-5 max-w-lg text-base leading-7 text-[#A1A1B5] sm:text-lg">
-            Искусственный интеллект создаст дизайн сайта
-            по описанию вашего бизнеса.
-            Нравится — заказывайте разработку.
-          </p>
-
-          <div className="reveal-up delay-3 mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:justify-center">
-            <Link href="/generator"
-              className="btn-shimmer inline-flex items-center justify-center gap-2 rounded-xl px-8 py-4 text-sm font-bold text-white shadow-xl shadow-violet-500/40 transition hover:opacity-90 hover:-translate-y-0.5">
-              <span className="text-base" aria-hidden="true">✦</span>
-              Сгенерировать дизайн
-            </Link>
-            <Link href="/process"
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-8 py-4 text-sm font-medium text-white backdrop-blur transition hover:bg-white/10 hover:border-white/20">
-              <PlayIcon />
-              Как это работает?
-            </Link>
+        <div className="mt-12 grid gap-3 sm:grid-cols-12 lg:mt-20">
+          <div className="relative min-h-[290px] overflow-hidden bg-[#222] sm:col-span-8 sm:min-h-[430px] lg:min-h-[540px]">
+            <Image
+              src="/images/hero-ui.jpg"
+              alt="Фрагменты интерфейсов и веб-дизайна"
+              fill
+              priority
+              sizes="(max-width: 640px) 100vw, 66vw"
+              className="object-cover opacity-90 grayscale-[15%]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+            <p className="absolute bottom-5 left-5 max-w-sm text-sm leading-5 text-white sm:bottom-7 sm:left-7 sm:text-base">
+              Не подгоняем бизнес под готовый шаблон. Сначала находим смысл и только потом форму.
+            </p>
           </div>
+          <div className="flex min-h-[290px] flex-col justify-between bg-cobalt p-5 text-white sm:col-span-4 sm:p-7 lg:min-h-[540px]">
+            <div className="flex items-start justify-between text-xs uppercase tracking-[0.16em] text-white/70">
+              <span>Первый шаг</span>
+              <span>30–60 сек</span>
+            </div>
+            <div>
+              <p className="editorial-serif text-4xl italic leading-none sm:text-5xl lg:text-6xl">Увидеть идею до созвона.</p>
+              <p className="mt-5 max-w-sm text-sm leading-6 text-white/75 sm:text-base">
+                Опишите бизнес и получите бесплатную AI-концепцию: возможную структуру, визуальное направление и подачу.
+              </p>
+              <Link href="/generator" className="mt-8 inline-flex items-center gap-3 border-b border-white pb-1 text-sm font-semibold">
+                Получить концепцию <Arrow />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
 
-          <div className="reveal-up mt-4 flex flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-xs text-[#6B6B80]">
-            <span><span className="text-emerald-400">✓</span> Без предоплаты</span>
-            <span><span className="text-emerald-400">✓</span> Ответим в течение часа</span>
-            <span><span className="text-emerald-400">✓</span> 10+ проектов запущено</span>
+function Statement() {
+  return (
+    <section className="bg-ink px-4 py-16 text-paper sm:px-6 sm:py-24 lg:py-32">
+      <div className="mx-auto grid max-w-[1440px] gap-10 lg:grid-cols-12">
+        <div className="lg:col-span-3">
+          <p className="section-index text-paper/55">01 / Подход</p>
+        </div>
+        <div className="lg:col-span-9">
+          <h2 className="max-w-5xl text-[clamp(2.4rem,5vw,5.4rem)] font-medium leading-[0.98] tracking-[-0.055em]">
+            AI ускоряет поиск, но не заменяет
+            <span className="editorial-serif font-normal italic text-acid"> вкус, ответственность и диалог.</span>
+          </h2>
+          <div className="mt-12 grid gap-8 border-t border-paper/20 pt-6 sm:grid-cols-3">
+            {[
+              ["Смысл раньше декора", "Структура начинается с задачи бизнеса, а не с понравившегося эффекта."],
+              ["Одна цельная система", "Тексты, сетка, изображения и motion работают как части одного решения."],
+              ["Запуск — не финал картинки", "Проверяем мобильный UX, формы, аналитику, SEO и скорость."],
+            ].map(([title, text], index) => (
+              <div key={title}>
+                <span className="text-xs text-paper/45">0{index + 1}</span>
+                <h3 className="mt-4 text-lg font-semibold">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-paper/62">{text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ConceptLab() {
+  return (
+    <section id="concepts" className="scroll-mt-20 bg-paper px-4 py-16 sm:px-6 sm:py-24 lg:py-32">
+      <div className="mx-auto max-w-[1440px]">
+        <div className="grid gap-8 border-b border-ink/20 pb-8 lg:grid-cols-12 lg:items-end">
+          <p className="section-index lg:col-span-3">02 / Концепт-лаборатория</p>
+          <div className="lg:col-span-9 lg:flex lg:items-end lg:justify-between lg:gap-10">
+            <h2 className="text-[clamp(2.7rem,6vw,6.4rem)] font-semibold leading-[0.9] tracking-[-0.065em]">Не портфолио.<br />Проверка идей.</h2>
+            <p className="mt-6 max-w-md text-sm leading-6 text-ink/65 lg:mt-0">
+              Это независимые концепции для демонстрации подхода, а не выданные за клиентские работы кейсы. Реальный проект всегда начинается с вашего контекста.
+            </p>
           </div>
         </div>
 
-        <div className="reveal-up delay-4 mt-6 grid grid-cols-3 gap-2 border-t border-white/[0.06] py-4 sm:gap-4">
-          {[
-            { icon: <BoltIcon />, value: "30 секунд", label: "время генерации дизайна", color: "text-violet-400", border: "border-violet-500/40", glow: "shadow-lg shadow-violet-500/20" },
-            { icon: <CalendarIcon />, value: "7–14 дней", label: "срок разработки", color: "text-blue-400", border: "border-blue-500/40", glow: "shadow-lg shadow-blue-500/20" },
-            { icon: <CheckCircleIcon />, value: "Без предоплаты", label: "оплата после результата", color: "text-emerald-400", border: "border-emerald-500/40", glow: "shadow-lg shadow-emerald-500/20" },
-          ].map((m) => (
-            <div key={m.label} className={`flex items-center gap-3 rounded-2xl border ${m.border} bg-[#13131A] px-3 py-4 ${m.glow} sm:px-5`}>
-              <span className={`shrink-0 ${m.color}`}>{m.icon}</span>
-              <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-white sm:text-base">{m.value}</p>
-                <p className="mt-0.5 truncate text-[10px] leading-4 text-[#6B6B80] sm:text-xs">{m.label}</p>
+        <div className="divide-y divide-ink/20">
+          {conceptItems.map((item, index) => (
+            <article key={item.number} className="grid gap-6 py-8 sm:py-12 lg:grid-cols-12 lg:gap-8 lg:py-16">
+              <div className="flex justify-between lg:col-span-3 lg:block">
+                <p className="text-xs font-semibold tracking-[0.16em]">{item.number}</p>
+                <p className="mt-0 text-xs uppercase tracking-[0.14em] text-ink/50 lg:mt-8">{item.category}</p>
               </div>
+              <div className={`relative min-h-[300px] overflow-hidden p-4 sm:min-h-[480px] sm:p-7 lg:col-span-6 ${item.tone}`}>
+                <div className={`relative h-full min-h-[268px] overflow-hidden shadow-[0_24px_70px_rgba(0,0,0,0.22)] sm:min-h-[424px] ${index === 1 ? "rotate-[1.2deg]" : index === 2 ? "-rotate-[0.8deg]" : "rotate-[0.4deg]"}`}>
+                  <Image
+                    src={item.image}
+                    alt={item.category}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover object-top"
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col justify-end lg:col-span-3">
+                <h3 className="text-3xl font-semibold leading-[1.02] tracking-[-0.04em] sm:text-4xl">{item.title}</h3>
+                <p className="mt-5 text-sm leading-6 text-ink/65">{item.description}</p>
+                <Link href="/generator" className="mt-7 inline-flex w-fit items-center gap-3 border-b border-ink pb-1 text-sm font-semibold">
+                  Исследовать своё направление <Arrow />
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Services() {
+  return (
+    <section id="services" className="scroll-mt-20 bg-[#e6e2d8] px-4 py-16 sm:px-6 sm:py-24 lg:py-32">
+      <div className="mx-auto max-w-[1440px]">
+        <div className="grid gap-8 lg:grid-cols-12">
+          <p className="section-index lg:col-span-3">03 / Форматы работы</p>
+          <div className="lg:col-span-9">
+            <h2 className="max-w-4xl text-[clamp(2.7rem,6vw,6.4rem)] font-semibold leading-[0.9] tracking-[-0.065em]">
+              От сильной страницы до цифровой системы.
+            </h2>
+          </div>
+        </div>
+
+        <div className="mt-14 border-t border-ink sm:mt-20">
+          {services.map((service) => (
+            <article key={service.number} className="group grid gap-4 border-b border-ink/30 py-7 transition-colors hover:bg-paper/40 sm:py-9 lg:grid-cols-12 lg:items-start">
+              <p className="text-xs font-semibold lg:col-span-1">{service.number}</p>
+              <h3 className="text-3xl font-semibold tracking-[-0.045em] sm:text-4xl lg:col-span-3">{service.title}</h3>
+              <div className="lg:col-span-4">
+                <p className="max-w-md text-sm leading-6 text-ink/70">{service.audience}</p>
+                <p className="mt-4 text-xs leading-5 text-ink/48">{service.features}</p>
+              </div>
+              <div className="flex items-end justify-between gap-4 lg:col-span-3 lg:block">
+                <p className="text-xl font-semibold">{service.price}</p>
+                <p className="mt-1 text-xs text-ink/50">{service.terms}</p>
+              </div>
+              <Link href="/contacts" aria-label={`Обсудить ${service.title.toLowerCase()}`} className="flex h-12 w-12 items-center justify-center justify-self-end rounded-full border border-ink text-xl transition group-hover:rotate-[-35deg] group-hover:bg-ink group-hover:text-paper lg:col-span-1">
+                <Arrow diagonal />
+              </Link>
+            </article>
+          ))}
+        </div>
+
+        <div className="mt-8 flex flex-col gap-3 text-sm text-ink/60 sm:flex-row sm:items-center sm:justify-between">
+          <p>Точная цена фиксируется после обсуждения задачи и не меняется без согласования объёма.</p>
+          <Link href="/pricing" className="inline-flex w-fit items-center gap-2 font-semibold text-ink">Что входит в стоимость <Arrow /></Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function GeneratorStory() {
+  return (
+    <section id="generator-story" className="scroll-mt-20 overflow-hidden bg-cobalt px-4 py-16 text-white sm:px-6 sm:py-24 lg:py-32">
+      <div className="mx-auto max-w-[1440px]">
+        <div className="grid gap-12 lg:grid-cols-12">
+          <div className="lg:col-span-7">
+            <p className="section-index text-white/60">04 / AI-концепция</p>
+            <h2 className="mt-9 text-[clamp(3rem,7vw,7.2rem)] font-semibold leading-[0.86] tracking-[-0.07em]">
+              Быстрый старт,<br />не короткий путь.
+            </h2>
+          </div>
+          <div className="flex flex-col justify-end lg:col-span-5">
+            <p className="max-w-xl text-xl leading-8 text-white/82">
+              Генератор помогает перейти от абстрактного «хочу сайт» к предметному разговору о структуре, настроении и приоритетах.
+            </p>
+            <p className="mt-5 max-w-xl text-sm leading-6 text-white/58">
+              Концепция не ограничивает будущий дизайн. Мы можем развить её, соединить понравившиеся решения или начать заново после исследования бизнеса.
+            </p>
+            <Link href="/generator" className="mt-9 inline-flex w-fit items-center gap-3 bg-white px-6 py-4 text-sm font-semibold text-cobalt transition hover:bg-acid">
+              Получить AI-концепцию <Arrow />
+            </Link>
+          </div>
+        </div>
+
+        <div className="mt-16 grid border-t border-white/30 sm:grid-cols-3 lg:mt-24">
+          {[
+            ["До", "Опишите бизнес, аудиторию и задачу. Получите возможную структуру и визуальное направление."],
+            ["Результат", "Смотрите концепцию как первую гипотезу — ценную, но открытую для профессиональной доработки."],
+            ["После", "Обсудите идею с дизайнером, уточните задачу и получите предложение по полноценной разработке."],
+          ].map(([title, text], index) => (
+            <div key={title} className="border-b border-white/30 py-7 sm:border-b-0 sm:border-r sm:px-6 sm:first:pl-0 sm:last:border-r-0">
+              <p className="text-xs text-white/45">0{index + 1}</p>
+              <h3 className="mt-5 text-2xl font-semibold">{title}</h3>
+              <p className="mt-4 max-w-sm text-sm leading-6 text-white/62">{text}</p>
             </div>
           ))}
         </div>
@@ -197,269 +342,120 @@ function Hero() {
   );
 }
 
-// ─── КАК ЭТО РАБОТАЕТ ────────────────────────────────────────────────────────
-
-function StepIconDescribe() {
+function Process() {
   return (
-    <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-violet-800 shadow-lg shadow-violet-500/30">
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <path d="M3 14.5V17h2.5l7.37-7.37-2.5-2.5L3 14.5z" fill="white" fillOpacity="0.9"/>
-        <path d="M16.71 5.04a1 1 0 0 0 0-1.41l-1.34-1.34a1 1 0 0 0-1.41 0l-1.05 1.05 2.75 2.75 1.05-1.05z" fill="white"/>
-      </svg>
-    </div>
-  );
-}
-
-function StepIconAI() {
-  return (
-    <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 shadow-lg shadow-blue-500/30">
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <circle cx="10" cy="10" r="3" fill="white"/>
-        <path d="M10 3v2M10 15v2M3 10h2M15 10h2M5.05 5.05l1.42 1.42M13.54 13.54l1.41 1.41M5.05 14.95l1.42-1.41M13.54 6.46l1.41-1.41" stroke="white" strokeWidth="1.3" strokeLinecap="round" strokeOpacity="0.8"/>
-      </svg>
-    </div>
-  );
-}
-
-function StepIconEye() {
-  return (
-    <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-fuchsia-500 to-pink-600 shadow-lg shadow-fuchsia-500/30">
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <path d="M2 10s3-5.5 8-5.5S18 10 18 10s-3 5.5-8 5.5S2 10 2 10z" stroke="white" strokeWidth="1.5" strokeLinejoin="round" fill="white" fillOpacity="0.1"/>
-        <circle cx="10" cy="10" r="2.5" fill="white"/>
-      </svg>
-    </div>
-  );
-}
-
-function StepIconBrush() {
-  return (
-    <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-blue-500 shadow-lg shadow-emerald-500/30">
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <path d="M3 17c2-2 4-3 6-3s4 2 4 4" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
-        <path d="M4 13l9-9 3 3-9 9" stroke="white" strokeWidth="1.5" strokeLinejoin="round"/>
-      </svg>
-    </div>
-  );
-}
-
-function StepIconRocket() {
-  return (
-    <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-lg shadow-amber-500/30">
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-        <path d="M10 2C10 2 14 4 14 9c0 2.5-1 4.5-4 6-3-1.5-4-3.5-4-6 0-5 4-7 4-7z" fill="white" fillOpacity="0.9"/>
-        <path d="M7 13l-2 3M13 13l2 3" stroke="white" strokeWidth="1.3" strokeLinecap="round" strokeOpacity="0.6"/>
-        <path d="M8 16h4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeOpacity="0.5"/>
-      </svg>
-    </div>
-  );
-}
-
-function HowItWorks() {
-  const steps = [
-    { num: "1", icon: <StepIconDescribe />, title: "Опишите бизнес", desc: "Расскажите о своей компании в паре предложений" },
-    { num: "2", icon: <StepIconAI />, title: "AI создаёт дизайн", desc: "Искусственный интеллект собирает концепт дизайна за 30 секунд" },
-    { num: "3", icon: <StepIconEye />, title: "Посмотрите и оцените", desc: "Оцените дизайн. Нравится — переходим к разработке" },
-    { num: "4", icon: <StepIconBrush />, title: "Мы дорабатываем", desc: "Берём AI-дизайн как основу и доводим до профессионального результата" },
-    { num: "5", icon: <StepIconRocket />, title: "Получите готовый сайт", desc: "Запускаем под ключ, настраиваем аналитику и SEO" },
-  ];
-
-  return (
-    <>
-      <div className="relative px-6" aria-hidden="true">
-        <div className="h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
-      </div>
-      <ScrollGlow className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
-        <div className="glow-orb -top-24 -right-24 h-[400px] w-[400px]" aria-hidden="true"
-          style={{ background: "radial-gradient(circle, rgba(124,58,237,0.18), transparent 65%)" }} />
-        <div className="mx-auto max-w-6xl">
-          <div className="reveal-up text-center">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Как это работает</p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">Пять шагов до готового сайта</h2>
+    <section id="process" className="scroll-mt-20 bg-paper px-4 py-16 sm:px-6 sm:py-24 lg:py-32">
+      <div className="mx-auto max-w-[1440px]">
+        <div className="grid gap-8 lg:grid-cols-12">
+          <p className="section-index lg:col-span-3">05 / Процесс</p>
+          <div className="lg:col-span-9">
+            <h2 className="text-[clamp(2.7rem,6vw,6.4rem)] font-semibold leading-[0.9] tracking-[-0.065em]">Понятно, что происходит дальше.</h2>
           </div>
-          <div className="flex flex-col gap-3 mt-10 sm:hidden">
-            {steps.map((step, i) => (
-              <div key={step.num} className="flex items-start gap-4 rounded-2xl border border-white/10 bg-[#13131A] p-4">
-                <div className="mt-0.5 flex flex-col items-center gap-1.5">
-                  <div className={`h-2.5 w-2.5 shrink-0 rounded-full ${i===0?"bg-violet-500":i===1?"bg-blue-500":i===2?"bg-fuchsia-500":i===3?"bg-emerald-500":"bg-amber-500"}`} aria-hidden="true" />
-                  {i < steps.length - 1 && <div className="w-px bg-white/[0.06]" style={{minHeight:"24px"}} aria-hidden="true" />}
-                </div>
-                <div className="min-w-0">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-[#6B6B80]">{String(i+1).padStart(2,"0")}</p>
-                  <p className="mt-0.5 text-sm font-semibold text-white">{step.title}</p>
-                  <p className="mt-1 text-xs leading-5 text-[#6B6B80]">{step.desc}</p>
-                </div>
+        </div>
+        <ol className="mt-14 grid border-t border-ink lg:mt-20 lg:grid-cols-5">
+          {processSteps.map(([title, text], index) => (
+            <li key={title} className="relative border-b border-ink/30 py-7 lg:min-h-[310px] lg:border-b-0 lg:border-r lg:px-5 lg:first:pl-0 lg:last:border-r-0">
+              <span className="text-xs">0{index + 1}</span>
+              <div className="mt-12 lg:mt-28">
+                <h3 className="text-2xl font-semibold">{title}</h3>
+                <p className="mt-3 max-w-xs text-sm leading-6 text-ink/62">{text}</p>
               </div>
-            ))}
-          </div>
-          <ol className="mt-10 hidden gap-4 sm:grid sm:grid-cols-5">
-            {steps.map((step, i) => (
-              <li key={step.num} className="relative">
-                {i < steps.length - 1 && (
-                  <div className="pointer-events-none absolute -right-3 top-8 z-10 hidden lg:block" aria-hidden="true">
-                    <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
-                      <path d="M0 7h16M11 2l7 5-7 5" stroke="rgba(124,58,237,0.35)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  </div>
-                )}
-                <div className={`reveal-up flex h-full flex-col rounded-2xl border border-white/10 bg-[#13131A] p-5 transition hover:border-violet-500/30 hover:bg-[#1C1C28] ${i===0?"delay-1":i===1?"delay-2":i===2?"delay-3":i===3?"delay-4":""}`}>
-                  <span className="pointer-events-none absolute right-3 top-2 select-none text-5xl font-black leading-none text-white/[0.04]" aria-hidden="true">{step.num}</span>
-                  <div className="mb-3 flex items-center gap-2">
-                    {step.icon}
-                    <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-violet-500/30 bg-violet-500/10 text-[10px] font-bold text-violet-400">{step.num}</span>
-                  </div>
-                  <h3 className="text-sm font-semibold text-white">{step.title}</h3>
-                  <p className="mt-2 flex-1 text-xs leading-5 text-[#6B6B80]">{step.desc}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
+            </li>
+          ))}
+        </ol>
+        <div className="mt-8 flex justify-end">
+          <Link href="/process" className="inline-flex items-center gap-3 border-b border-ink pb-1 text-sm font-semibold">Подробный процесс <Arrow /></Link>
         </div>
-      </ScrollGlow>
-    </>
-  );
-}
-
-// ─── ПРИМЕРЫ ДИЗАЙНОВ ────────────────────────────────────────────────────────
-
-function GeneratorExamples() {
-  const categories = ["Медицина", "Красота", "Спорт", "Еда", "B2B", "Tech"];
-  return (
-    <section className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
-      <div className="mx-auto max-w-6xl">
-        <div className="reveal-up text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Результаты генератора</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Посмотрите что{" "}
-            <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">создаёт AI</span>
-          </h2>
-          <p className="mt-3 text-[#A1A1B5]">5 ниш — 5 разных стилей. Каждый дизайн под характер бизнеса.</p>
-        </div>
-        <GeneratorExamplesFilter cases={GENERATOR_CASES} categories={categories} />
       </div>
     </section>
   );
 }
 
-// ─── ДЛЯ КОГО ─────────────────────────────────────────────────────────────────
-
-function IconCafe() {
-  return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 2v4M10 2v4M14 2v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M4 6h12l-1.5 10a2 2 0 0 1-2 1.8H7.5a2 2 0 0 1-2-1.8L4 6z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/><path d="M16 8h2a2 2 0 0 1 0 4h-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M3 20h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-}
-function IconBeauty() {
-  return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2C9 2 7 5 7 8c0 2.5 1.5 4.5 3.5 5.5V17h3v-3.5C15.5 12.5 17 10.5 17 8c0-3-2-6-5-6z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/><path d="M10 17v1a2 2 0 0 0 4 0v-1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M9 8h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-}
-function IconClinic() {
-  return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="6" width="18" height="15" rx="2" stroke="currentColor" strokeWidth="1.5"/><path d="M3 11h18" stroke="currentColor" strokeWidth="1.5"/><path d="M12 2v4M10 4h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M10 15h4M12 13v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-}
-function IconExpert() {
-  return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.5"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/><path d="M16 3l1.5 1.5L21 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-}
-function IconBusiness() {
-  return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" stroke="currentColor" strokeWidth="1.5"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" stroke="currentColor" strokeWidth="1.5"/><path d="M12 12v4M10 14h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-}
-function IconServices() {
-  return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2l2.5 5 5.5.8-4 3.9.9 5.5L12 14.8l-4.9 2.6.9-5.5L4 7.8l5.5-.8L12 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/><path d="M5 20h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/></svg>
-}
-
-function ForWhom() {
-  const categories = [
-    { icon: <IconCafe />, color: "text-amber-400", bg: "bg-amber-500/10 border-amber-500/20", label: "Кафе и рестораны" },
-    { icon: <IconBeauty />, color: "text-pink-400", bg: "bg-pink-500/10 border-pink-500/20", label: "Салоны красоты" },
-    { icon: <IconClinic />, color: "text-blue-400", bg: "bg-blue-500/10 border-blue-500/20", label: "Клиники и медицина" },
-    { icon: <IconExpert />, color: "text-violet-400", bg: "bg-violet-500/10 border-violet-500/20", label: "Эксперты и коучи" },
-    { icon: <IconBusiness />, color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20", label: "Малый бизнес" },
-    { icon: <IconServices />, color: "text-fuchsia-400", bg: "bg-fuchsia-500/10 border-fuchsia-500/20", label: "Компании и услуги" },
-  ];
-
+function Trust() {
   return (
-    <>
-      <div className="relative px-6" aria-hidden="true">
-        <div className="h-px bg-gradient-to-r from-transparent via-fuchsia-500/15 to-transparent" />
-      </div>
-      <ScrollGlow className="bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
-        <div className="glow-orb top-0 left-1/2 -translate-x-1/2 h-[350px] w-[700px]" aria-hidden="true"
-          style={{ background: "radial-gradient(ellipse, rgba(217,70,239,0.1), transparent 65%)" }} />
-        <div className="mx-auto max-w-6xl">
-          <div className="reveal-up text-center">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Кому подойдёт</p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl">Для любого бизнеса</h2>
-          </div>
-          <div className="-mx-4 mt-10 sm:hidden">
-            <div className="niches-scroll overflow-x-auto px-4 pb-3" style={{ scrollSnapType: "x mandatory" }}>
-              <div className="flex gap-4">
-                {categories.map((cat) => (
-                  <div key={cat.label} className="flex w-[40vw] max-w-[160px] shrink-0 flex-col items-center gap-3 rounded-2xl border border-white/10 bg-[#13131A] p-5 text-center" style={{ scrollSnapAlign: "start" }}>
-                    <div className={`inline-flex h-11 w-11 items-center justify-center rounded-xl border ${cat.bg} ${cat.color}`}>{cat.icon}</div>
-                    <p className="text-sm font-medium text-[#A1A1B5]">{cat.label}</p>
-                  </div>
-                ))}
-                <div className="w-4 shrink-0" aria-hidden="true" />
-              </div>
-            </div>
-          </div>
-          <div className="mt-10 hidden grid-cols-6 gap-4 sm:grid">
-            {categories.map((cat, i) => (
-              <div key={cat.label} className={`reveal-up flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-[#13131A] p-5 text-center transition hover:border-white/20 hover:bg-[#1C1C28] ${i<2?"delay-1":i<4?"delay-2":"delay-3"}`}>
-                <div className={`inline-flex h-12 w-12 items-center justify-center rounded-xl border ${cat.bg} ${cat.color}`}>{cat.icon}</div>
-                <p className="text-sm font-medium text-[#A1A1B5]">{cat.label}</p>
-              </div>
-            ))}
-          </div>
+    <section className="bg-acid px-4 py-16 text-ink sm:px-6 sm:py-24 lg:py-28">
+      <div className="mx-auto grid max-w-[1440px] gap-12 lg:grid-cols-12">
+        <div className="lg:col-span-5">
+          <p className="section-index">06 / Без театра масштаба</p>
+          <h2 className="mt-9 text-[clamp(2.8rem,5.6vw,6rem)] font-semibold leading-[0.9] tracking-[-0.065em]">
+            Новая студия.<br />Взрослый процесс.
+          </h2>
         </div>
-      </ScrollGlow>
-    </>
+        <div className="grid gap-8 border-t border-ink pt-7 sm:grid-cols-2 lg:col-span-7">
+          {[
+            ["Не придумываем кейсы", "Концепции называем концепциями. Реальные проекты появятся здесь только с разрешения клиентов."],
+            ["Фиксируем договорённости", "До старта понятны объём, стоимость, этапы, сроки и количество итераций."],
+            ["Показываем промежуточный результат", "Вы не ждёте финала вслепую: структура и направление согласуются раньше разработки."],
+            ["Проверяем то, что нельзя увидеть на макете", "Формы, мобильный UX, доступность, SEO, скорость и аналитика входят в процесс запуска."],
+          ].map(([title, text]) => (
+            <div key={title}>
+              <h3 className="text-lg font-semibold">{title}</h3>
+              <p className="mt-3 text-sm leading-6 text-ink/68">{text}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
-// ─── ФИНАЛЬНЫЙ CTA ────────────────────────────────────────────────────────────
+function Faq() {
+  return (
+    <section className="bg-paper px-4 py-16 sm:px-6 sm:py-24 lg:py-32">
+      <div className="mx-auto grid max-w-[1440px] gap-12 lg:grid-cols-12">
+        <div className="lg:col-span-4">
+          <p className="section-index">07 / Коротко о важном</p>
+          <h2 className="mt-8 text-5xl font-semibold leading-[0.92] tracking-[-0.055em] sm:text-6xl">Вопросы<br />до старта.</h2>
+        </div>
+        <div className="border-t border-ink lg:col-span-8">
+          {faqs.map((item, index) => (
+            <details key={item.q} className="group border-b border-ink/30 py-1">
+              <summary className="flex cursor-pointer list-none items-start justify-between gap-5 py-6 text-left text-lg font-semibold sm:text-xl">
+                <span className="flex gap-4"><span className="mt-1 text-xs font-normal text-ink/45">0{index + 1}</span>{item.q}</span>
+                <span className="text-2xl font-normal transition-transform group-open:rotate-45" aria-hidden="true">+</span>
+              </summary>
+              <p className="max-w-2xl pb-7 pl-9 text-sm leading-6 text-ink/65 sm:text-base sm:leading-7">{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function FinalCta() {
   return (
-    <>
-      <div className="relative px-6" aria-hidden="true">
-        <div className="h-px bg-gradient-to-r from-transparent via-violet-500/20 to-transparent" />
-      </div>
-      <section className="relative overflow-hidden bg-[#0A0A0F] px-4 py-16 sm:px-6 sm:py-24">
-        <div className="mx-auto max-w-3xl">
-          <div className="relative overflow-hidden rounded-3xl border border-violet-500/20 bg-gradient-to-br from-violet-500/10 via-[#13131A] to-blue-500/5 p-8 text-center sm:p-14">
-            <div className="cta-glow-pulse pointer-events-none absolute inset-0 rounded-3xl" aria-hidden="true"
-              style={{ background: "radial-gradient(ellipse 70% 60% at 50% 0%, rgba(124,58,237,0.5), transparent 70%)" }} />
-            <div className="grid-overlay pointer-events-none absolute inset-0 rounded-3xl opacity-40" aria-hidden="true" />
-            <div className="relative">
-              <p className="text-xs font-semibold uppercase tracking-widest text-violet-400">Готовы увидеть концепт за 30 секунд?</p>
-              <h2 className="mt-4 text-3xl font-bold tracking-tight text-white sm:text-4xl">
-                Опишите свой бизнес и получите<br className="hidden sm:block" /> дизайн прямо сейчас
-              </h2>
-              <p className="mt-4 text-[#A1A1B5]">Бесплатно. Без регистрации. Нравится — заказываете разработку.</p>
-              <Link href="/generator"
-                className="btn-shimmer mt-8 inline-flex items-center gap-2 rounded-xl px-8 py-4 text-sm font-bold text-white shadow-xl shadow-violet-500/30 transition hover:opacity-90 hover:-translate-y-0.5">
-                <span aria-hidden="true">✦</span> Попробовать бесплатно
-              </Link>
-            </div>
+    <section className="bg-signal px-4 py-16 text-ink sm:px-6 sm:py-24 lg:py-28">
+      <div className="mx-auto max-w-[1440px]">
+        <p className="section-index">08 / Начать проект</p>
+        <div className="mt-10 grid gap-10 lg:grid-cols-12 lg:items-end">
+          <h2 className="text-[clamp(3.2rem,8vw,8rem)] font-semibold leading-[0.84] tracking-[-0.075em] lg:col-span-9">
+            Есть задача?<br />Давайте сделаем
+            <span className="editorial-serif font-normal italic text-paper"> хорошо.</span>
+          </h2>
+          <div className="lg:col-span-3">
+            <p className="text-sm leading-6 text-ink/70">Расскажите о бизнесе и результате, который хотите получить. Ответим в течение рабочего дня.</p>
+            <Link href="/contacts" className="mt-7 flex items-center justify-between border-y border-ink py-4 text-sm font-semibold">
+              Обсудить проект <Arrow diagonal />
+            </Link>
           </div>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
 
-// ─── Страница ─────────────────────────────────────────────────────────────────
-
 export default function Home() {
   return (
-    <main>
+    <main className="overflow-hidden bg-paper text-ink">
       <Hero />
-      <QuickContact />
-      <HowItWorks />
-      <GeneratorExamples />
-      <ForWhom />
-      <PricingPreview />
-      <Faq
-        title="Частые вопросы"
-        subtitle="Отвечаем на то что чаще всего спрашивают"
-        items={homeContent.faq.items}
-      />
+      <Statement />
+      <ConceptLab />
+      <Services />
+      <GeneratorStory />
+      <Process />
+      <Trust />
+      <Faq />
       <FinalCta />
     </main>
   );

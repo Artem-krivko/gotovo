@@ -8,7 +8,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio"
 export const metadata: Metadata = {
   title: "Создание сайтов по нишам — для любого бизнеса | gotovo",
   description:
-    "Сайты для стоматологий, салонов красоты, ресторанов, фитнес-клубов, юристов и медклиник. Минск и вся Беларусь. AI дизайн за 30 сек, от 500 $.",
+    "Сайты для стоматологий, салонов красоты, ресторанов, фитнес-клубов, юристов и клиник. Минск и вся Беларусь. От 1 200 BYN.",
   alternates: { canonical: `${SITE_URL}/uslugi` },
   openGraph: {
     url: `${SITE_URL}/uslugi`,
@@ -108,7 +108,7 @@ export default function UslugiPage() {
             <h2 className="mt-5 text-2xl font-bold text-white">Ваша ниша не в списке?</h2>
             <p className="mt-3 text-[#A1A1B5]">
               Мы делаем сайты для любого бизнеса — не только для тех что в списке.
-              Попробуйте AI генератор: опишите свой бизнес и получите дизайн за 30 секунд бесплатно.
+              Попробуйте AI-генератор: опишите бизнес и бесплатно получите первую визуальную концепцию.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
               <Link href="/generator"

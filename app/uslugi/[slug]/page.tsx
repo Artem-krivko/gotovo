@@ -310,7 +310,7 @@ export default async function NichePage({
                   <span className="text-[#6B6B80]">за сайт под ключ</span>
                 </div>
                 <p className="mt-3 text-[#A1A1B5]">
-                  Готово за {page.duration}. Фиксированная цена, оплата после результата.
+                  Готово за {page.duration}. Объём и поэтапная оплата фиксируются до старта.
                   Видите дизайн до оплаты через AI генератор.
                 </p>
                 <ul className="mt-4 flex flex-col gap-2">

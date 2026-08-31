@@ -209,7 +209,7 @@ export default function GeneratorPage() {
             AI Design Generator
           </h1>
           <p className="text-xs text-zinc-400">
-            Опишите бизнес — получите дизайн за 30 сек
+            Опишите бизнес — получите AI-концепцию
           </p>
         </div>
 

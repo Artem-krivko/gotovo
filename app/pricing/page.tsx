@@ -8,13 +8,13 @@ import { PRICING_PLANS, VALUE_ITEMS, CHOOSE_ITEMS, PRICING_FAQ } from "@/content
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
 
 export const metadata: Metadata = {
-  title: "Стоимость разработки сайта: лендинг до 300 $ | gotovo",
-  description: "Прозрачные пакеты: лендинг до 300 $ за 7 дней, бизнес-сайт до 1000 $ за 14 дней. Фиксированный объём, без скрытых доплат. Оплата после результата.",
+  title: "Стоимость разработки сайта — от 1 200 BYN",
+  description: "Прозрачные пакеты: лендинг от 1 200 BYN, бизнес-сайт от 2 900 BYN. Фиксируем объём, этапы и смету до старта.",
   alternates: { canonical: `${SITE_URL}/pricing` },
   openGraph: { url: `${SITE_URL}/pricing`, images: [{ url: "/og-image.png", width: 1200, height: 630 }] },
 };
 
-/** Первое число из строки вида «до 1000 $» или «500–800 $». */
+/** Первое число из строки вида «от 1 200 BYN» или «1 200–1 800 BYN». */
 function extractPrice(raw: string): string {
   return raw.replace(/\s/g, "").match(/\d+/)?.[0] ?? "0"
 }
@@ -31,7 +31,7 @@ const pricingSchema = {
         "@type": "Offer",
         priceCurrency: "USD",
         // Прежняя версия делала .split("").find(Boolean) и брала ПЕРВЫЙ СИМВОЛ:
-        // «до 1000 $» превращалось в цену "1". Берём первое число целиком.
+        // Число с пробелами не должно обрезаться до первой цифры.
         price: extractPrice(plan.price),
         ...(plan.price.includes("–") ? { priceSpecification: { "@type": "PriceSpecification", minPrice: extractPrice(plan.price) } } : {}),
       } },
@@ -96,7 +96,7 @@ export default function PricingPage() {
           {/* Метрики */}
           <div className="reveal-up delay-4 mt-12 grid max-w-lg mx-auto grid-cols-3 gap-3">
             {[
-              { value: "до 300 $", label: "лендинг", border: "border-violet-500/40", glow: "shadow-lg shadow-violet-500/20" },
+              { value: "от 1 200 BYN", label: "лендинг", border: "border-violet-500/40", glow: "shadow-lg shadow-violet-500/20" },
               { value: "7–14 дней", label: "типичный срок", border: "border-blue-500/40", glow: "shadow-lg shadow-blue-500/20" },
               { value: "После", label: "результата — оплата", border: "border-emerald-500/40", glow: "shadow-lg shadow-emerald-500/20" },
             ].map((m) => (

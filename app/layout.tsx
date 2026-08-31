@@ -6,7 +6,7 @@ import { AnalyticsConsent } from "@/components/shared/analytics-consent";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.usegotovo.by";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin", "latin-ext"],
@@ -19,11 +19,11 @@ const spaceGrotesk = Space_Grotesk({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "gotovo — концепт сайта за 30 секунд, готовый сайт за 7–14 дней",
+    default: "gotovo — разработка сайтов для бизнеса",
     template: "%s | gotovo",
   },
   description:
-    "Опишите бизнес — ИИ соберёт персональный концепт сайта за 30 секунд, бесплатно. Подходит направление — доведём до готового сайта за 7–14 дней. Лендинги до 300 $.",
+    "Проектируем и разрабатываем выразительные сайты для бизнеса. Бесплатная AI-концепция помогает увидеть первое направление до начала проекта.",
   keywords: [
     "создание сайтов для бизнеса",
     "ai генератор сайтов",
@@ -49,15 +49,15 @@ export const metadata: Metadata = {
     locale: "ru_RU",
     url: SITE_URL,
     siteName: "gotovo",
-    title: "gotovo — AI-генератор дизайна сайтов",
-    description: "Опишите бизнес — ИИ соберёт концепт сайта за 30 секунд. Бесплатно. Готовый сайт от 300 $.",
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "gotovo — AI веб-агентство" }],
+    title: "gotovo — сайты, с которыми бизнес выглядит убедительно",
+    description: "Структура, дизайн, разработка и запуск. Начните с разговора или бесплатной AI-концепции.",
+    images: [{ url: "/og-redesign.png", width: 1731, height: 909, alt: "gotovo — сайты, с которыми бизнес выглядит убедительно" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "gotovo — AI-генератор дизайна сайтов",
-    description: "Концепт сайта за 30 секунд — бесплатно. Готовый сайт от 300 $.",
-    images: ["/og-image.png"],
+    title: "gotovo — разработка сайтов для бизнеса",
+    description: "Структура, дизайн, разработка и запуск. Бесплатная AI-концепция помогает увидеть первое направление.",
+    images: ["/og-redesign.png"],
   },
   robots: {
     index: true,
@@ -70,7 +70,7 @@ const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
   name: "gotovo",
-  description: "AI-агентство по разработке сайтов. Генератор концептов дизайна — бесплатно, за 30 секунд.",
+  description: "Независимая веб-студия: структура, дизайн, разработка и запуск сайтов для бизнеса.",
   url: SITE_URL,
   serviceType: "Web Development",
   areaServed: [
@@ -103,7 +103,7 @@ try{if(localStorage.getItem('analytics_consent')==='granted'){gtag('consent','up
 gtag('js',new Date());gtag('config','G-MSXLMK8X5K',{anonymize_ip:true});`}
       </Script>
       <body
-        className="bg-[#0A0A0F] text-white antialiased"
+        className="bg-[#f2efe7] text-[#171712] antialiased"
         style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}
         suppressHydrationWarning
       >
@@ -120,7 +120,7 @@ gtag('js',new Date());gtag('config','G-MSXLMK8X5K',{anonymize_ip:true});`}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Написать в Telegram"
-          className="fixed bottom-5 right-5 z-50 flex h-13 w-13 items-center justify-center rounded-full bg-[#2AABEE] shadow-lg shadow-[#2AABEE]/30 transition-all duration-200 hover:scale-110 hover:shadow-[#2AABEE]/50"
+          className="fixed bottom-4 right-4 z-40 flex h-12 w-12 items-center justify-center bg-[#171712] text-white shadow-[4px_4px_0_#ff6542] transition-transform duration-200 hover:-translate-y-1 sm:bottom-5 sm:right-5"
         >
           <svg width="26" height="26" viewBox="0 0 24 24" fill="white" aria-hidden="true">
             <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.14 14.5l-2.95-.924c-.64-.203-.654-.64.136-.954l11.527-4.448c.537-.194 1.006.131.71.074z"/>

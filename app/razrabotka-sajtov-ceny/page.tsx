@@ -6,13 +6,13 @@ import { Cta } from "@/components/sections/cta";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
 
 export const metadata: Metadata = {
-  title: "Цены на разработку сайта в Беларуси — от 500$ | gotovo",
+  title: "Цены на разработку сайта в Беларуси — от 1 200 BYN",
   description:
-    "Стоимость создания сайта в Беларуси: лендинг 500–700$, корпоративный 800–1200$. Фиксированные цены, без скрытых доплат. Оплата после результата. Срок 7–14 дней.",
+    "Стоимость создания сайта в Беларуси: лендинг от 1 200 BYN, бизнес-сайт от 2 900 BYN. Фиксируем объём, этапы и смету до старта.",
   alternates: { canonical: `${SITE_URL}/razrabotka-sajtov-ceny` },
   openGraph: {
     title: "Цены на разработку сайта — gotovo",
-    description: "Лендинг от 500$, корпоративный от 800$. Фиксированные цены по Беларуси.",
+    description: "Лендинг от 1 200 BYN, бизнес-сайт от 2 900 BYN. Прозрачные цены по Беларуси.",
     url: `${SITE_URL}/razrabotka-sajtov-ceny`,
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
@@ -31,7 +31,7 @@ const priceSchema = {
         "@type": "Service",
         name: "Лендинг",
         description: "Одностраничный продающий сайт за 7–10 рабочих дней",
-        offers: { "@type": "Offer", price: "500", priceCurrency: "USD", priceSpecification: { "@type": "PriceSpecification", minPrice: "500", maxPrice: "700", priceCurrency: "USD" } },
+        offers: { "@type": "Offer", price: "1200", priceCurrency: "BYN" },
       },
     },
     {
@@ -41,7 +41,7 @@ const priceSchema = {
         "@type": "Service",
         name: "Корпоративный сайт",
         description: "Многостраничный сайт за 10–14 рабочих дней",
-        offers: { "@type": "Offer", price: "800", priceCurrency: "USD", priceSpecification: { "@type": "PriceSpecification", minPrice: "800", maxPrice: "1200", priceCurrency: "USD" } },
+        offers: { "@type": "Offer", price: "2900", priceCurrency: "BYN" },
       },
     },
   ],
@@ -51,7 +51,7 @@ const PRICE_COMPARISON = [
   { label: "Фрилансер (Беларусь)", landing: "200–500$", corp: "500–1000$", quality: "Непредсказуемо", timeline: "1–2 месяца" },
   { label: "Агентство (Минск)", landing: "800–2000$", corp: "2000–5000$", quality: "Высокое", timeline: "1–3 месяца" },
   { label: "Конструктор (Tilda)", landing: "0 + абонемент", corp: "0 + абонемент", quality: "Шаблонное", timeline: "Самостоятельно" },
-  { label: "gotovo", landing: "500–700$", corp: "800–1200$", quality: "Высокое + AI", timeline: "7–14 дней" },
+  { label: "gotovo", landing: "от 1 200 BYN", corp: "от 2 900 BYN", quality: "Дизайн + разработка", timeline: "7–14 дней" },
 ];
 
 const FAQ_ITEMS = [
@@ -65,15 +65,15 @@ const FAQ_ITEMS = [
   },
   {
     question: "Можно ли оплатить в белорусских рублях?",
-    answer: "Да, принимаем оплату в BYN по курсу НБ РБ на день оплаты. Также работаем в USD, EUR. Схема: 50% перед стартом, 50% после финального согласования.",
+    answer: "Да, основная валюта прайса — BYN. Оплата поэтапная 30/40/30: после фиксации объёма, после согласованной промежуточной версии и перед публикацией.",
   },
   {
     question: "Есть ли рассрочка?",
-    answer: "Предоплаты нет: вы платите после того, как увидели и одобрили финальный результат. Индивидуальные схемы обсуждаются для крупных проектов.",
+    answer: "Для крупных проектов график можно разделить на большее число этапов. Результат и сумма каждого этапа фиксируются до старта.",
   },
   {
     question: "Что если результат не понравится?",
-    answer: "Именно для этого есть бесплатный AI-генератор — вы видите направление до оплаты. В процессе работы есть 2–3 круга правок включённых в стоимость. Если после всех правок результат не устраивает — возвращаем предоплату.",
+    answer: "AI-генератор помогает бесплатно проверить визуальное направление. После брифа фиксируем этапы, а в разработку включаем 2–3 круга правок.",
   },
 ];
 
@@ -96,7 +96,7 @@ function ArrowRight() {
 const PACKAGES = [
   {
     name: "Лендинг",
-    price: "500–700$",
+    price: "от 1 200 BYN",
     duration: "7–10 дней",
     description: "Одностраничный продающий сайт для услуги или оффера",
     features: ["1 страница до 7–9 секций", "Индивидуальный дизайн", "Адаптивная верстка", "Форма заявки", "Базовое SEO", "2 круга правок"],
@@ -105,7 +105,7 @@ const PACKAGES = [
   },
   {
     name: "Корпоративный сайт",
-    price: "800–1200$",
+    price: "от 2 900 BYN",
     duration: "10–14 дней",
     description: "Многостраничный сайт для компании с несколькими разделами",
     features: ["5–7 страниц", "Главная, услуги, о компании, контакты", "Единая дизайн-система", "Формы и интеграции", "Базовое SEO", "2–3 круга правок"],
@@ -113,8 +113,8 @@ const PACKAGES = [
     cta: "Заказать сайт",
   },
   {
-    name: "SEO-старт",
-    price: "+150–250$",
+    name: "Расширенное SEO",
+    price: "от 600 BYN",
     duration: "3–5 дней",
     description: "Дополнение к любому пакету — полная техническая SEO-подготовка",
     features: ["Расширенные мета-теги", "Микроразметка Schema.org", "Google Search Console", "Sitemap и robots.txt", "Аналитика GA4 / Метрика", "Рекомендации по контенту"],
@@ -157,7 +157,7 @@ export default function RazrabotkaStoimostPage() {
           </h1>
 
           <p className="reveal-up delay-2 mt-5 mx-auto max-w-2xl text-lg leading-7 text-[#A1A1B5]">
-            Фиксированные пакеты без скрытых доплат. Лендинг от 500$, корпоративный сайт от 800$.
+            Фиксированные пакеты без скрытых доплат. Лендинг от 1 200 BYN, бизнес-сайт от 2 900 BYN.
             Цена, объём и сроки фиксируются письменно до начала работы.
           </p>
 
@@ -168,7 +168,7 @@ export default function RazrabotkaStoimostPage() {
             </a>
             <Link href="/generator"
               className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-7 py-4 text-sm font-medium text-white transition hover:bg-white/10">
-              <span aria-hidden="true">✦</span> Превью за 30 сек
+              <span aria-hidden="true">✦</span> AI-концепция
             </Link>
           </div>
         </div>

@@ -225,7 +225,7 @@ export function PricingPreview() {
         </ul>
 
         <div className="mt-8 flex flex-col items-center gap-2 text-center">
-          <p className="text-sm text-[#6B6B80]">Оплата 50/50 · Фиксированный объём · Без скрытых доплат</p>
+          <p className="text-sm text-[#6B6B80]">Оплата 30/40/30 · Фиксированный объём · Без скрытых доплат</p>
           <Link href="/pricing" className="text-sm text-[#A1A1B5] transition-colors hover:text-white">
             Подробнее о пакетах →
           </Link>

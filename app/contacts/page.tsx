@@ -147,7 +147,7 @@ export default function ContactsPage() {
               <div className="max-w-xl">
                 <p className="text-xs font-semibold uppercase tracking-widest text-[#6B6B80]">Не готовы писать?</p>
                 <h2 className="mt-2 text-2xl font-bold tracking-tight text-white sm:text-3xl">Начните с генератора — бесплатно</h2>
-                <p className="mt-2 text-sm text-[#A1A1B5]">Опишите бизнес, получите дизайн за 30 секунд. Понравится — тогда напишете.</p>
+                <p className="mt-2 text-sm text-[#A1A1B5]">Опишите бизнес и получите первую AI-концепцию. Понравится направление — обсудим проект.</p>
               </div>
               <Link href="/generator"
                 className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:opacity-90 hover:-translate-y-0.5">

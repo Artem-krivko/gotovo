@@ -8,13 +8,13 @@ import { Cta } from "@/components/sections/cta";
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://gotovo.studio";
 
 export const metadata: Metadata = {
-  title: "Разработка сайтов в Минске — от 500$ под ключ | gotovo",
+  title: "Разработка сайтов в Минске — от 1 200 BYN",
   description:
-    "Создание сайтов для бизнеса в Минске. Лендинги от 500$, корпоративные сайты от 800$. AI-генератор покажет дизайн за 30 сек до оплаты. Срок 7–14 дней.",
+    "Создание сайтов для бизнеса в Минске. Лендинги от 1 200 BYN, бизнес-сайты от 2 900 BYN. Бесплатная AI-концепция. Срок 7–14 дней.",
   alternates: { canonical: `${SITE_URL}/razrabotka-sajtov-minsk` },
   openGraph: {
     title: "Разработка сайтов в Минске — gotovo",
-    description: "Лендинги от 500$, сайты от 800$. Видите дизайн до оплаты. Срок 7–14 дней.",
+    description: "Лендинги от 1 200 BYN, бизнес-сайты от 2 900 BYN. Срок 7–14 дней.",
     url: `${SITE_URL}/razrabotka-sajtov-minsk`,
     images: [{ url: "/og-image.png", width: 1200, height: 630 }],
   },
@@ -66,7 +66,7 @@ const faqSchema = {
       name: "Сколько стоит разработка сайта в Минске?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Лендинг стоит от 500$, корпоративный сайт от 800$. Цена фиксированная — без скрытых доплат. Оплата 50% перед стартом, 50% после финального согласования.",
+        text: "Лендинг стоит от 1 200 BYN, бизнес-сайт — от 2 900 BYN. Точную смету фиксируем после брифа. Оплата по этапам 30/40/30.",
       },
     },
     {
@@ -151,7 +151,7 @@ const NICHES = [
 const PACKAGES = [
   {
     name: "Лендинг",
-    price: "от 500$",
+    price: "от 1 200 BYN",
     duration: "7–10 дней",
     description: "Для одной услуги или оффера. Фокус на конверсию.",
     features: [
@@ -167,7 +167,7 @@ const PACKAGES = [
   },
   {
     name: "Корпоративный сайт",
-    price: "от 800$",
+    price: "от 2 900 BYN",
     duration: "10–14 дней",
     description: "Для компании с несколькими услугами и разделами.",
     features: [
@@ -193,7 +193,7 @@ const PROCESS_STEPS = [
 const FAQ_ITEMS = [
   {
     question: "Сколько стоит разработка сайта в Минске?",
-    answer: "Лендинг — от 500$, корпоративный сайт — от 800$. Цена фиксированная, без скрытых доплат. Точная стоимость зависит от объёма и сложности — обсуждаем перед стартом.",
+    answer: "Лендинг — от 1 200 BYN, бизнес-сайт — от 2 900 BYN. Точная стоимость зависит от объёма и сложности — фиксируем её перед стартом.",
   },
   {
     question: "Сколько времени занимает создание сайта?",
@@ -280,17 +280,17 @@ export default function RazrabotkaMinskPage() {
               </h1>
 
               <p className="reveal-up delay-2 mt-5 text-lg leading-7 text-[#A1A1B5]">
-                Создаём сайты для бизнеса в Минске и по всей Беларуси. Лендинги от 500$, корпоративные сайты от 800$.{" "}
-                <strong className="text-white">AI-генератор покажет дизайн за 30 секунд до оплаты.</strong>
+                Создаём сайты для бизнеса в Минске и по всей Беларуси. Лендинги от 1 200 BYN, бизнес-сайты от 2 900 BYN.{" "}
+                <strong className="text-white">AI-генератор бесплатно покажет первую визуальную концепцию.</strong>
               </p>
 
               {/* Быстрые метрики */}
               <div className="reveal-up delay-2 mt-6 flex flex-wrap gap-4">
                 {[
-                  { label: "Лендинг", value: "от 500$" },
-                  { label: "Сайт", value: "от 800$" },
+                  { label: "Лендинг", value: "от 1 200 BYN" },
+                  { label: "Сайт", value: "от 2 900 BYN" },
                   { label: "Срок", value: "7–14 дней" },
-                  { label: "Оплата", value: "После результата" },
+                  { label: "Оплата", value: "30/40/30" },
                 ].map((m) => (
                   <div key={m.label} className="flex flex-col">
                     <span className="text-xl font-bold text-white">{m.value}</span>
@@ -535,8 +535,8 @@ export default function RazrabotkaMinskPage() {
             <p className="mt-3 text-[#A1A1B5] leading-7">
               Цены на разработку сайтов в Минске варьируются от 200$ за простые шаблонные
               решения до нескольких тысяч долларов за сложные корпоративные порталы.
-              В gotovo мы предлагаем прозрачные фиксированные пакеты: лендинг от 500$
-              за 7–10 дней, корпоративный сайт от 800$ за 10–14 дней. Никаких скрытых
+              В gotovo мы предлагаем прозрачные пакеты: лендинг от 1 200 BYN
+              за 7–10 дней, бизнес-сайт от 2 900 BYN за 10–14 дней. Никаких скрытых
               доплат — цена фиксируется письменно до начала работы.
             </p>
 
@@ -565,7 +565,7 @@ export default function RazrabotkaMinskPage() {
           {/* Внутренние ссылки — SEO + UX */}
           <div className="mt-10 grid gap-3 sm:grid-cols-2">
             {[
-              { href: "/lending-minsk", label: "Лендинги в Минске", desc: "Одностраничные сайты от 500$" },
+              { href: "/lending-minsk", label: "Лендинги в Минске", desc: "Одностраничные сайты от 1 200 BYN" },
               { href: "/pricing", label: "Все тарифы", desc: "Подробные пакеты и состав" },
               { href: "/process", label: "Как проходит работа", desc: "7 этапов от идеи до запуска" },
               { href: "/generator", label: "AI-генератор", desc: "Превью дизайна за 30 секунд" },
