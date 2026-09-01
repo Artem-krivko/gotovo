@@ -71,7 +71,10 @@ export function setConsent(granted: boolean) {
     ad_personalization: granted ? "granted" : "denied",
   } as unknown as EventParams)
 
-  if (granted) flushQueue()
+  if (granted) {
+    flushQueue()
+    window.dispatchEvent(new Event("gotovo-analytics-consent-granted"))
+  }
   else queue.length = 0
 }
 

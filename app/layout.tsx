@@ -80,12 +80,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       {/* Consent Mode: по умолчанию аналитика запрещена и включается только
           после явного согласия (см. AnalyticsConsent). Раньше GA4 писал
           события сразу, без какого-либо согласия. */}
-      <Script id="ga-init" strategy="afterInteractive">
+        <Script id="ga-init" strategy="afterInteractive">
         {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
 gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500});
 try{if(localStorage.getItem('analytics_consent')==='granted'){gtag('consent','update',{analytics_storage:'granted',ad_storage:'granted',ad_user_data:'granted',ad_personalization:'granted'});}}catch(e){}
 gtag('js',new Date());gtag('config','G-MSXLMK8X5K',{anonymize_ip:true});`}
-      </Script>
+        </Script>
+        <Script id="yandex-metrika-init" strategy="afterInteractive">
+          {`(function(){
+  function initMetrika(){
+    if(window.__gotovoMetrikaLoaded) return;
+    window.__gotovoMetrikaLoaded=true;
+    window.ym=window.ym||function(){(window.ym.a=window.ym.a||[]).push(arguments)};
+    window.ym.l=window.ym.l||1*new Date();
+    var s=document.createElement('script'); s.async=true; s.src='https://mc.yandex.ru/metrika/tag.js?id=112132579';
+    document.head.appendChild(s);
+    window.ym(112132579,'init',{ssr:true,webvisor:true,clickmap:true,ecommerce:'dataLayer',referrer:document.referrer,url:location.href,accurateTrackBounce:true,trackLinks:true});
+  }
+  try{if(localStorage.getItem('analytics_consent')==='granted') initMetrika();}catch(e){}
+  window.addEventListener('gotovo-analytics-consent-granted',initMetrika);
+})();`}
+        </Script>
       <body
         className="bg-[#f2efe7] text-[#171712] antialiased"
         style={{ fontFamily: "var(--font-sans), system-ui, sans-serif" }}
