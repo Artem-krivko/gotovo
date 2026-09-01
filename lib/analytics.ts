@@ -38,7 +38,10 @@ type Gtag = (command: string, eventName: string, params?: EventParams) => void
 
 interface AnalyticsWindow extends Window {
   gtag?: Gtag
+  ym?: (counterId: number, command: string, target: string, params?: EventParams) => void
 }
+
+const YANDEX_COUNTER_ID = 112132579
 
 /** Очередь событий до получения согласия либо до загрузки gtag. */
 const queue: Array<{ name: FunnelEvent; params: EventParams }> = []
@@ -80,9 +83,14 @@ export function setConsent(granted: boolean) {
 
 function send(name: FunnelEvent, params: EventParams) {
   const w = window as AnalyticsWindow
-  if (!w.gtag) return false
-  w.gtag("event", name, params)
-  return true
+  let delivered = false
+  if (w.gtag) {
+    w.gtag("event", name, params)
+    delivered = true
+  }
+  w.ym?.(YANDEX_COUNTER_ID, "reachGoal", name, params)
+  if (w.ym) delivered = true
+  return delivered
 }
 
 function flushQueue() {
