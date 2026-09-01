@@ -35,6 +35,46 @@ function EmptyPreview() {
   )
 }
 
+function GeneratorStatusRow({
+  preset,
+  isLoading,
+  hasResult,
+}: {
+  preset: GalleryPreset | null
+  isLoading: boolean
+  hasResult: boolean
+}) {
+  const briefState = isLoading || hasResult ? "complete" : "active"
+  const conceptsState = hasResult ? "complete" : isLoading ? "active" : "upcoming"
+  const stages = [
+    { number: "01", label: "Направление", state: "complete" },
+    { number: "02", label: "Бриф", state: briefState },
+    { number: "03", label: "Три концепции", state: conceptsState },
+  ] as const
+
+  return (
+    <div className="border-b border-ink/20 px-5 py-4">
+      <p className="section-index text-ink/42">Выбрано направление</p>
+      <p className="mt-2 flex flex-wrap items-baseline gap-x-2 text-sm" aria-live="polite">
+        <span className="font-semibold text-ink">{preset?.label ?? "С чистого листа"}</span>
+        <span className="text-xs text-ink/48">{preset?.styleTag ?? "Контекст определит характер"}</span>
+      </p>
+      <ol className="mt-4 grid grid-cols-3 border-y border-ink/20" aria-label="Этапы создания концепций">
+        {stages.map((stage) => (
+          <li
+            key={stage.number}
+            className={`border-r border-ink/20 px-2 py-2.5 last:border-r-0 ${stage.state === "active" ? "bg-acid text-ink" : stage.state === "complete" ? "text-cobalt" : "text-ink/35"}`}
+            aria-current={stage.state === "active" ? "step" : undefined}
+          >
+            <span className="block text-xs font-semibold">{stage.number}</span>
+            <span className="mt-1 block text-xs leading-4">{stage.label}</span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  )
+}
+
 export default function GeneratorPage() {
   const [step, setStep] = useState<"gallery" | "form">("gallery")
   const [preset, setPreset] = useState<GalleryPreset | null>(null)
@@ -209,6 +249,8 @@ export default function GeneratorPage() {
             Три направления для предметного разговора
           </p>
         </div>
+
+        <GeneratorStatusRow preset={preset} isLoading={isLoading} hasResult={hasResult} />
 
         <div className="flex-1 overflow-y-auto p-5">
           <GeneratorForm

@@ -56,27 +56,40 @@ const ADJUSTMENTS = [
 
 export function GeneratorSkeleton() {
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-6 p-8 text-center">
-      <div className="w-full max-w-md space-y-3">
-        <div className="h-8 w-3/4 animate-pulse rounded-xl bg-zinc-200 mx-auto" />
-        <div className="h-4 w-1/2 animate-pulse rounded-lg bg-zinc-200 mx-auto" />
-        <div className="mt-6 h-32 animate-pulse rounded-2xl bg-zinc-200" />
-        <div className="grid grid-cols-3 gap-3">
-          {[1,2,3].map(i => (
-            <div key={i} className="h-20 animate-pulse rounded-xl bg-zinc-200" />
-          ))}
+    <div className="flex h-full flex-col items-center justify-center bg-paper p-5 text-ink sm:p-8" role="status" aria-live="polite">
+      <div className="w-full max-w-xl border border-ink/25 bg-[#e8e4da] p-4 sm:p-6">
+        <div className="flex items-start justify-between gap-6 border-b border-ink/25 pb-4">
+          <div>
+            <p className="section-index text-cobalt">03 / Сборка концепций</p>
+            <p className="mt-3 text-xl font-semibold tracking-[-0.035em] sm:text-2xl">Превращаем бриф в три направления.</p>
+          </div>
+          <span className="text-3xl text-signal" aria-hidden="true">✦</span>
         </div>
-        <div className="h-16 animate-pulse rounded-2xl bg-zinc-200" />
-      </div>
-      <div className="flex flex-col items-center gap-2">
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 animate-bounce rounded-full bg-violet-500 [animation-delay:0ms]" aria-hidden="true" />
-          <span className="h-2 w-2 animate-bounce rounded-full bg-violet-500 [animation-delay:150ms]" aria-hidden="true" />
-          <span className="h-2 w-2 animate-bounce rounded-full bg-violet-500 [animation-delay:300ms]" aria-hidden="true" />
+
+        <div className="generator-skeleton__canvas mt-4 border border-ink/20 bg-paper p-4" aria-hidden="true">
+          <div className="h-6 w-2/3 bg-ink/[0.14]" />
+          <div className="mt-2 h-3 w-2/5 bg-ink/10" />
+          <div className="mt-5 h-28 border border-cobalt/25 bg-cobalt/[0.08]" />
+          <div className="mt-3 grid grid-cols-3 gap-2">
+            {[1, 2, 3].map((item) => (
+              <div key={item} className="h-16 border border-ink/[0.18] bg-ink/[0.06]" />
+            ))}
+          </div>
+          <div className="mt-3 h-10 border border-signal/35 bg-signal/10" />
         </div>
-        <p className="text-sm text-zinc-500">ИИ создаёт дизайн вашего сайта...</p>
-        <p className="text-xs text-zinc-400">Обычно до минуты</p>
+
+        <div className="mt-5">
+          <div className="h-px overflow-hidden bg-ink/20" aria-hidden="true">
+            <span className="generator-skeleton__line block h-full w-2/5 bg-cobalt" />
+          </div>
+          <div className="mt-3 flex flex-col gap-1 text-sm sm:flex-row sm:items-center sm:justify-between">
+            <p className="font-semibold">Собираем структуру, визуальный характер и подачу.</p>
+            <p className="shrink-0 text-xs text-ink/45">Обычно до минуты</p>
+          </div>
+          <p className="mt-2 text-xs leading-5 text-ink/48">Без выдуманных цифр, отзывов и обещаний — только данные из вашего брифа.</p>
+        </div>
       </div>
+      <span className="sr-only">Создаём три концепции сайта. Обычно это занимает до минуты.</span>
     </div>
   )
 }

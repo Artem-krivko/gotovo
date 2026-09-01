@@ -1,6 +1,8 @@
+import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { ConceptBlueprint } from "@/components/shared/concept-blueprint";
 import { createPageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = createPageMetadata({
@@ -23,6 +25,7 @@ const conceptItems = [
       "Чистая композиция, человеческая фотография и ясная иерархия — чтобы медицинский сайт вызывал доверие, а не тревогу.",
     image: "/images/generator/dentist-preview.png",
     tone: "bg-[#d9e7ff]",
+    blueprint: ["Hero / доверие", "Услуги", "Доказательства", "Запись / CTA"],
   },
   {
     number: "02",
@@ -32,6 +35,7 @@ const conceptItems = [
       "Контрастная типографика и плотный визуальный ритм превращают портфолио мастеров в самостоятельное высказывание.",
     image: "/images/generator/tattoo-preview.png",
     tone: "bg-[#ff653c]",
+    blueprint: ["Hero / характер", "Портфолио", "Мастера", "Запись / CTA"],
   },
   {
     number: "03",
@@ -41,6 +45,7 @@ const conceptItems = [
       "Атмосфера места, меню и повод зайти собраны в короткий путь — от первого впечатления до визита.",
     image: "/images/generator/coffee-preview.png",
     tone: "bg-[#d7ff52]",
+    blueprint: ["Hero / атмосфера", "Меню", "Повод зайти", "Адрес / CTA"],
   },
 ] as const;
 
@@ -106,26 +111,32 @@ function Arrow({ diagonal = false }: { diagonal?: boolean }) {
   );
 }
 
+function revealDelay(index: number): CSSProperties {
+  return { "--reveal-delay": `${Math.min(index, 3) * 70}ms` } as CSSProperties;
+}
+
 function Hero() {
   return (
     <section className="editorial-hero border-b border-ink/20 px-4 pb-10 pt-10 sm:px-6 sm:pb-14 sm:pt-14 lg:pb-20 lg:pt-20">
       <div className="mx-auto max-w-[1440px]">
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-6">
           <div className="lg:col-span-8">
-            <div className="mb-8 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink/60 sm:mb-12" data-reveal="fade">
+            <div className="hero-eyebrow mb-8 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-ink/60 sm:mb-12">
               <span className="inline-block h-2.5 w-2.5 bg-signal" aria-hidden="true" />
               Независимая веб-студия · Минск / удалённо
             </div>
-            <h1 className="max-w-[1040px] text-[clamp(3.5rem,6vw,6rem)] font-semibold leading-[0.88] tracking-[-0.07em] text-ink" data-reveal>
-              <span className="block">Сайты, с которыми</span>
-              <span className="block">бизнес выглядит</span>
-              <span className="editorial-serif block font-normal italic tracking-[-0.055em] text-signal">
-                убедительно.
+            <h1 className="max-w-[1040px] text-[clamp(3.5rem,6vw,6rem)] font-semibold leading-[0.88] tracking-[-0.07em] text-ink">
+              <span className="hero-line-mask block"><span className="hero-line hero-line--1 block">Сайты, с которыми</span></span>
+              <span className="hero-line-mask block"><span className="hero-line hero-line--2 block">бизнес выглядит</span></span>
+              <span className="hero-line-mask hero-line-mask--serif block">
+                <span className="hero-line hero-line--3 editorial-serif block font-normal italic tracking-[-0.055em] text-signal">
+                  убедительно.
+                </span>
               </span>
             </h1>
           </div>
 
-          <aside className="flex flex-col justify-end border-t border-ink/20 pt-5 lg:col-span-4 lg:border-l lg:border-t-0 lg:pl-7 lg:pt-0" data-reveal>
+          <aside className="hero-aside flex flex-col justify-end border-t border-ink/20 pt-5 lg:col-span-4 lg:border-l lg:border-t-0 lg:pl-7 lg:pt-0">
             <p className="max-w-md text-lg leading-7 text-ink/78 sm:text-xl sm:leading-8">
               Исследуем задачу, проектируем структуру, создаём дизайн и запускаем сайт. AI помогает быстрее увидеть первое направление — решения принимает человек.
             </p>
@@ -141,7 +152,7 @@ function Hero() {
         </div>
 
         <div className="mt-12 grid gap-3 sm:grid-cols-12 lg:mt-20">
-          <div className="editorial-visual relative min-h-[290px] overflow-hidden bg-[#222] sm:col-span-8 sm:min-h-[430px] lg:min-h-[540px]" data-reveal="image">
+          <div className="hero-visual relative min-h-[290px] overflow-hidden bg-[#222] sm:col-span-8 sm:min-h-[430px] lg:min-h-[540px]">
             <Image
               src="/images/hero-process-v2.jpg"
               alt="Печатные вайрфреймы, модульные сетки и цветовые пробы сайта"
@@ -194,7 +205,7 @@ function Statement() {
               ["Одна цельная система", "Тексты, сетка, изображения и motion работают как части одного решения."],
               ["Запуск — не финал картинки", "Проверяем мобильный UX, формы, аналитику, SEO и скорость."],
             ].map(([title, text], index) => (
-              <div key={title} data-reveal>
+              <div key={title} data-reveal style={revealDelay(index)}>
                 <span className="text-xs text-paper/45">0{index + 1}</span>
                 <h3 className="mt-4 text-lg font-semibold">{title}</h3>
                 <p className="mt-3 text-sm leading-6 text-paper/62">{text}</p>
@@ -228,17 +239,13 @@ function ConceptLab() {
                 <p className="text-xs font-semibold tracking-[0.16em]">{item.number}</p>
                 <p className="mt-0 text-xs uppercase tracking-[0.14em] text-ink/50 lg:mt-8">{item.category}</p>
               </div>
-              <div className={`relative min-h-[300px] overflow-hidden p-4 sm:min-h-[480px] sm:p-7 lg:col-span-6 ${item.tone}`}>
-                <div className={`relative h-full min-h-[268px] overflow-hidden shadow-[0_24px_70px_rgba(0,0,0,0.22)] sm:min-h-[424px] ${index === 1 ? "rotate-[1.2deg]" : index === 2 ? "-rotate-[0.8deg]" : "rotate-[0.4deg]"}`}>
-                  <Image
-                    src={item.image}
-                    alt={item.category}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover object-top"
-                  />
-                </div>
-              </div>
+              <ConceptBlueprint
+                image={item.image}
+                alt={item.category}
+                tone={item.tone}
+                rotation={index === 1 ? "rotate-[1.2deg]" : index === 2 ? "-rotate-[0.8deg]" : "rotate-[0.4deg]"}
+                labels={item.blueprint}
+              />
               <div className="flex flex-col justify-end lg:col-span-3">
                 <h3 className="text-3xl font-semibold leading-[1.02] tracking-[-0.04em] sm:text-4xl">{item.title}</h3>
                 <p className="mt-5 text-sm leading-6 text-ink/65">{item.description}</p>
@@ -268,8 +275,8 @@ function Services() {
         </div>
 
         <div className="mt-14 border-t border-ink sm:mt-20">
-          {services.map((service) => (
-            <article key={service.number} className="group grid gap-4 border-b border-ink/30 py-7 transition-colors hover:bg-paper/40 sm:py-9 lg:grid-cols-12 lg:items-start" data-reveal>
+          {services.map((service, index) => (
+            <article key={service.number} className="group grid gap-4 border-b border-ink/30 py-7 transition-colors hover:bg-paper/40 sm:py-9 lg:grid-cols-12 lg:items-start" data-reveal style={revealDelay(index)}>
               <p className="text-xs font-semibold lg:col-span-1">{service.number}</p>
               <h3 className="text-3xl font-semibold tracking-[-0.045em] sm:text-4xl lg:col-span-3">{service.title}</h3>
               <div className="lg:col-span-4">
@@ -329,7 +336,7 @@ function GeneratorStory() {
             ["Результат", "Смотрите концепцию как первую гипотезу — ценную, но открытую для профессиональной доработки."],
             ["После", "Обсудите идею с дизайнером, уточните задачу и получите предложение по полноценной разработке."],
           ].map(([title, text], index) => (
-            <div key={title} className="border-b border-white/30 py-7 sm:border-b-0 sm:border-r sm:px-6 sm:first:pl-0 sm:last:border-r-0" data-reveal>
+            <div key={title} className="border-b border-white/30 py-7 sm:border-b-0 sm:border-r sm:px-6 sm:first:pl-0 sm:last:border-r-0" data-reveal style={revealDelay(index)}>
               <p className="text-xs text-white/45">0{index + 1}</p>
               <h3 className="mt-5 text-2xl font-semibold">{title}</h3>
               <p className="mt-4 max-w-sm text-sm leading-6 text-white/62">{text}</p>
@@ -353,7 +360,7 @@ function Process() {
         </div>
         <ol className="mt-14 grid border-t border-ink lg:mt-20 lg:grid-cols-5">
           {processSteps.map(([title, text], index) => (
-            <li key={title} className="relative border-b border-ink/30 py-7 lg:min-h-[310px] lg:border-b-0 lg:border-r lg:px-5 lg:first:pl-0 lg:last:border-r-0" data-reveal>
+            <li key={title} className="relative border-b border-ink/30 py-7 lg:min-h-[310px] lg:border-b-0 lg:border-r lg:px-5 lg:first:pl-0 lg:last:border-r-0" data-reveal style={revealDelay(index)}>
               <span className="text-xs">0{index + 1}</span>
               <div className="mt-12 lg:mt-28">
                 <h3 className="text-2xl font-semibold">{title}</h3>

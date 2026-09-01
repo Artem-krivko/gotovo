@@ -1,9 +1,13 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
 export function Arrow({ diagonal = false }: { diagonal?: boolean }) {
   return <span aria-hidden="true">{diagonal ? "↗" : "→"}</span>;
+}
+
+function revealDelay(index: number): CSSProperties {
+  return { "--reveal-delay": `${Math.min(index, 3) * 70}ms` } as CSSProperties;
 }
 
 export function EditorialHero({
@@ -104,8 +108,8 @@ export function EditorialMetrics({ items, light = false }: { items: { value: str
   const columns = items.length >= 4 ? "sm:grid-cols-4" : items.length === 3 ? "sm:grid-cols-3" : "sm:grid-cols-2";
   return (
     <div className={`grid border-y ${columns} ${light ? "border-paper/20" : "border-ink/20"}`}>
-      {items.map((item) => (
-        <div key={`${item.value}-${item.label}`} className={`border-b p-5 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0 lg:p-7 ${light ? "border-paper/20" : "border-ink/20"}`} data-reveal>
+      {items.map((item, index) => (
+        <div key={`${item.value}-${item.label}`} className={`border-b p-5 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0 lg:p-7 ${light ? "border-paper/20" : "border-ink/20"}`} data-reveal style={revealDelay(index)}>
           <p className="text-2xl font-semibold tracking-[-0.04em] sm:text-3xl">{item.value}</p>
           <p className={`mt-2 text-xs leading-5 ${light ? "text-paper/55" : "text-ink/55"}`}>{item.label}</p>
         </div>
@@ -118,7 +122,7 @@ export function EditorialFaq({ items, startIndex = 1 }: { items: { question: str
   return (
     <div className="border-t border-ink">
       {items.map((item, index) => (
-        <details key={item.question} className="group border-b border-ink/25" data-reveal>
+        <details key={item.question} className="group border-b border-ink/25" data-reveal style={revealDelay(index)}>
           <summary className="flex min-h-20 cursor-pointer list-none items-center gap-4 py-5 text-left focus-visible:outline-3 focus-visible:outline-offset-4 focus-visible:outline-cobalt">
             <span className="w-8 shrink-0 text-xs text-ink/45">{String(index + startIndex).padStart(2, "0")}</span>
             <span className="flex-1 text-lg font-semibold tracking-[-0.02em] sm:text-xl">{item.question}</span>

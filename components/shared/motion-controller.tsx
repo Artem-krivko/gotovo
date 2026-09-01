@@ -15,8 +15,6 @@ export function MotionController() {
       return;
     }
 
-    root.classList.add("motion-ready");
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {

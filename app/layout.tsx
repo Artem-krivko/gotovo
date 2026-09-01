@@ -69,6 +69,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ru" suppressHydrationWarning className={spaceGrotesk.variable}>
       <head>
         <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var root=document.documentElement;var reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;if(!reduce&&"IntersectionObserver" in window){root.classList.add("motion-ready");}}catch(error){}})();`,
+          }}
+        />
+        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
         />

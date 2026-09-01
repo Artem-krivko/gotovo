@@ -360,6 +360,48 @@ main summary:focus-visible {
 .editorial-generator-form button[type="submit"]:hover { background: #2656d8 !important; }
 
 /* ── Editorial motion system ─────────────────────────────────────────────── */
+@keyframes hero-line-enter {
+  from { transform: translate3d(0, 108%, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes hero-support-enter {
+  from { opacity: 0; transform: translate3d(0, 14px, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+@keyframes hero-image-enter {
+  from { transform: scale(1.035); }
+  to { transform: scale(1); }
+}
+
+.hero-line-mask {
+  overflow: hidden;
+}
+
+.hero-line-mask--serif {
+  margin-bottom: -0.08em;
+  padding-bottom: 0.08em;
+}
+
+.motion-ready .hero-line {
+  animation: hero-line-enter 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.motion-ready .hero-line--2 { animation-delay: 80ms; }
+.motion-ready .hero-line--3 { animation-delay: 170ms; }
+
+.motion-ready .hero-eyebrow,
+.motion-ready .hero-aside {
+  animation: hero-support-enter 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.motion-ready .hero-aside { animation-delay: 190ms; }
+
+.motion-ready .hero-visual img {
+  animation: hero-image-enter 1050ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 .motion-ready [data-reveal]:not([data-reveal-visible="true"]) {
   opacity: 0;
   transform: translate3d(0, 22px, 0);
@@ -393,6 +435,95 @@ main summary:focus-visible {
 @media (hover: hover) {
   .editorial-visual[data-reveal-visible="true"]:hover img {
     transform: scale(1.015);
+  }
+}
+
+/* ── Concept laboratory: blueprint inspection ────────────────────────────── */
+.concept-blueprint__frame,
+.concept-blueprint__image,
+.concept-blueprint__overlay,
+.concept-blueprint__zone {
+  transition-duration: 260ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.concept-blueprint__frame { transition-property: transform; }
+.concept-blueprint__image { transition-property: filter, opacity, transform; }
+
+.concept-blueprint__overlay {
+  clip-path: inset(0 0 100% 0);
+  opacity: 0;
+  pointer-events: none;
+  transition-property: clip-path, opacity;
+}
+
+.concept-blueprint__grid {
+  display: grid;
+  grid-template-rows: 1.2fr 1fr 1fr 0.8fr;
+  background-image:
+    linear-gradient(rgba(38, 86, 216, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(38, 86, 216, 0.12) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.concept-blueprint__zone {
+  opacity: 0;
+  transform: translate3d(0, 8px, 0);
+  transition-delay: var(--blueprint-delay, 0ms);
+  transition-property: opacity, transform;
+}
+
+.concept-blueprint[data-blueprint-active="true"] .concept-blueprint__image {
+  filter: grayscale(1) contrast(0.72);
+  opacity: 0.22;
+  transform: scale(1.015);
+}
+
+.concept-blueprint[data-blueprint-active="true"] .concept-blueprint__overlay {
+  clip-path: inset(0 0 0 0);
+  opacity: 1;
+}
+
+.concept-blueprint[data-blueprint-active="true"] .concept-blueprint__zone {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* ── Generator: editorial loading state ──────────────────────────────────── */
+@keyframes generator-progress-line {
+  from { transform: translate3d(-120%, 0, 0); }
+  to { transform: translate3d(350%, 0, 0); }
+}
+
+.generator-skeleton__canvas {
+  background-image:
+    linear-gradient(rgba(23, 23, 18, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23, 23, 18, 0.045) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.generator-skeleton__line {
+  animation: generator-progress-line 1500ms cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@media (hover: hover) {
+  .concept-blueprint:hover .concept-blueprint__image,
+  .concept-blueprint:focus-within .concept-blueprint__image {
+    filter: grayscale(1) contrast(0.72);
+    opacity: 0.22;
+    transform: scale(1.015);
+  }
+
+  .concept-blueprint:hover .concept-blueprint__overlay,
+  .concept-blueprint:focus-within .concept-blueprint__overlay {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+
+  .concept-blueprint:hover .concept-blueprint__zone,
+  .concept-blueprint:focus-within .concept-blueprint__zone {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -455,6 +586,26 @@ main summary:focus-visible {
   .gradient-reveal { animation: none; opacity: 1; background-position: 0% center; }
   [data-glow] > .glow-orb { opacity: 1; transition: none; }
   .parallax-mockup { transition: none; }
+  .editorial-button:hover { transform: none; }
+  .hero-line,
+  .hero-eyebrow,
+  .hero-aside,
+  .hero-visual img {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+  .concept-blueprint__frame,
+  .concept-blueprint__image,
+  .concept-blueprint__overlay,
+  .concept-blueprint__zone {
+    transition: none;
+  }
+  .generator-skeleton__line {
+    width: 100%;
+    animation: none;
+    transform: none;
+  }
   .motion-ready [data-reveal],
   .motion-ready [data-reveal="image"] {
     opacity: 1;
@@ -467,4 +618,18 @@ main summary:focus-visible {
     transition: none;
   }
   html { scroll-behavior: auto; }
+}
+
+@media (max-width: 639px) {
+  .motion-ready [data-reveal]:not([data-reveal-visible="true"]) {
+    transform: translate3d(0, 14px, 0);
+  }
+
+  .motion-ready .hero-line {
+    animation-duration: 500ms;
+  }
+
+  .motion-ready .hero-line--2 { animation-delay: 55ms; }
+  .motion-ready .hero-line--3 { animation-delay: 115ms; }
+  .motion-ready .hero-aside { animation-delay: 125ms; }
 }

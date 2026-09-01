@@ -6,15 +6,21 @@ import { GENERATOR_CASES, type GeneratorCase } from "@/content/generator-cases"
 import type { GeneratorStyle } from "@/lib/types"
 import { track } from "@/lib/analytics"
 
-export interface GalleryPreset { businessType: string; style: GeneratorStyle; description: string }
+export interface GalleryPreset {
+  businessType: string
+  style: GeneratorStyle
+  description: string
+  label: string
+  styleTag: string
+}
 
 const CASE_PRESETS: Record<number, GalleryPreset> = {
-  1: { businessType: "Медицинская клиника", style: "minimal", description: "Современная стоматологическая клиника. Акцент на доверие, технологии и заботу о пациентах. Услуги: лечение, имплантация, отбеливание." },
-  2: { businessType: "Салон красоты", style: "bold", description: "Авторский тату-салон с тёмной эстетикой. Портфолио мастеров, стили татуировок, онлайн-запись." },
-  3: { businessType: "Фитнес-клуб", style: "bold", description: "Премиум фитнес-клуб. Акцент на энергию и результат. Абонементы, расписание групповых, тренеры." },
-  4: { businessType: "Кофейня / кафе", style: "modern", description: "Уютная кофейня со specialty кофе и авторскими десертами. Тёплая атмосфера, меню, адрес и часы работы." },
-  5: { businessType: "Юридические услуги", style: "corporate", description: "Юридическая компания для бизнеса. Строгий авторитетный стиль. Услуги, команда, подтверждённые кейсы, контакты." },
-  6: { businessType: "IT-агентство", style: "minimal", description: "IT-стартап с SaaS-продуктом. Минималистичный технологичный стиль. Функции, тарифы, форма регистрации." },
+  1: { businessType: "Медицинская клиника", style: "minimal", description: "Современная стоматологическая клиника. Акцент на доверие, технологии и заботу о пациентах. Услуги: лечение, имплантация, отбеливание.", label: "Стоматология", styleTag: "Чистый · Доверие" },
+  2: { businessType: "Салон красоты", style: "bold", description: "Авторский тату-салон с тёмной эстетикой. Портфолио мастеров, стили татуировок, онлайн-запись.", label: "Тату-салон", styleTag: "Тёмный · Характер" },
+  3: { businessType: "Фитнес-клуб", style: "bold", description: "Премиум фитнес-клуб. Акцент на энергию и результат. Абонементы, расписание групповых, тренеры.", label: "Фитнес-клуб", styleTag: "Энергия · Премиум" },
+  4: { businessType: "Кофейня / кафе", style: "modern", description: "Уютная кофейня со specialty кофе и авторскими десертами. Тёплая атмосфера, меню, адрес и часы работы.", label: "Кофейня", styleTag: "Тёплый · Уютный" },
+  5: { businessType: "Юридические услуги", style: "corporate", description: "Юридическая компания для бизнеса. Строгий авторитетный стиль. Услуги, команда, подтверждённые кейсы, контакты.", label: "Юридическая компания", styleTag: "Авторитет · B2B" },
+  6: { businessType: "IT-агентство", style: "minimal", description: "IT-стартап с SaaS-продуктом. Минималистичный технологичный стиль. Функции, тарифы, форма регистрации.", label: "IT-стартап", styleTag: "Минимализм · SaaS" },
 }
 
 function GalleryCard({ c, onSelect }: { c: GeneratorCase; onSelect: (preset: GalleryPreset | null) => void }) {
