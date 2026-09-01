@@ -9,12 +9,19 @@ import type { AttributionData } from "@/lib/attribution";
 
 const RATE_LIMIT = { limit: 5, windowMs: 10 * 60 * 1000 };
 
-const LIMITS = { contact: 120, name: 80, message: 2000 } as const;
+const LIMITS = { contact: 120, name: 80, message: 2000, qualification: 80 } as const;
+
+interface LeadQualification {
+  service?: string;
+  budget?: string;
+  deadline?: string;
+}
 
 interface LeadFields {
   contact: string;
   name: string;
   message: string;
+  qualification: LeadQualification;
   attribution: AttributionData;
 }
 
@@ -44,6 +51,11 @@ function parseLead(body: unknown): { ok: true; value: LeadFields } | { ok: false
       contact,
       name: sanitizeUserText(b.name, LIMITS.name),
       message: sanitizeUserText(b.message, LIMITS.message),
+      qualification: {
+        service: sanitizeUserText(b.service, LIMITS.qualification),
+        budget: sanitizeUserText(b.budget, LIMITS.qualification),
+        deadline: sanitizeUserText(b.deadline, LIMITS.qualification),
+      },
       attribution: normalizeAttribution(b.attribution),
     },
   };
@@ -51,7 +63,7 @@ function parseLead(body: unknown): { ok: true; value: LeadFields } | { ok: false
 
 // ─── Письмо ──────────────────────────────────────────────────────────────────
 
-function buildLeadEmail({ contact, name, message, attribution }: LeadFields): string {
+function buildLeadEmail({ contact, name, message, qualification, attribution, leadId }: LeadFields & { leadId: string }): string {
   // Значения приходят из открытой формы, поэтому экранируется каждое.
   const row = (label: string, value: string) => `
     <tr>
@@ -66,11 +78,14 @@ function buildLeadEmail({ contact, name, message, attribution }: LeadFields): st
         ${row("Контакт", escapeHtml(contact))}
         ${name ? row("Имя", escapeHtml(name)) : ""}
         ${message ? row("Задача", escapeHtml(message).replace(/\n/g, "<br>")) : ""}
+        ${qualification.service ? row("Услуга", escapeHtml(qualification.service)) : ""}
+        ${qualification.budget ? row("Бюджет", escapeHtml(qualification.budget)) : ""}
+        ${qualification.deadline ? row("Срок", escapeHtml(qualification.deadline)) : ""}
         ${Object.keys(attribution).length ? row("Атрибуция", escapeHtml(JSON.stringify(attribution))) : ""}
       </table>
       <div style="margin-top: 32px; padding: 16px; background: #f4f4f5; border-radius: 12px;">
         <p style="margin: 0; font-size: 13px; color: #71717a;">
-          Заявка отправлена через форму на сайте gotovo
+          ID заявки: ${escapeHtml(leadId)}
         </p>
       </div>
     </div>`;
@@ -101,6 +116,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error }, { status: 400 });
   }
   const lead = parsed.value;
+  const leadId = crypto.randomUUID();
 
   const apiKey = process.env.RESEND_API_KEY;
   const toEmail = process.env.LEAD_NOTIFICATION_EMAIL;
@@ -136,7 +152,7 @@ export async function POST(req: NextRequest) {
       to: toEmail,
       reply_to: isValidEmail(lead.contact) ? lead.contact : undefined,
       subject: `Новая заявка от ${lead.name || lead.contact}`,
-      html: buildLeadEmail(lead),
+      html: buildLeadEmail({ ...lead, leadId }),
     }),
     sendTelegram(
       [
@@ -145,6 +161,10 @@ export async function POST(req: NextRequest) {
         tgField("Контакт", lead.contact),
         lead.name ? tgField("Имя", lead.name) : "",
         lead.message ? tgField("Задача", lead.message) : "",
+        lead.qualification.service ? tgField("Услуга", lead.qualification.service) : "",
+        lead.qualification.budget ? tgField("Бюджет", lead.qualification.budget) : "",
+        lead.qualification.deadline ? tgField("Срок", lead.qualification.deadline) : "",
+        tgField("ID заявки", leadId),
         Object.keys(lead.attribution).length ? tgField("Источник", JSON.stringify(lead.attribution)) : "",
       ]
         .filter(Boolean)
@@ -184,5 +204,5 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  return NextResponse.json({ success: true }, { status: 200 });
+  return NextResponse.json({ success: true, lead_id: leadId }, { status: 200 });
 }

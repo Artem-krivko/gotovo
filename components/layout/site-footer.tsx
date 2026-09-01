@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BrandLogo } from "@/components/brand/brand-logo";
+import { TrackedContactLink } from "@/components/shared/tracked-contact-link";
 
 const NAVIGATION = [
   { href: "/services", label: "Услуги" },
@@ -46,9 +47,9 @@ export function SiteFooter() {
             <div>
               <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#f2efe7]/45">Связаться</p>
               <div className="mt-5 flex flex-col gap-3 text-sm">
-                <a href="mailto:info@usegotovo.by" className="text-[#f2efe7]/70 transition hover:text-[#d8ff52]">info@usegotovo.by</a>
-                <a href="tel:+375296333337" className="text-[#f2efe7]/70 transition hover:text-[#d8ff52]">+375 29 633-33-37</a>
-                <a href="https://t.me/Artem_k_r" target="_blank" rel="noopener noreferrer" className="text-[#f2efe7]/70 transition hover:text-[#d8ff52]">Telegram ↗</a>
+                <TrackedContactLink href="mailto:info@usegotovo.by" kind="email" source="footer" className="text-[#f2efe7]/70 transition hover:text-[#d8ff52]">info@usegotovo.by</TrackedContactLink>
+                <TrackedContactLink href="tel:+375296333337" kind="phone" source="footer" className="text-[#f2efe7]/70 transition hover:text-[#d8ff52]">+375 29 633-33-37</TrackedContactLink>
+                <TrackedContactLink href="https://t.me/Artem_k_r" kind="telegram" source="footer" target="_blank" rel="noopener noreferrer" className="text-[#f2efe7]/70 transition hover:text-[#d8ff52]">Telegram ↗</TrackedContactLink>
               </div>
             </div>
           </div>

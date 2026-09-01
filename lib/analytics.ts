@@ -22,9 +22,13 @@ export type FunnelEvent =
   | "preview_engaged"
   | "lead_modal_opened"
   | "lead_submitted"
+  | "direct_lead_submitted"
+  | "generator_lead_submitted"
   | "lead_form_started"
   | "lead_submit_failed"
   | "telegram_clicked"
+  | "phone_clicked"
+  | "email_clicked"
 
 export type EventParams = Record<string, string | number | boolean | undefined>
 
@@ -62,6 +66,9 @@ export function setConsent(granted: boolean) {
   const w = window as AnalyticsWindow
   w.gtag?.("consent", "update", {
     analytics_storage: granted ? "granted" : "denied",
+    ad_storage: granted ? "granted" : "denied",
+    ad_user_data: granted ? "granted" : "denied",
+    ad_personalization: granted ? "granted" : "denied",
   } as unknown as EventParams)
 
   if (granted) flushQueue()

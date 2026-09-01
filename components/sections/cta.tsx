@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TrackedContactLink } from "@/components/shared/tracked-contact-link";
 
 interface CtaProps {
   title: string;
@@ -29,10 +30,10 @@ export function Cta({ title, subtitle, button, href = "/generator" }: CtaProps) 
                 <span aria-hidden="true">✦</span>
                 {button}
               </Link>
-              <a href="mailto:info@usegotovo.by"
+              <TrackedContactLink href="mailto:info@usegotovo.by" kind="email" source="cta"
                 className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-7 py-3.5 text-sm font-medium text-white transition hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white/40">
                 Написать напрямую
-              </a>
+              </TrackedContactLink>
             </div>
             <p className="mt-4 text-xs text-[#6B6B80]">
               Бесплатно · Без регистрации · Ответ в течение нескольких часов

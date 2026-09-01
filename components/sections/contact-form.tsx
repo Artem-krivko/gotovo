@@ -10,6 +10,9 @@ interface FormFields {
   name: string;
   contact: string;
   message: string;
+  service: string;
+  budget: string;
+  deadline: string;
 }
 
 function SpinnerIcon() {
@@ -41,7 +44,7 @@ function SuccessState() {
 const inputClass = "min-h-13 border border-ink/30 bg-paper px-4 py-3 text-sm text-ink placeholder:text-ink/38 outline-none transition focus:border-cobalt focus:ring-2 focus:ring-cobalt/20 disabled:opacity-50";
 
 export function ContactForm() {
-  const [fields, setFields] = useState<FormFields>({ name: "", contact: "", message: "" });
+  const [fields, setFields] = useState<FormFields>({ name: "", contact: "", message: "", service: "", budget: "", deadline: "" });
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const formStartedRef = useRef(false);
@@ -52,7 +55,7 @@ export function ContactForm() {
     track("lead_form_started", { form: "contacts" });
   }, []);
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFields((prev) => ({ ...prev, [name]: value }));
   }, []);
@@ -70,7 +73,7 @@ export function ContactForm() {
       });
       const data = await res.json() as { success?: boolean; error?: string };
       if (!res.ok || !data.success) throw new Error(data.error ?? "Ошибка отправки");
-      track("lead_submitted", { form: "contacts" });
+      track("direct_lead_submitted", { form: "contacts" });
       setStatus("success");
     } catch (err) {
       track("lead_submit_failed", { form: "contacts" });
@@ -90,6 +93,27 @@ export function ContactForm() {
         <input id="contact-name" name="name" type="text" required
           placeholder="Как вас зовут" value={fields.name}
           onChange={handleChange} disabled={isLoading} className={inputClass} />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink/70">
+          Услуга
+          <select name="service" value={fields.service} onChange={handleChange} disabled={isLoading} className={inputClass}>
+            <option value="">Выберите</option><option>Сайт с нуля</option><option>Редизайн</option><option>Лендинг</option><option>Поддержка</option>
+          </select>
+        </label>
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink/70">
+          Бюджет
+          <select name="budget" value={fields.budget} onChange={handleChange} disabled={isLoading} className={inputClass}>
+            <option value="">Выберите</option><option>до 1 000 BYN</option><option>1 000–3 000 BYN</option><option>3 000–7 000 BYN</option><option>от 7 000 BYN</option>
+          </select>
+        </label>
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink/70">
+          Срок
+          <select name="deadline" value={fields.deadline} onChange={handleChange} disabled={isLoading} className={inputClass}>
+            <option value="">Выберите</option><option>Как можно скорее</option><option>1–2 месяца</option><option>3+ месяца</option><option>Пока изучаю варианты</option>
+          </select>
+        </label>
       </div>
 
       <div className="flex flex-col gap-1.5">

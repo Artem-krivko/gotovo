@@ -82,8 +82,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           события сразу, без какого-либо согласия. */}
       <Script id="ga-init" strategy="afterInteractive">
         {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
-gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',wait_for_update:500});
-try{if(localStorage.getItem('analytics_consent')==='granted'){gtag('consent','update',{analytics_storage:'granted'});}}catch(e){}
+gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',wait_for_update:500});
+try{if(localStorage.getItem('analytics_consent')==='granted'){gtag('consent','update',{analytics_storage:'granted',ad_storage:'granted',ad_user_data:'granted',ad_personalization:'granted'});}}catch(e){}
 gtag('js',new Date());gtag('config','G-MSXLMK8X5K',{anonymize_ip:true});`}
       </Script>
       <body

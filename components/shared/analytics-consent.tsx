@@ -67,7 +67,7 @@ export function AnalyticsConsent() {
             </Link>
           </div>
           <p id="analytics-consent-description" className="mt-1.5 text-xs leading-5 text-ink/68 sm:text-sm sm:leading-6">
-            Обезличенная аналитика помогает улучшать сайт. Без вашего согласия данные не собираются.
+            Обезличенная аналитика помогает улучшать сайт. До вашего выбора используются только ограниченные сигналы без рекламной персонализации.
           </p>
           <Link
             href="/privacy"

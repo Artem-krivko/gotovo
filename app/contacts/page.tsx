@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ContactForm } from "@/components/sections/contact-form";
+import { TrackedContactLink } from "@/components/shared/tracked-contact-link";
 import { Arrow, EditorialBreadcrumbs, EditorialHero, EditorialSectionHeader } from "@/components/shared/editorial";
 import { createPageMetadata } from "@/lib/site";
 
@@ -29,9 +30,9 @@ export default function ContactsPage() {
             <aside className="lg:col-span-5 lg:border-l lg:border-ink/25 lg:pl-8">
               <p className="section-index text-ink/45">Напрямую</p>
               <div className="mt-6 border-t border-ink">
-                <a href="mailto:info@usegotovo.by" className="flex items-center justify-between border-b border-ink/25 py-5 text-lg font-semibold hover:text-cobalt"><span>info@usegotovo.by</span><Arrow diagonal /></a>
-                <a href="tel:+375296333337" className="flex items-center justify-between border-b border-ink/25 py-5 text-lg font-semibold hover:text-cobalt"><span>+375 29 633-33-37</span><Arrow diagonal /></a>
-                <a href="https://t.me/Artem_k_r" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between border-b border-ink/25 py-5 text-lg font-semibold hover:text-cobalt"><span>Telegram</span><Arrow diagonal /></a>
+                <TrackedContactLink href="mailto:info@usegotovo.by" kind="email" source="contacts" className="flex items-center justify-between border-b border-ink/25 py-5 text-lg font-semibold hover:text-cobalt"><span>info@usegotovo.by</span><Arrow diagonal /></TrackedContactLink>
+                <TrackedContactLink href="tel:+375296333337" kind="phone" source="contacts" className="flex items-center justify-between border-b border-ink/25 py-5 text-lg font-semibold hover:text-cobalt"><span>+375 29 633-33-37</span><Arrow diagonal /></TrackedContactLink>
+                <TrackedContactLink href="https://t.me/Artem_k_r" kind="telegram" source="contacts" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between border-b border-ink/25 py-5 text-lg font-semibold hover:text-cobalt"><span>Telegram</span><Arrow diagonal /></TrackedContactLink>
               </div>
               <div className="mt-10 bg-acid p-6">
                 <p className="section-index">Что дальше</p>

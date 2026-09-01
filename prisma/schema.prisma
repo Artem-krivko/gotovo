@@ -27,6 +27,7 @@ model Order {
   phone     String
   email     String
   comment   String?
+  qualificationJson String?
   attributionJson String?
   createdAt DateTime @default(now())
 

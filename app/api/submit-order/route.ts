@@ -21,6 +21,7 @@ interface OrderFields {
   email: string
   comment: string
   attribution: AttributionData
+  qualification: { service?: string; budget?: string; deadline?: string }
 }
 
 // ─── Валидация ───────────────────────────────────────────────────────────────
@@ -58,6 +59,11 @@ function parseOrder(body: unknown): { ok: true; value: OrderFields } | { ok: fal
       name: sanitizeUserText(b.name, LIMITS.name),
       comment: sanitizeUserText(b.comment, LIMITS.comment),
       attribution: normalizeAttribution(b.attribution),
+      qualification: {
+        service: sanitizeUserText(b.service, 80),
+        budget: sanitizeUserText(b.budget, 80),
+        deadline: sanitizeUserText(b.deadline, 80),
+      },
     },
   }
 }
@@ -172,6 +178,7 @@ export async function POST(req: NextRequest) {
         phone: order.phone,
         email: order.email,
         comment: order.comment || null,
+        qualificationJson: Object.values(order.qualification).some(Boolean) ? JSON.stringify(order.qualification) : null,
         attributionJson: Object.keys(order.attribution).length ? JSON.stringify(order.attribution) : null,
       },
       select: { id: true },
@@ -268,5 +275,5 @@ export async function POST(req: NextRequest) {
     )
   }
 
-  return NextResponse.json({ success: true, orderId })
+  return NextResponse.json({ success: true, orderId, lead_id: orderId })
 }

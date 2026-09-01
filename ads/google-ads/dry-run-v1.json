@@ -1,0 +1,180 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-01",
+  "mode": "dry_run",
+  "apply": false,
+  "authorized": false,
+  "platform": "google_ads",
+  "account": {
+    "managerCustomerId": "570-737-3950",
+    "advertiserCustomerId": "211-905-4297",
+    "name": "usegotovo.by",
+    "accessMode": "read_only",
+    "developerTokenAccess": "test_access",
+    "accountStateObserved": "setup_in_progress"
+  },
+  "blockingPreconditions": [
+    "basic_access_approved",
+    "billing_country_currency_and_payment_verified",
+    "existing_onboarding_draft_reviewed_without_saving",
+    "performance_max_not_used_for_first_test",
+    "germany_removed_and_belarus_confirmed_as_target",
+    "measurement_p0_closed",
+    "google_conversions_verified_separately_from_yandex",
+    "keyword_planner_forecast_reviewed",
+    "owner_approved_exact_dry_run",
+    "owner_approved_spend_separately"
+  ],
+  "operations": [
+    {
+      "operation": "create_search_campaign_paused",
+      "campaignName": "GA | Search | Minsk | Landing+Business | RU | v1",
+      "campaignType": "SEARCH",
+      "status": "PAUSED",
+      "networks": {
+        "googleSearch": true,
+        "searchPartners": false,
+        "displayNetwork": false
+      },
+      "geography": {
+        "include": ["Minsk, Belarus"],
+        "exclude": ["Germany"],
+        "locationOption": "presence"
+      },
+      "language": ["Russian"],
+      "budget": {
+        "currency": "TBD_FROM_ACCOUNT",
+        "fourteenDayCapBynEquivalent": 150,
+        "runConcurrentlyWithYandexFirstTest": false,
+        "spendAuthorized": false
+      },
+      "bidding": {
+        "initialMode": "manual_control_or_click_cap_after_forecast",
+        "smartBidding": false,
+        "reason": "No verified conversion volume yet"
+      },
+      "adGroups": [
+        {
+          "name": "landing_order_minsk",
+          "landingPage": "https://www.usegotovo.by/lending-minsk",
+          "matchTypes": ["EXACT", "PHRASE"],
+          "keywords": [
+            "заказать лендинг минск",
+            "разработка лендинга минск",
+            "создание лендинга минск",
+            "лендинг под ключ минск",
+            "стоимость разработки лендинга"
+          ]
+        },
+        {
+          "name": "business_site_minsk",
+          "landingPage": "https://www.usegotovo.by/sozdanie-sajtov-dlya-biznesa",
+          "matchTypes": ["EXACT", "PHRASE"],
+          "keywords": [
+            "сайт для бизнеса заказать",
+            "разработка сайта для бизнеса",
+            "создание сайта для компании",
+            "корпоративный сайт заказать минск",
+            "сайт услуг заказать"
+          ]
+        },
+        {
+          "name": "turnkey_site_minsk",
+          "landingPage": "https://www.usegotovo.by/razrabotka-sajtov-minsk",
+          "matchTypes": ["EXACT", "PHRASE"],
+          "keywords": [
+            "создание сайта под ключ минск",
+            "разработка сайта под ключ минск",
+            "заказать разработку сайта",
+            "разработка сайтов минск",
+            "создание сайтов минск"
+          ]
+        },
+        {
+          "name": "price_minsk",
+          "landingPage": "https://www.usegotovo.by/pricing",
+          "matchTypes": ["EXACT", "PHRASE"],
+          "keywords": [
+            "разработка сайта цена минск",
+            "сколько стоит создать сайт беларусь",
+            "стоимость сайта для бизнеса",
+            "лендинг цена минск"
+          ]
+        }
+      ],
+      "campaignNegativeKeywords": [
+        "бесплатно",
+        "своими руками",
+        "конструктор",
+        "шаблон",
+        "скачать",
+        "исходный код",
+        "курс",
+        "обучение",
+        "вакансия",
+        "работа",
+        "стажировка",
+        "диплом",
+        "курсовая",
+        "логотип",
+        "мобильное приложение",
+        "субподряд",
+        "white label"
+      ],
+      "responsiveSearchAds": [
+        {
+          "variant": "landing",
+          "headlines": [
+            "Лендинг для бизнеса в Минске",
+            "Разработка от 1 200 BYN",
+            "Структура, дизайн, код и запуск",
+            "Бесплатная AI-концепция",
+            "Срок проекта 7–10 дней"
+          ],
+          "descriptions": [
+            "Проектируем лендинг под задачу бизнеса: структура, индивидуальный дизайн, адаптив и форма заявки.",
+            "Сначала можно увидеть три AI-направления. Финальный сайт разрабатываем вручную."
+          ]
+        },
+        {
+          "variant": "business_site",
+          "headlines": [
+            "Сайт для бизнеса под ключ",
+            "Бизнес-сайт от 2 900 BYN",
+            "Понятные этапы и состав работ",
+            "Базовое техническое SEO включено",
+            "Работаем по Минску и Беларуси"
+          ],
+          "descriptions": [
+            "Структура, дизайн, разработка и запуск без шаблонных обещаний.",
+            "Покажем формат, этапы и ориентир стоимости до начала проекта."
+          ]
+        }
+      ],
+      "finalUrlSuffix": "utm_source=google&utm_medium=cpc&utm_campaign=ga_search_minsk_landing_business_v1&utm_id={campaignid}&utm_content={adgroupid}_{creative}&utm_term={keyword}&matchtype={matchtype}&device={device}",
+      "autoTagging": {
+        "gclid": true,
+        "preserveGbraidWbraidIfPresent": true
+      },
+      "conversions": {
+        "primary": ["ga_lead_submitted", "ga_generator_lead_submitted"],
+        "secondary": [
+          "ga_phone_clicked",
+          "ga_email_clicked",
+          "ga_telegram_clicked",
+          "ga_generator_started",
+          "ga_generation_succeeded"
+        ],
+        "importFromYandex": false
+      },
+      "risks": [
+        "account_onboarding_not_completed",
+        "wrong_default_geography_observed_in_wizard",
+        "developer_token_is_test_access",
+        "high_google_serp_competition_in_minsk",
+        "no_verified_conversion_volume_for_smart_bidding"
+      ],
+      "rollback": "All created objects remain PAUSED. Do not complete onboarding, publish, enable, or add payment/spend without a second explicit approval."
+    }
+  ]
+}

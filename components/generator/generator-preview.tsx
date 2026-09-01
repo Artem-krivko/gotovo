@@ -12,6 +12,7 @@ import { track } from "@/lib/analytics"
 import { readApiResponse } from "@/lib/api-response"
 import { getGenerationFailureCopy } from "@/lib/generation-diagnostics"
 import { getAttribution } from "@/lib/attribution"
+import { TrackedContactLink } from "@/components/shared/tracked-contact-link"
 
 interface GeneratorPreviewProps {
   html: string
@@ -118,7 +119,7 @@ function TimedBanner({ designId, onDismiss }: { designId: string; onDismiss: () 
       })
       const data = await res.json() as { success?: boolean }
       if (res.ok && data.success) {
-        track("lead_submitted", { source: "preview_banner" })
+        track("generator_lead_submitted", { source: "preview_banner" })
         setState("done")
         setTimeout(onDismiss, 2500)
       } else {
@@ -199,7 +200,7 @@ function OrderModal({ designId, onClose }: { designId: string; onClose: () => vo
       })
       const data = await res.json() as { success?: boolean; error?: string }
       if (!res.ok || !data.success) throw new Error(data.error ?? "Ошибка отправки")
-      track("lead_submitted", { source: "modal" })
+        track("generator_lead_submitted", { source: "modal" })
       setState("success")
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : "Попробуйте ещё раз")
@@ -587,18 +588,19 @@ export function GeneratorPreview({
             </p>
           </div>
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
-            <a
+            <TrackedContactLink
               href="https://t.me/Artem_k_r"
+              kind="telegram"
+              source="preview"
               target="_blank"
               rel="noopener noreferrer"
-              onClick={() => track("telegram_clicked", { source: "preview" })}
               className="flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm font-semibold text-zinc-700 transition hover:-translate-y-0.5 hover:border-[#2AABEE]/40 hover:bg-[#2AABEE]/5 hover:text-[#1a96d4] sm:w-auto"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="text-[#2AABEE]" aria-hidden="true">
                 <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248-1.97 9.289c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.14 14.5l-2.95-.924c-.64-.203-.654-.64.136-.954l11.527-4.448c.537-.194 1.006.131.71.074z"/>
               </svg>
               Написать в Telegram
-            </a>
+            </TrackedContactLink>
             <button
               type="button"
               onClick={() => {

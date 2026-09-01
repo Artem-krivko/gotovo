@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { getAttribution } from "@/lib/attribution";
+import { track } from "@/lib/analytics";
 
 type SubmitStatus = "idle" | "loading" | "success" | "error";
 
@@ -42,6 +44,7 @@ export function LeadForm() {
           contact: form.phone,
           name: form.name,
           message: form.message,
+          attribution: getAttribution(),
         }),
       });
 
@@ -49,12 +52,14 @@ export function LeadForm() {
       if (!res.ok) throw new Error(data.error ?? "Ошибка отправки");
 
       setStatus("success");
+      track("direct_lead_submitted", { form: "lead_form" });
       setForm({
         name: "",
         phone: "",
         message: "",
       });
     } catch (error) {
+      track("lead_submit_failed", { form: "lead_form" });
       console.error("[lead-form]", error);
       setErrorMsg(error instanceof Error ? error.message : "Попробуйте ещё раз");
       setStatus("error");

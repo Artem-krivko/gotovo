@@ -1,12 +1,15 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
+import { getAttribution } from "@/lib/attribution"
+import { track } from "@/lib/analytics"
 
 type QuickState = "idle" | "loading" | "success" | "error"
 
 export function QuickContact() {
   const [phone, setPhone] = useState("")
   const [state, setState] = useState<QuickState>("idle")
+  const started = useRef(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -15,11 +18,18 @@ export function QuickContact() {
       const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contact: phone, message: "Быстрая заявка с главной страницы" }),
+        body: JSON.stringify({ contact: phone, message: "Быстрая заявка с главной страницы", attribution: getAttribution() }),
       })
       const data = await res.json() as { success?: boolean }
-      setState(res.ok && data.success ? "success" : "error")
+      if (res.ok && data.success) {
+        track("direct_lead_submitted", { form: "quick_contact" })
+        setState("success")
+      } else {
+        track("lead_submit_failed", { form: "quick_contact" })
+        setState("error")
+      }
     } catch {
+      track("lead_submit_failed", { form: "quick_contact" })
       setState("error")
     }
   }
@@ -45,7 +55,7 @@ export function QuickContact() {
                 <p className="text-xs text-[#6B6B80]">Просто оставьте номер — обсудим проект по телефону</p>
               </div>
               <div className="flex flex-col gap-2">
-                <form onSubmit={handleSubmit} className="flex gap-2">
+                <form onSubmit={handleSubmit} onFocus={() => { if (!started.current) { started.current = true; track("lead_form_started", { form: "quick_contact" }) } }} className="flex gap-2">
                   <input
                     type="tel"
                     required

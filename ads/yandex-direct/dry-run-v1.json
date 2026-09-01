@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-01",
+  "mode": "dry_run",
+  "apply": false,
+  "authorized": false,
+  "platform": "yandex_direct",
+  "account": {
+    "login": "krivkoArtemk",
+    "accessMode": "read_only"
+  },
+  "preconditions": [
+    "measurement_p0_closed",
+    "yandex_metrika_installed_and_verified",
+    "first_and_last_touch_verified",
+    "lead_id_persisted_for_every_lead",
+    "keyword_forecast_reviewed",
+    "owner_approved_exact_dry_run",
+    "owner_approved_spend_separately"
+  ],
+  "operations": [
+    {
+      "operation": "create_campaign_paused",
+      "campaignName": "YD | Search | Minsk | Landing+Business | RU | v1",
+      "campaignType": "search_manual",
+      "status": "paused",
+      "networks": {
+        "search": true,
+        "yan": false
+      },
+      "geography": {
+        "include": ["Minsk, Belarus"],
+        "exclude": [],
+        "extendedGeoTargeting": false
+      },
+      "language": ["ru"],
+      "schedule": {
+        "timezone": "Europe/Minsk",
+        "days": "daily",
+        "hours": "08:00-22:00"
+      },
+      "budget": {
+        "currency": "BYN",
+        "dailyCap": 11,
+        "fourteenDayCap": 150,
+        "firstMonthAbsoluteCap": 300,
+        "spendAuthorized": false
+      },
+      "automation": {
+        "autoTargeting": false,
+        "broadExpansion": false,
+        "autoApplyRecommendations": false
+      },
+      "adGroups": [
+        {
+          "name": "landing_order_minsk",
+          "landingPage": "https://www.usegotovo.by/lending-minsk",
+          "keywords": [
+            "заказать лендинг минск",
+            "разработка лендинга минск",
+            "создание лендинга минск",
+            "лендинг под ключ минск",
+            "стоимость разработки лендинга"
+          ]
+        },
+        {
+          "name": "business_site_minsk",
+          "landingPage": "https://www.usegotovo.by/sozdanie-sajtov-dlya-biznesa",
+          "keywords": [
+            "сайт для бизнеса заказать",
+            "разработка сайта для бизнеса",
+            "создание сайта для компании",
+            "корпоративный сайт заказать минск",
+            "сайт услуг заказать"
+          ]
+        },
+        {
+          "name": "turnkey_site_minsk",
+          "landingPage": "https://www.usegotovo.by/razrabotka-sajtov-minsk",
+          "keywords": [
+            "создание сайта под ключ минск",
+            "разработка сайта под ключ минск",
+            "заказать разработку сайта",
+            "разработка сайтов минск",
+            "создание сайтов минск"
+          ]
+        },
+        {
+          "name": "price_minsk",
+          "landingPage": "https://www.usegotovo.by/pricing",
+          "keywords": [
+            "разработка сайта цена минск",
+            "сколько стоит создать сайт беларусь",
+            "стоимость сайта для бизнеса",
+            "лендинг цена минск"
+          ]
+        }
+      ],
+      "campaignNegativeKeywords": [
+        "бесплатно",
+        "своими руками",
+        "конструктор",
+        "шаблон",
+        "скачать",
+        "исходный код",
+        "курс",
+        "обучение",
+        "вакансия",
+        "работа",
+        "стажировка",
+        "диплом",
+        "курсовая",
+        "логотип",
+        "мобильное приложение",
+        "субподряд",
+        "white label"
+      ],
+      "ads": [
+        {
+          "variant": "landing",
+          "headlines": [
+            "Лендинг для бизнеса в Минске",
+            "Разработка от 1 200 BYN",
+            "Структура, дизайн, код и запуск",
+            "Бесплатная AI-концепция"
+          ],
+          "description": "Проектируем лендинг под задачу бизнеса: структура, индивидуальный дизайн, адаптив и форма заявки. Сначала можно увидеть три AI-направления."
+        },
+        {
+          "variant": "business_site",
+          "headlines": [
+            "Сайт для бизнеса под ключ",
+            "Бизнес-сайт от 2 900 BYN",
+            "Понятные этапы и состав работ",
+            "Базовое техническое SEO включено"
+          ],
+          "description": "Структура, дизайн, разработка и запуск. Покажем формат, этапы и ориентир стоимости до начала проекта."
+        }
+      ],
+      "trackingTemplate": "utm_source=yandex&utm_medium=cpc&utm_campaign=yd_search_minsk_landing_business_v1&utm_id={campaign_id}&utm_content={ad_id}_{phrase_id}&utm_term={keyword}&placement={source}_{position_type}",
+      "conversions": {
+        "primary": ["yd_lead_submitted", "yd_generator_lead_submitted"],
+        "secondary": [
+          "yd_phone_clicked",
+          "yd_email_clicked",
+          "yd_telegram_clicked",
+          "yd_generator_started",
+          "yd_generation_succeeded"
+        ]
+      },
+      "risks": [
+        "high_serp_competition_in_minsk",
+        "insufficient_volume_at_150_byn",
+        "free_ai_hook_may_attract_diy_users",
+        "no_launch_if_source_loss_is_nonzero"
+      ],
+      "rollback": "Campaign and all child objects remain paused; if creation is later approved but validation fails, do not enable and archive only after separate approval."
+    },
+    {
+      "operation": "prepare_campaign_paused_only",
+      "campaignName": "YD | Search | BY-ex-Minsk | Landing+Business | RU | v1",
+      "status": "paused",
+      "geography": {
+        "include": ["Belarus"],
+        "exclude": ["Minsk"]
+      },
+      "budget": {
+        "currency": "BYN",
+        "spendAuthorized": false,
+        "note": "No budget until Minsk test and separate approval"
+      }
+    }
+  ]
+}
