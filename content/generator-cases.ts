@@ -53,7 +53,7 @@ export const GENERATOR_CASES: GeneratorCase[] = [
     id: 3,
     label: "Фитнес-клуб",
     prompt: "Премиум спортзал — энергия, мощь, яркий акцент на чёрном",
-    image: "/images/generator/gym-preview.png",
+    image: "/images/generator/gym-motion-system.webp",
     category: "Спорт",
     accent: {
       border: "border-orange-500/30",
@@ -83,7 +83,7 @@ export const GENERATOR_CASES: GeneratorCase[] = [
     id: 5,
     label: "Юридическая компания",
     prompt: "Юридические услуги B2B — авторитет, строгость и доверие",
-    image: "/images/generator/legal-preview.png",
+    image: "/images/generator/legal-dossier.webp",
     category: "B2B",
     accent: {
       border: "border-emerald-500/30",

@@ -18,18 +18,18 @@ const selectedIds = new Set(
 )
 
 const fixtureFiles = [
-  "public/images/generator/dentist-preview.png",
-  "public/images/generator/gym-preview.png",
-  "public/images/generator/coffee-preview.png",
+  "public/images/generator/dentist-editorial.webp",
+  "public/images/generator/gym-motion-system.webp",
+  "public/images/generator/coffee-magazine.webp",
   "public/templates/t1.png",
 ]
-const PIXELS = await Promise.all(fixtureFiles.map(async (file) =>
-  (await readFile(resolve(file))).toString("base64")
+const DATA_URLS = await Promise.all(fixtureFiles.map(async (file) =>
+  `data:image/${file.endsWith(".webp") ? "webp" : "png"};base64,${(await readFile(resolve(file))).toString("base64")}`
 ))
 
 function assetsFor(brief) {
-  const gallery = PIXELS.map((pixel, index) => ({
-    url: `data:image/png;base64,${pixel}`,
+  const gallery = DATA_URLS.map((url, index) => ({
+    url,
     alt: `${brief.businessType}: визуальный пример ${index + 1}`,
   }))
   return {

@@ -66,12 +66,12 @@ C:\Users\RedmiBook Pro\ai-agency-starter\
 │       └── scroll-glow.tsx
 ├── public\
 │   ├── images\
-│   │   ├── generator\                 ← PNG рендеры сайтов по нишам
-│   │   │   ├── dentist-preview.png
-│   │   │   ├── tattoo-preview.png
-│   │   │   ├── gym-preview.png
-│   │   │   ├── coffee-preview.png
-│   │   │   └── legal-preview.png
+│   │   ├── generator\                 ← WebP-концепты сайтов по нишам
+│   │   │   ├── dentist-editorial.webp
+│   │   │   ├── tattoo-artbook.webp
+│   │   │   ├── gym-motion-system.webp
+│   │   │   ├── coffee-magazine.webp
+│   │   │   └── legal-dossier.webp
 │   │   └── hero-blocks\
 │   │       └── mockup.jpg             ← нарезанный мокап UI (545x475px)
 │   └── video\
