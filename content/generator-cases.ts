@@ -23,7 +23,7 @@ export const GENERATOR_CASES: GeneratorCase[] = [
     id: 1,
     label: "Стоматология",
     prompt: "Современная клиника — чистый дизайн, доверие и технологии",
-    image: "/images/generator/dentist-preview.png",
+    image: "/images/generator/dentist-editorial.webp",
     category: "Медицина",
     accent: {
       border: "border-sky-500/30",
@@ -38,7 +38,7 @@ export const GENERATOR_CASES: GeneratorCase[] = [
     id: 2,
     label: "Тату-салон",
     prompt: "Авторский тату — тёмная эстетика, портфолио мастеров, характер",
-    image: "/images/generator/tattoo-preview.png",
+    image: "/images/generator/tattoo-artbook.webp",
     category: "Красота",
     accent: {
       border: "border-zinc-500/30",
@@ -68,7 +68,7 @@ export const GENERATOR_CASES: GeneratorCase[] = [
     id: 4,
     label: "Кофейня",
     prompt: "Specialty кофе — тёплая атмосфера, авторские десерты, уют",
-    image: "/images/generator/coffee-preview.png",
+    image: "/images/generator/coffee-magazine.webp",
     category: "Еда",
     accent: {
       border: "border-amber-500/30",

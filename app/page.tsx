@@ -23,7 +23,7 @@ const conceptItems = [
     category: "Концепция для стоматологии",
     description:
       "Чистая композиция, человеческая фотография и ясная иерархия — чтобы медицинский сайт вызывал доверие, а не тревогу.",
-    image: "/images/generator/dentist-preview.png",
+    image: "/images/generator/dentist-editorial.webp",
     tone: "bg-[#d9e7ff]",
     blueprint: ["Hero / доверие", "Услуги", "Доказательства", "Запись / CTA"],
   },
@@ -33,7 +33,7 @@ const conceptItems = [
     category: "Концепция для тату-студии",
     description:
       "Контрастная типографика и плотный визуальный ритм превращают портфолио мастеров в самостоятельное высказывание.",
-    image: "/images/generator/tattoo-preview.png",
+    image: "/images/generator/tattoo-artbook.webp",
     tone: "bg-[#ff653c]",
     blueprint: ["Hero / характер", "Портфолио", "Мастера", "Запись / CTA"],
   },
@@ -43,7 +43,7 @@ const conceptItems = [
     category: "Концепция для кофейни",
     description:
       "Атмосфера места, меню и повод зайти собраны в короткий путь — от первого впечатления до визита.",
-    image: "/images/generator/coffee-preview.png",
+    image: "/images/generator/coffee-magazine.webp",
     tone: "bg-[#d7ff52]",
     blueprint: ["Hero / атмосфера", "Меню", "Повод зайти", "Адрес / CTA"],
   },

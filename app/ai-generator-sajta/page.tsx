@@ -6,9 +6,9 @@ import { createPageMetadata } from "@/lib/site";
 export const metadata: Metadata = createPageMetadata({ title: "AI-генератор концепций сайта", description: "Бесплатный AI-генератор создаёт три первые визуальные концепции сайта. Это начало разговора о дизайне, а не обещание готового проекта.", path: "/ai-generator-sajta" });
 
 const conceptExamples = [
-  { src: "/images/generator/dentist-preview.png", label: "Стоматология", tone: "bg-[#d9e7ff]" },
-  { src: "/images/generator/tattoo-preview.png", label: "Тату-студия", tone: "bg-signal" },
-  { src: "/images/generator/coffee-preview.png", label: "Кофейня", tone: "bg-acid" },
+  { src: "/images/generator/dentist-editorial.webp", label: "Стоматология", tone: "bg-[#d9e7ff]" },
+  { src: "/images/generator/tattoo-artbook.webp", label: "Тату-студия", tone: "bg-signal" },
+  { src: "/images/generator/coffee-magazine.webp", label: "Кофейня", tone: "bg-acid" },
 ] as const;
 
 function GeneratorProof() {
