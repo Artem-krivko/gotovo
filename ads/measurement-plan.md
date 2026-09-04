@@ -2,17 +2,35 @@
 
 ## Основные конверсии
 
-- `lead_submitted` — контактная форма успешно принята сервером.
-- `generator_lead_submitted` — заявка из результата AI-генератора успешно
+Яндекс Метрика/Директ:
+
+- `yd_lead_submitted` — прямая форма успешно принята сервером.
+- `yd_generator_lead_submitted` — заявка из результата AI-генератора успешно
+  принята сервером.
+
+Google Analytics/Google Ads:
+
+- `ga_lead_submitted` — прямая форма успешно принята сервером.
+- `ga_generator_lead_submitted` — заявка из результата AI-генератора успешно
   принята сервером.
 
 ## Вторичные действия
 
-- `phone_clicked`.
-- `email_clicked`.
-- `telegram_clicked`.
-- `generator_started`.
-- `generation_succeeded`.
+Яндекс:
+
+- `yd_phone_clicked`;
+- `yd_email_clicked`;
+- `yd_telegram_clicked`;
+- `yd_generator_started`;
+- `yd_generation_succeeded`.
+
+Google:
+
+- `ga_phone_clicked`;
+- `ga_email_clicked`;
+- `ga_telegram_clicked`;
+- `ga_generator_started`;
+- `ga_generation_succeeded`.
 
 Вторичные действия не оптимизируют первую поисковую кампанию как равнозначные
 заявке.

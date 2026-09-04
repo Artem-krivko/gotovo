@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google";
+import localFont from "next/font/local";
 import Script from "next/script";
 import "./globals.css";
 import { AnalyticsConsent } from "@/components/shared/analytics-consent";
@@ -8,10 +8,10 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { MotionController } from "@/components/shared/motion-controller";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin", "latin-ext"],
+const spaceGrotesk = localFont({
+  src: "../public/fonts/space-grotesk-latin.woff2",
   variable: "--font-sans",
-  weight: ["400", "500", "600", "700"],
+  weight: "400 700",
   display: "swap",
 });
 

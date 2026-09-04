@@ -155,6 +155,7 @@ export function GeneratorForm({ onResult, onLoading, isLoading, defaultValues }:
     if (formStartedRef.current) return
     formStartedRef.current = true
     track("generator_form_started")
+    track("generator_started")
   }, [])
 
   const handleSubmit = useCallback(

@@ -33,3 +33,18 @@ model Order {
 
   design Design @relation(fields: [designId], references: [id])
 }
+
+model Lead {
+  id                    String   @id
+  contact               String
+  name                  String
+  message               String
+  service               String?
+  budget                String?
+  deadline              String?
+  attributionJson       String?
+  status                String   @default("new")
+  disqualificationReason String?
+  qualifiedAt           DateTime?
+  createdAt             DateTime @default(now())
+}
