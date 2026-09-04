@@ -6,6 +6,7 @@ import { sanitizeUserText } from "@/lib/validation";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
 import { normalizeAttribution } from "@/lib/attribution";
 import type { AttributionData } from "@/lib/attribution";
+import { db } from "@/lib/db";
 
 const RATE_LIMIT = { limit: 5, windowMs: 10 * 60 * 1000 };
 
@@ -118,6 +119,29 @@ export async function POST(req: NextRequest) {
   const lead = parsed.value;
   const leadId = crypto.randomUUID();
 
+  let storedInDb = false;
+  try {
+    await db.lead.create({
+      data: {
+        id: leadId,
+        contact: lead.contact,
+        name: lead.name,
+        message: lead.message,
+        service: lead.qualification.service || null,
+        budget: lead.qualification.budget || null,
+        deadline: lead.qualification.deadline || null,
+        attributionJson: Object.keys(lead.attribution).length
+          ? JSON.stringify(lead.attribution)
+          : null,
+      },
+    });
+    storedInDb = true;
+  } catch (error) {
+    // Доставка уведомлений остаётся резервным каналом, если миграция БД ещё
+    // не применена или база временно недоступна.
+    console.error("[lead] db_failed", { leadId, error: String(error) });
+  }
+
   const apiKey = process.env.RESEND_API_KEY;
   const toEmail = process.env.LEAD_NOTIFICATION_EMAIL;
 
@@ -135,8 +159,8 @@ export async function POST(req: NextRequest) {
     });
 
     // В dev без ключей заявка ожидаемо никуда не уходит — не пугаем разработчика.
-    if (process.env.NODE_ENV !== "production") {
-      return NextResponse.json({ success: true, delivery: "logged_only" });
+    if (process.env.NODE_ENV !== "production" || storedInDb) {
+      return NextResponse.json({ success: true, lead_id: leadId, delivery: storedInDb ? "stored_only" : "logged_only" });
     }
 
     return NextResponse.json(
@@ -204,5 +228,5 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  return NextResponse.json({ success: true, lead_id: leadId }, { status: 200 });
+  return NextResponse.json({ success: true, lead_id: leadId, delivery: storedInDb ? "stored_and_notified" : "notified_only" }, { status: 200 });
 }

@@ -11,6 +11,7 @@
 
 export type FunnelEvent =
   | "generator_gallery_view"
+  | "generator_started"
   | "generator_preset_selected"
   | "generator_form_started"
   | "generator_submitted"
@@ -42,6 +43,30 @@ interface AnalyticsWindow extends Window {
 }
 
 const YANDEX_COUNTER_ID = 112132579
+
+const GOOGLE_EVENT_NAMES: Partial<Record<FunnelEvent, string>> = {
+  direct_lead_submitted: "ga_lead_submitted",
+  generator_lead_submitted: "ga_generator_lead_submitted",
+  generator_started: "ga_generator_started",
+  generation_succeeded: "ga_generation_succeeded",
+  phone_clicked: "ga_phone_clicked",
+  email_clicked: "ga_email_clicked",
+  telegram_clicked: "ga_telegram_clicked",
+}
+
+const YANDEX_EVENT_NAMES: Partial<Record<FunnelEvent, string>> = {
+  direct_lead_submitted: "yd_lead_submitted",
+  generator_lead_submitted: "yd_generator_lead_submitted",
+  generator_started: "yd_generator_started",
+  generation_succeeded: "yd_generation_succeeded",
+  phone_clicked: "yd_phone_clicked",
+  email_clicked: "yd_email_clicked",
+  telegram_clicked: "yd_telegram_clicked",
+}
+
+export function platformEventName(name: FunnelEvent, platform: "google" | "yandex"): string {
+  return (platform === "google" ? GOOGLE_EVENT_NAMES : YANDEX_EVENT_NAMES)[name] ?? name
+}
 
 /** Очередь событий до получения согласия либо до загрузки gtag. */
 const queue: Array<{ name: FunnelEvent; params: EventParams }> = []
@@ -85,10 +110,10 @@ function send(name: FunnelEvent, params: EventParams) {
   const w = window as AnalyticsWindow
   let delivered = false
   if (w.gtag) {
-    w.gtag("event", name, params)
+    w.gtag("event", platformEventName(name, "google"), params)
     delivered = true
   }
-  w.ym?.(YANDEX_COUNTER_ID, "reachGoal", name, params)
+  w.ym?.(YANDEX_COUNTER_ID, "reachGoal", platformEventName(name, "yandex"), params)
   if (w.ym) delivered = true
   return delivered
 }
